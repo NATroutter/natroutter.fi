@@ -8,7 +8,7 @@ import {FaDiscord, FaGithub, FaSteam} from "react-icons/fa";
 export const config = {
 	siteName: "natroutter.fi",
 	baseAddress: "https://NATroutter.fi", 			//IMPORTANT NO TRAILING SLASHES!!!
-	copyRight: "Copyright © NATroutter.fi 2025"
+	copyRight: "Copyright © NATroutter.fi " + (new Date().getFullYear())
 };
 
 export function NavLinks(): NavLink[] {
@@ -20,6 +20,10 @@ export function NavLinks(): NavLink[] {
 		{
 			name: "About",
 			link: "/about"
+		},
+		{
+			name: "Links",
+			link: "/links"
 		},
 		{
 			name: "Projects",
@@ -50,7 +54,7 @@ export function FooterSocialLinks(): FooterLink[] {
 			link: "https://github.com/natroutter"
 		},
 		{
-			name: "BlueSky",
+			name: "Bluesky",
 			icon: FaBluesky,
 			link: "https://bsky.app/profile/natroutter.fi"
 		},

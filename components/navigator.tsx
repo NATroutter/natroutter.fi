@@ -30,7 +30,7 @@ export function Navigator() {
 				<ul className="flex flex-row justify-center m-0 p-0;">
 					{NavLinks().map((item, index) => (
 						<li key={index} className={`px-5 py-1.5 list-none ${pathname===item.link ? "bg-theme" : ""}`}>
-							<Link href={item.link} className={`text-text no-underline font-bold hover:text-white hover:cursor-pointer ${pathname===item.link ? "text-white" : ""}`}>&lt;{item.name}&gt;</Link>
+							<Link href={item.link} className={`text-text no-underline font-bold hover:text-white hover:cursor-pointer ${pathname===item.link ? "text-white" : ""}`}>&lt;/{item.name}&gt;</Link>
 						</li>
 					))}
 				</ul>

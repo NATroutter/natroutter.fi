@@ -1,5 +1,4 @@
 import {AnimeData} from "@/types/animeData";
-import {AnimeCard} from "@/components/animeCard";
 import Anime from "@/app/anime/anime";
 
 const getAnimeData = async (status:string, limit:number, order:string) => {
