@@ -3,9 +3,9 @@ import Anime from "@/app/anime/anime";
 
 const getAnimeData = async (status:string, limit:number, order:string) => {
 	const endpoint: string = "https://api.myanimelist.net/v2/users/NATroutter/animelist";
-	const fields: string = "list_status{tags},rank,mean,alternative_titles,synopsis,my_list_status{priority,comments},main_picture";
+	const fields: string = "list_status,rank,rating,status,nsfw,average_episode_duration,popularity,num_episodes,num_scoring_users,media_type,start_date,end_date,mean,source,main_picture,genres,alternative_titles,synopsis,studios";
 
-	const response = await fetch(endpoint + '?fields=' + fields + '&limit=' + limit + '&status=' + status + '&sort=' + order, {
+	const response = await fetch(endpoint + '?fields=' + fields + '&limit=' + limit + '&status=' + status + '&sort=' + order + "&nsfw=1", {
 		method: "GET",
 		headers: {
 			"X-MAL-CLIENT-ID": process.env.MAL_CLIENT_ID as string

@@ -12,18 +12,17 @@ export default {
   theme: {
   	extend: {
   		colors: {
-			background: 'rgb(47, 51, 53)',
-  			'nav-top': 'rgb(30,35,39)',
-  			'nav-bottom': 'rgb(39,43,44)',
-  			text: 'rgb(207, 199, 189)',
-  			theme: 'rgb(120, 0, 0)',
+			background: '#31383f',
+			nav: '#1e2226',
+			card: '#20252a',
+			card2: '#272d33',
+  			text: '#abadae',
+			textHover: '#ffffff',
+  			theme: '#bb2e3a',
+			themeHover: '#a12832',
 
 
   			foreground: 'hsl(0 0% 98%)',
-  			card: {
-  				DEFAULT: 'hsl(0 0% 3.9%)',
-  				foreground: 'hsl(0 0% 98%)'
-  			},
   			popover: {
   				DEFAULT: 'hsl(0 0% 3.9%)',
   				foreground: 'hsl(0 0% 98%)'
@@ -60,7 +59,7 @@ export default {
   			}
   		},
   		boxShadow: {
-  			nav: 'rgb(15 18 22 / 30%) 0px 0px 5px;'
+  			nav: 'rgba(13, 16, 19, 0.7) 0px 3px 10px'
   		},
   		fontFamily: {
   			montserrat: [
@@ -68,7 +67,13 @@ export default {
   				'Helvetica',
   				'Arial',
   				'sans-serif'
-  			]
+  			],
+			AGRevueCyr: [
+				'AGRevueCyr',
+				'Helvetica',
+				'Arial',
+				'sans-serif'
+			]
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

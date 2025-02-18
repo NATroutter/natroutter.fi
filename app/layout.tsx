@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import {Navigator} from "@/components/navigator";
-import {FaDiscord, FaGithub, FaSteam} from "react-icons/fa";
-import {FaBluesky} from "react-icons/fa6";
 import {config, FooterSocialLinks} from "@/config/shared";
 
 export const metadata: Metadata = {
@@ -13,18 +11,23 @@ export const metadata: Metadata = {
 export default function RootLayout({children}: Readonly<{ children: React.ReactNode; }>) {
   return (
     <html lang="en">
-      <body className="flex flex-col min-h-screen">
-        <header>
+      <body className="flex flex-col min-h-screen overflow-y-auto">
+        <header className="flex h-[7.2rem] fixed top-0 left-0 right-0 z-10 bg-white">
             <Navigator/>
         </header>
-        <main className="flex flex-col grow">
+        <main className="flex flex-col flex-grow mt-[7.2rem]">
             {children}
         </main>
-        <footer className="bg-nav-top flex flex-row">
+        <footer className="bg-nav flex flex-row">
             <ul className="ml-auto mr-2.5 my-auto p-6 list-none">
                 {FooterSocialLinks().map((item, index) => (
                     <li key={index}>
-                        <a className="text-lg tracking-[3px] flex flex-row" target="_blank" href={item.link}><item.icon className="mx-2"/>{item.name}</a>
+                        <a className="text-lg tracking-[3px] flex flex-row" target="_blank" href={item.link}>
+                            <div className="flex flex-row">
+                                <item.icon className="m-auto mr-2"/>
+                                <p>{item.name}</p>
+                            </div>
+                        </a>
                     </li>
                 ))}
             </ul>

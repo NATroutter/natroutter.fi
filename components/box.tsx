@@ -8,8 +8,10 @@ export function Box({children}: Readonly<{ children: React.ReactNode; }>) {
 // 	border-style: none none none solid;
 //
 	return (
-		<div className="border-theme mx-auto my-60 p-7 rounded-lg border-[3px] boxBorder">
-			{children}
+		<div className="flex flex-col justify-center m-auto p-7">
+			<div className="border-theme p-7 rounded-[10px] boxBorder border-solid border-l-[3px] border-0">
+				{children}
+			</div>
 		</div>
 	)
 }

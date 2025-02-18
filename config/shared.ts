@@ -1,6 +1,6 @@
 import {FaBluesky} from "react-icons/fa6";
 import {IconType} from "react-icons";
-import {FaDiscord, FaGithub, FaSteam} from "react-icons/fa";
+import {FaDiscord, FaGithub, FaHome, FaLink, FaProjectDiagram, FaSteam, FaTv, FaUser} from "react-icons/fa";
 
 // **********************************************
 // *                Main config                 *
@@ -11,60 +11,61 @@ export const config = {
 	copyRight: "Copyright © NATroutter.fi " + (new Date().getFullYear())
 };
 
-export function NavLinks(): NavLink[] {
+export function NavLinks(): Link[] {
 	return [
 		{
 			name: "Home",
-			link: "/"
+			link: "/",
+			icon: FaHome
 		},
 		{
 			name: "About",
-			link: "/about"
+			link: "/about",
+			icon: FaUser
 		},
 		{
 			name: "Links",
-			link: "/links"
+			link: "/links",
+			icon: FaLink
 		},
 		{
 			name: "Projects",
-			link: "/projects"
+			link: "/projects",
+			icon: FaProjectDiagram
 		},
 		{
 			name: "Anime",
-			link: "/anime"
+			link: "/anime",
+			icon: FaTv
 		},
 	]
 }
 
-export function FooterSocialLinks(): FooterLink[] {
+export function FooterSocialLinks(): Link[] {
 	return [
 		{
 			name: "Discord",
-			icon: FaDiscord,
-			link: "https://discordapp.com/users/162669508866211841"
+			link: "https://discordapp.com/users/162669508866211841",
+			icon: FaDiscord
 		},
 		{
 			name: "Steam",
-			icon: FaSteam,
-			link: "https://steamcommunity.com/id/batroutter"
+			link: "https://steamcommunity.com/id/batroutter",
+			icon: FaSteam
 		},
 		{
 			name: "Github",
-			icon: FaGithub,
-			link: "https://github.com/natroutter"
+			link: "https://github.com/natroutter",
+			icon: FaGithub
 		},
 		{
 			name: "Bluesky",
-			icon: FaBluesky,
-			link: "https://bsky.app/profile/natroutter.fi"
+			link: "https://bsky.app/profile/natroutter.fi",
+			icon: FaBluesky
 		},
 	]
 }
-export interface NavLink {
-	name: string;
-	link: string;
-}
-export interface FooterLink {
+export interface Link {
 	name: string;
 	link: string;
 	icon: IconType;
