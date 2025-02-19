@@ -7,8 +7,12 @@ import {FaDiscord, FaGithub, FaHome, FaLink, FaProjectDiagram, FaSteam, FaTv, Fa
 // **********************************************
 export const config = {
 	siteName: "natroutter.fi",
-	baseAddress: "https://NATroutter.fi", 			//IMPORTANT NO TRAILING SLASHES!!!
-	copyRight: "Copyright © NATroutter.fi " + (new Date().getFullYear())
+	baseAddress: "https://NATroutter.fi", 				//IMPORTANT NO TRAILING SLASHES!!!
+	apiAddress: "https://api.natroutter.fi", 			//IMPORTANT NO TRAILING SLASHES!!!
+	database: {
+		aboutCollection: "75k11al61cm92x8",
+		footerCollection: "764004g12k5fo6p"
+	}
 };
 
 export function NavLinks(): Link[] {
@@ -65,8 +69,14 @@ export function FooterSocialLinks(): Link[] {
 		},
 	]
 }
+
 export interface Link {
 	name: string;
 	link: string;
 	icon: IconType;
+}
+
+
+export function getImage(collection: string, id:string, image:string) : string {
+	return `${config.apiAddress}/api/files/${collection}/${id}/${image}`
 }

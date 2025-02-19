@@ -36,20 +36,15 @@ body {
 ::-webkit-scrollbar {
 	width: 10px;
 }
-
 ::-webkit-scrollbar-track {
 	background: var(--CardColor);
-	/*background: red;*/
-
 }
 .hide-scrollbar-thumb::-webkit-scrollbar-thumb {
 	display: none;
 }
 ::-webkit-scrollbar-thumb {
 	background: var(--Card2Color);
-	/*background: blue;*/
 }
-
 ::-webkit-scrollbar-thumb:hover {
 	background: var(--Card2Color);
 }

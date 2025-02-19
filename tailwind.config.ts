@@ -13,7 +13,9 @@ export default {
   	extend: {
   		colors: {
 			background: '#31383f',
-			nav: '#1e2226',
+			navbar: '#31383f',
+			header: '#1e2226',
+			overlay: 'rgba(30,34,38,0.16)',
 			card: '#20252a',
 			card2: '#272d33',
   			text: '#abadae',
@@ -58,8 +60,14 @@ export default {
   				'5': 'hsl(340 75% 55%)'
   			}
   		},
+		screens: {
+			'lg+': '1152px',
+			'xl+': '1472px',
+			'3xl': '2400px',
+		},
   		boxShadow: {
-  			nav: 'rgba(13, 16, 19, 0.7) 0px 3px 10px'
+			nav: 'rgba(13, 15, 20, 0.7) 0px 3px 10px',
+			header: 'rgba(15, 20, 25, 0.3) 0px 0px 5px'
   		},
   		fontFamily: {
   			montserrat: [

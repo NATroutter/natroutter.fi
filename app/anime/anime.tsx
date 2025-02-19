@@ -51,7 +51,7 @@ export default function Anime({ currentlyWatching,latestCompleted,latestPlanToWa
 
 	return (
 		<div className="flex flex-col justify-center mb-5 p-6">
-			<div className="flex flex-col 2xl:flex-row justify-center">
+			<div className="flex flex-col xl:flex-row justify-center">
 				<AnimeList name="Currently watching" showScore={false} data={currentlyWatching} page={page} showingCount={showItemCount}/>
 				<AnimeList name="Latest Completed" showScore={true} data={latestCompleted} page={page} showingCount={showItemCount}/>
 				<AnimeList name="Latest plan to watch" showScore={false} data={latestPlanToWatch} page={page} showingCount={showItemCount}/>
@@ -96,8 +96,8 @@ function AnimeList({name, showScore, data, page, showingCount} : {name:string,sh
 
 	if (showingData.length > 0) {
 		return (
-			<div className="bg-card m-5 p-2 rounded-sm shadow-md shadow-nav-top max-h-fit min-h-fit h-fit w-full flex flex-col mx-auto 2xl:mx-4 lg:max-w-[60rem] 2xl:max-w-[30rem]">
-				<h1 className="text-center text-2xl font-semibold p-2">{name}</h1>
+			<div className="bg-card m-5 p-2 rounded-sm shadow-nav max-h-fit min-h-fit h-fit w-full flex flex-col mx-auto xl:mx-4 lg:max-w-[60rem] 2xl:max-w-[30rem]">
+				<h1 className="text-center text-2xl font-bold p-2">{name}</h1>
 				{showingData.map((item,index) => (
 					<AnimeCard key={index} data={item} showScore={showScore}/>
 				))}

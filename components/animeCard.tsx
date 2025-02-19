@@ -35,7 +35,7 @@ export function AnimeCard({ data, showScore }: { data: AnimeData, showScore:bool
 							</div>
 							<div className="flex flex-row justify-between">
 								<div>
-									<p className="text-xs text-neutral-400 font-semibold italic text-nowrap">Rating: {data.node.mean} {showScore && (" | Score: "+data.list_status.score)}</p>
+									<p className="text-xs text-neutral-400 font-semibold italic text-nowrap">{data.node.mean ? ("Rating: " + data.node.mean) : "Rating: ?"} {showScore && (" | Score: "+data.list_status.score)}</p>
 								</div>
 								<div className="flex flex-col justify-end">
 									<p className="text-xs text-neutral-500 font-semibold italic text-nowrap">{updated.getDay()}.{updated.getMonth()}.{updated.getFullYear()} {updated.getHours()}:{updated.getMinutes()}</p>
@@ -67,13 +67,13 @@ export function AnimeCard({ data, showScore }: { data: AnimeData, showScore:bool
 								<p className="text-neutral-500">Aired: <span className="text-theme">{data.node.start_date ? (formatDate(data.node.start_date)) : "???"}</span> to <span className="text-theme">{data.node.end_date ? (formatDate(data.node.end_date)) : "?"}</span></p>
 								<p className="text-neutral-500">Studios:
 									{data.node.studios.map((g,index)=>(
-										<span key={index} className="text-neutral-500"> <Link href={`https://myanimelist.net/anime/producer/${g.id}/`} className="text-theme hover:underline hover:text-themeHover">{g.name}</Link>{index != data.node.studios.length -1 ? ", " : ""}</span>
+										<span key={index} className="text-neutral-500"> <Link href={`https://myanimelist.net/anime/producer/${g.id}/`} target="_blank" className="text-theme hover:underline hover:text-themeHover">{g.name}</Link>{index != data.node.studios.length -1 ? ", " : ""}</span>
 									))}
 								</p>
 								<p className="text-neutral-500">Source: <span className="text-theme">{toCapitalizedCase(data.node.source)}</span></p>
 								<p className="text-neutral-500">Genres:
 									{data.node.genres.slice(0,data.node.genres.length-1).map((g,index)=>(
-										<span key={index} className="text-neutral-500"> <Link href={`https://myanimelist.net/anime/genre/${g.id}/`} className="text-theme hover:underline hover:text-themeHover">{g.name}</Link>{index != data.node.genres.length -2 ? ", " : ""}</span>
+										<span key={index} className="text-neutral-500"> <Link href={`https://myanimelist.net/anime/genre/${g.id}/`} target="_blank" className="text-theme hover:underline hover:text-themeHover">{g.name}</Link>{index != data.node.genres.length -2 ? ", " : ""}</span>
 									))}
 								</p>
 								<p className="text-neutral-500">Theme: <span className="text-theme">{data.node.genres.slice(-1)[0].name}</span></p>
@@ -86,7 +86,7 @@ export function AnimeCard({ data, showScore }: { data: AnimeData, showScore:bool
 								<p className="text-neutral-500">Ranked: <span className="text-theme">#{data.node.rank}</span></p>
 								<p className="text-neutral-500">Popularity: <span className="text-theme">#{data.node.popularity}</span></p>
 							</div>
-							<Link href={`https://myanimelist.net/anime/${data.node.id}`} className="flex w-full mt-10 m-auto">
+							<Link href={`https://myanimelist.net/anime/${data.node.id}`} target="_blank" className="flex w-full mt-10 m-auto">
 								<button className="bg-[#3557a5] hover:bg-[#253c73] active:bg-[#253c73] text-white transition-colors ease-in-out duration-300 px-4 py-2 m-auto w-full font-AGRevueCyr">MyAnimeList.net</button>
 							</Link>
 						</div>
