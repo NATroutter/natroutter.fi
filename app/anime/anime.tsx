@@ -1,6 +1,6 @@
 'use client'
 
-import {AnimeCard} from "@/components/animeCard";
+import {AnimeCard} from "@/components/AnimeCard";
 import {AnimeData} from "@/types/animeData";
 import {useEffect, useState} from "react";
 import {Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious} from "@/components/ui/pagination";
@@ -50,8 +50,8 @@ export default function Anime({ currentlyWatching,latestCompleted,latestPlanToWa
 	};
 
 	return (
-		<div className="flex flex-col justify-center mb-5 p-6">
-			<div className="flex flex-col xl:flex-row justify-center">
+		<div className="flex flex-col justify-center gap-10 m-auto w-full p-6 py-10">
+			<div className="p-4 gap-10 w-full max-w-[90vw] 3xl:w-[140rem] grid self-center place-items-center grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 lg+:grid-cols-2 xl:grid-cols-2 xl+:grid-cols-2 2xl:grid-cols-3">
 				<AnimeList name="Currently watching" showScore={false} data={currentlyWatching} page={page} showingCount={showItemCount}/>
 				<AnimeList name="Latest Completed" showScore={true} data={latestCompleted} page={page} showingCount={showItemCount}/>
 				<AnimeList name="Latest plan to watch" showScore={false} data={latestPlanToWatch} page={page} showingCount={showItemCount}/>
@@ -78,7 +78,6 @@ export default function Anime({ currentlyWatching,latestCompleted,latestPlanToWa
 						</PaginationItem>
 					</PaginationContent>
 				</Pagination>
-
 			</div>
 		</div>
 	);
@@ -94,14 +93,12 @@ function AnimeList({name, showScore, data, page, showingCount} : {name:string,sh
 	const offset = shown - showingCount;
 	const showingData = data.slice(offset, shown);
 
-	if (showingData.length > 0) {
-		return (
-			<div className="bg-card m-5 p-2 rounded-sm shadow-nav max-h-fit min-h-fit h-fit w-full flex flex-col mx-auto xl:mx-4 lg:max-w-[60rem] 2xl:max-w-[30rem]">
-				<h1 className="text-center text-2xl font-bold p-2">{name}</h1>
-				{showingData.map((item,index) => (
-					<AnimeCard key={index} data={item} showScore={showScore}/>
-				))}
-			</div>
-		);
-	}
+	return (
+		<div className={`${showingData.length > 0 ? "flex flex-col" : "hidden 3xl:block"} bg-card shadow-nav w-full h-full p-2`}>
+			<h1 className="text-center text-2xl font-bold p-2">{name}</h1>
+			{showingData.map((item,index) => (
+				<AnimeCard key={index} data={item} showScore={showScore}/>
+			))}
+		</div>
+	);
 }

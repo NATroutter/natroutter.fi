@@ -1,7 +1,7 @@
 'use client'
 
 import Image from "next/image";
-import {Navigator} from "@/components/navigator";
+import {Navigator} from "@/components/Navigator";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import useWindowDimensions from "@/hooks/useWindowDimensions";

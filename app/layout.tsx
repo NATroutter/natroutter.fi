@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import "@/styles/globals.css";
 import * as React from "react";
-import Header from "@/components/header";
-import Footer from "@/components/footer";
-import PocketBase from "pocketbase";
-import {config} from "@/config/shared";
-import {FooterData, NavData} from "@/types/interfaces";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import {getFooterData, getNavigatorData} from "@/lib/database";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -13,16 +11,14 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({children}: Readonly<{ children: React.ReactNode; }>) {
-
-    const pb = new PocketBase('https://api.natroutter.fi');
-    const NavData = await pb.collection("navigator").getList<NavData>(0,30);
-    const footerData = await pb.collection("footer").getOne<FooterData>(config.database.footerCollection, { expand: "links" });
+    const NavData = await getNavigatorData();
+    const footerData = await getFooterData();
 
     return (
         <html lang="en">
             <body className="flex flex-col min-h-screen overflow-y-auto">
 
-            <Header data={NavData.items}/>
+            <Header data={NavData}/>
 
             <main className="flex flex-col flex-grow mt-[7.5rem]">
             {   children}

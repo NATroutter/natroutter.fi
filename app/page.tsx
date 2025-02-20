@@ -1,14 +1,12 @@
-import {Box} from "@/components/box";
+import * as React from "react";
+import Home from "@/app/home";
+import {getHomePage} from "@/lib/database";
 
-export default function Home() {
+export default async function HomePage() {
+
+  const data = await getHomePage();
 
   return (
-
-      <Box>
-          <h1 className="text-3xl font-bold mt-0 mb-2.5 mx-0">Welcome to my personal website!</h1>
-          <p className="text-lg m-0">Here you can find contact info and list of my favourite projects</p>
-          <p className="text-lg m-0">If you have any questions, feel free to contact me on discord</p>
-      </Box>
-
+        <Home data={data}></Home>
   );
 }

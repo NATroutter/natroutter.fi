@@ -1,14 +1,9 @@
-import PocketBase from 'pocketbase';
-import {LinkData} from "@/types/interfaces";
 import Links from "@/app/links/links";
+import {getLinkPage} from "@/lib/database";
 
 export default async function LinksPage() {
-
-	const pb = new PocketBase('https://api.natroutter.fi');
-
-	const links = await pb.collection<LinkData>('links').getFullList();
-
+	const data = await getLinkPage()
 	return (
-		<Links links={links} />
+		<Links data={data} />
 	);
 }

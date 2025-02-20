@@ -1,27 +1,17 @@
+//*************************************
+//*             Components            *
+//*************************************
 export interface LinkData {
 	id: string;
+	display_name: string;
 	image: string;
 	icon: string;
-	name: string;
 	description: string;
 	url: string;
-	type: 'dev' | 'social' | 'games' | 'projects' | 'other';
-	priority: number;
-	active: boolean;
 }
-
-export interface AboutData {
+export interface TextData {
 	id: string;
-	image: string;
-	about: string;
-	skills: string;
-	languages: string;
-	favourite_shows: string;
-	favourite_games: string;
-	programing_langs: string;
-	frameworks: string;
-	databases: string;
-	birthday: Date;
+	content: string;
 }
 
 export interface NavData {
@@ -34,9 +24,51 @@ export interface NavData {
 export interface FooterData {
 	links: LinkData[];
 	copyright: string;
-	expand: expandFooter;
+	expand: expandLinks;
 }
 
-export interface expandFooter {
+//*************************************
+//*              Page Data            *
+//*************************************
+export interface HomePage {
+	id: string;
+	intro: string;
+	what_am_i:string;
+	links: string[];
+	expand: expandLinks;
+}
+
+export interface AboutPage {
+	id: string;
+	image: string;
+	about_title: string;
+	about: string;
+	skills_title: string;
+	skills: string;
+	birthday: Date;
+}
+export interface LinkPage {
+	id: string;
+	title: string;
+	category: 'dev' | 'social' | 'games' | 'projects' | 'other';
+	links: string[];
+	priority: number;
+	expand: expandLinks;
+}
+export interface ProjectPage {
+	id: string;
+	image: string;
+	name: string;
+	description: string;
+	github: string;
+	links: string[]
+	expand: expandLinks;
+}
+
+
+//*************************************
+//*             Expansions            *
+//*************************************
+export interface expandLinks {
 	links: LinkData[];
 }

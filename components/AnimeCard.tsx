@@ -4,21 +4,20 @@ import * as React from "react"
 import {AnimeData, formatRating} from "@/types/animeData";
 import Image from "next/image";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
-import {formatDate, toCapitalizedCase} from "@/utilities/utils";
+import {formatDate, toCapitalizedCase} from "@/lib/utils";
 import Link from "next/link";
 
 export function AnimeCard({ data, showScore }: { data: AnimeData, showScore:boolean }) {
 
 	const updated = new Date(data.list_status.updated_at);
-
 	const title_en = data.node.alternative_titles.en;
 
 	return (
 		<Dialog>
-			<DialogTrigger className="text-left">
-				<div className="flex p-1.5 m-3 h-[7rem]">
-					<div className="flex w-full h-full bg-card2 rounded-lg hover:scale-105 transition-transform duration-300 ease-in-out">
-						<div className="min-w-20 h-full">
+			<DialogTrigger className="flex flex-col text-left w-full">
+				<div className="flex p-1.5 m-3 h-[9rem]">
+					<div className="flex w-full h-full bg-card2 rounded-lg hover:scale-[1.03] md:hover:scale-[1.02] lg:hover:scale-[1.02] xl:hover:scale-[1.03] transition-transform duration-300 ease-in-out">
+						<div className="min-w-24 h-full">
 							<Image
 								className="h-full w-full m-auto"
 								src={data.node.main_picture.large}
@@ -28,17 +27,17 @@ export function AnimeCard({ data, showScore }: { data: AnimeData, showScore:bool
 								height={0}
 							/>
 						</div>
-						<div className="flex flex-col justify-between p-1 pt-0.5 w-full">
+						<div className="flex flex-col justify-between px-2 py-1 w-full">
 							<div className="flex flex-col justify-between">
-								<h2 className="text-lg line-clamp-1">{title_en.length > 0 ? title_en : data.node.title}</h2>
-								<h3 className="text-xs line-clamp-1 text-neutral-500">{data.node.alternative_titles.ja}</h3>
+								<h2 className="text-xl font-semibold line-clamp-1">{title_en.length > 0 ? title_en : data.node.title}</h2>
+								<h3 className="text-sm leading-none line-clamp-1 text-neutral-500">{data.node.alternative_titles.ja}</h3>
 							</div>
 							<div className="flex flex-row justify-between">
 								<div>
-									<p className="text-xs text-neutral-400 font-semibold italic text-nowrap">{data.node.mean ? ("Rating: " + data.node.mean) : "Rating: ?"} {showScore && (" | Score: "+data.list_status.score)}</p>
+									<p className="text-sm text-neutral-400 font-semibold italic text-nowrap">{data.node.mean ? ("Rating: " + data.node.mean) : "Rating: ?"} {showScore && (" | Score: "+data.list_status.score)}</p>
 								</div>
 								<div className="flex flex-col justify-end">
-									<p className="text-xs text-neutral-500 font-semibold italic text-nowrap">{updated.getDay()}.{updated.getMonth()}.{updated.getFullYear()} {updated.getHours()}:{updated.getMinutes()}</p>
+									<p className="text-sm text-neutral-500 font-semibold italic text-nowrap">{updated.getDay()}.{updated.getMonth()}.{updated.getFullYear()} {updated.getHours()}:{updated.getMinutes()}</p>
 								</div>
 							</div>
 						</div>
@@ -113,6 +112,5 @@ export function AnimeCard({ data, showScore }: { data: AnimeData, showScore:bool
 				</DialogHeader>
 			</DialogContent>
 		</Dialog>
-
 	)
 }

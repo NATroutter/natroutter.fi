@@ -63,11 +63,16 @@ export default {
 		screens: {
 			'lg+': '1152px',
 			'xl+': '1472px',
-			'3xl': '2400px',
+			'3xl': '2000px',
+			'4xl': '2400px',
+			'5xl': '2800px',
+			'6xl': '3840px',
+			'7xl': '5120px',
 		},
   		boxShadow: {
 			nav: 'rgba(13, 15, 20, 0.7) 0px 3px 10px',
-			header: 'rgba(15, 20, 25, 0.3) 0px 0px 5px'
+			header: 'rgba(15, 20, 25, 0.3) 0px 0px 5px',
+			themeGlow: 'hsl(355 81% 46% / 1) 0 0 20px 2px'
   		},
   		fontFamily: {
   			montserrat: [

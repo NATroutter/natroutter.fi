@@ -1,13 +1,12 @@
 'use client'
 
-import {AboutData} from "@/types/interfaces";
+import {AboutPage} from "@/types/interfaces";
 import Image from "next/image";
-import {getImage} from "@/config/shared";
 import * as React from "react";
+import {getFileURL} from "@/lib/database";
+import Markdown from "@/components/Markdown";
 
-export default function About({ data }: { data: AboutData }) {
-
-	console.log(data)
+export default function About({ data }: { data: AboutPage }) {
 
 	function calculateAge(dateOfBirth: Date): number {
 		const currentDate = new Date();
@@ -26,10 +25,8 @@ export default function About({ data }: { data: AboutData }) {
 		return age;
 	}
 
-	function replaceTags(input: string): React.ReactNode {
-		input = input.replace("{age}", calculateAge(data.birthday).toString());
-		input = input.replace(/\[b](.*?)\[\/b]/g, '<span class="font-bold">$1</span>');
-		return <span dangerouslySetInnerHTML={{ __html: input }} />;
+	function replaceTags(input: string): string {
+		return input.replace("{age}", calculateAge(data.birthday).toString());
 	}
 
 	return (
@@ -40,7 +37,7 @@ export default function About({ data }: { data: AboutData }) {
 				<div className="flex xl:hidden w-full min-w-lg max-w-lg m-auto p-5">
 					<Image
 						className="h-full w-full aspect-square m-auto rounded-full shadow-2xl"
-						src={getImage("about", data.id, data.image)}
+						src={getFileURL("page_about", data.id, data.image)}
 						alt="Profile Picture"
 						sizes="100vw"
 						width={0}
@@ -50,24 +47,14 @@ export default function About({ data }: { data: AboutData }) {
 
 				<div className="flex flex-col lg:flex-row">
 					<div className="text-left w-full max-w-lg p-5">
-						<h2 className="font-semibold text-5xl">NATroutter</h2>
-
-						<p className="mt-4 text-lg">{replaceTags(data.about)}</p>
-						<p className="mt-4 text-lg font-semibold">
-							Languages I Speak: <span className="font-normal">{data.languages}</span>
-						</p>
-						<p className="mt-1 text-lg font-semibold">
-							Favorite Shows: <span className="font-normal">{data.favourite_shows}</span>
-						</p>
-						<p className="mt-1 text-lg font-semibold">
-							Favorite Games: <span className="font-normal">{data.favourite_games}</span>
-						</p>
+						<h2 className="font-semibold text-5xl mb-4">{data.about_title}</h2>
+						<Markdown content={replaceTags(data.about)} className=""/>
 					</div>
 
 					<div className="hidden xl:flex w-full min-w-lg max-w-lg my-auto p-5">
 						<Image
 							className="h-full w-full aspect-square m-auto rounded-full shadow-2xl"
-							src={getImage("about", data.id, data.image)}
+							src={getFileURL("page_about", data.id, data.image)}
 							alt="Profile Picture"
 							sizes="100vw"
 							width={0}
@@ -76,17 +63,8 @@ export default function About({ data }: { data: AboutData }) {
 					</div>
 
 					<div className="text-left w-full max-w-lg mt-5 lg:mt-0 p-5">
-						<h2 className="font-semibold text-5xl">My Skills</h2>
-						<p className="mt-4 text-lg">{data.skills}</p>
-						<p className="mt-4 text-lg font-semibold">
-							Languages: <span className="font-normal">{data.programing_langs}</span>
-						</p>
-						<p className="mt-1 text-lg font-semibold">
-							Frameworks: <span className="font-normal">{data.frameworks}</span>
-						</p>
-						<p className="mt-1 text-lg font-semibold">
-							Databases: <span className="font-normal">{data.databases}</span>
-						</p>
+						<h2 className="font-semibold text-5xl mb-4">{data.skills_title}</h2>
+						<Markdown content={data.skills} className=""/>
 					</div>
 				</div>
 

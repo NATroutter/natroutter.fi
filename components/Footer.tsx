@@ -4,7 +4,7 @@ import * as React from "react";
 import {config} from "@/config/shared";
 import {FooterData} from "@/types/interfaces";
 import Link from "next/link";
-import DynamicIcon from "@/utilities/dynamicIcon";
+import DynamicIcon from "@/lib/dynamicIcon";
 
 export default function Footer({data}:{data:FooterData}) {
 
@@ -16,7 +16,7 @@ export default function Footer({data}:{data:FooterData}) {
 						<Link className="text-lg tracking-[3px] flex flex-row" target="_blank" href={""}>
 							<div className="flex flex-row">
 								<DynamicIcon dynamicName={item.icon} className="m-auto mr-2"/>
-								<p>{item.name}</p>
+								<p>{item.display_name}</p>
 							</div>
 						</Link>
 					</li>

@@ -1,12 +1,9 @@
-import PocketBase from "pocketbase";
-import {AboutData} from "@/types/interfaces";
 import About from "@/app/about/about";
-import {config} from "@/config/shared";
+import {getAboutPage} from "@/lib/database";
 
 
 export default async function AboutPage() {
-	const pb = new PocketBase('https://api.natroutter.fi');
-	const data = await pb.collection<AboutData>('about').getOne(config.database.aboutCollection);
+	const data = await getAboutPage();
 	return (
 		<About data={data} />
 	);
