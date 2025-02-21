@@ -14,8 +14,8 @@ export function toCapitalizedCase(input: string): string {
   return input.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
 }
 
-export function formatDate(dateString: string): string {
-  const date = new Date(dateString);  // Convert string to Date object
+export function formatDate(rawDate: string|Date): string {
+  const date = new Date(rawDate);  // Convert string to Date object
   return date.toLocaleDateString('en-US', {  // Format the date as you prefer
     year: 'numeric',       // '2019'
     month: 'short',         // 'January'

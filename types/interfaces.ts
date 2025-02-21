@@ -17,14 +17,17 @@ export interface TextData {
 export interface NavData {
 	icon: string;
 	name: string;
-	link: string;
+	url: string;
 	priority: number;
 }
 
 export interface FooterData {
-	links: LinkData[];
+	contact: string[];
+	quick: string[];
+	social: string[];
+	about_me: string;
 	copyright: string;
-	expand: expandLinks;
+	expand: expandFooter;
 }
 
 //*************************************
@@ -32,6 +35,7 @@ export interface FooterData {
 //*************************************
 export interface HomePage {
 	id: string;
+	username: string;
 	intro: string;
 	what_am_i:string;
 	links: string[];
@@ -65,10 +69,23 @@ export interface ProjectPage {
 	expand: expandLinks;
 }
 
+export interface PrivacyPage {
+	id: string;
+	title: string;
+	privacy: string;
+	updated: Date;
+	effective: Date
+}
+
 
 //*************************************
 //*             Expansions            *
 //*************************************
 export interface expandLinks {
 	links: LinkData[];
+}
+export interface expandFooter {
+	contact: LinkData[];
+	quick: NavData[];
+	social: LinkData[];
 }

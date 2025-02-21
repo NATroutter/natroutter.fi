@@ -1,6 +1,5 @@
 'use client'
 
-import "@/styles/markdown.css";
 import * as React from "react";
 import MarkdownIt from "markdown-it";
 

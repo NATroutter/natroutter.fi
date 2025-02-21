@@ -6,6 +6,7 @@ import * as React from "react";
 import {useEffect, useState} from "react";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
 import {NavData} from "@/types/interfaces";
+import {config} from "@/config/config";
 
 export default function Header({data} : {data: NavData[]}) {
 	const [open, setOpen] = useState(false);
@@ -35,16 +36,16 @@ export default function Header({data} : {data: NavData[]}) {
 		<header className="fixed top-0 left-0 right-0 z-10 w-full select-none">
 			<div className="relative bg-header shadow-header flex flex-row justify-between px-2 py-0 h-20">
 				<div className="flex flex-row">
-					<a className="flex flex-row" href="https://NATroutter.fi">
+					<a className="flex flex-row" href={config.BASE_ADDRESS}>
 						<Image
 							className="w-full p-2"
-							src="/images/head.png"
+							src="/images/logo.png"
 							alt="Logo"
 							sizes="100vw"
 							width={0}
 							height={0}
 						/>
-						<h1 className="m-auto text-theme font-bold text-2xl">NATroutter.fi</h1>
+						<h1 className="m-auto text-theme font-bold text-2xl">{config.SITE_NAME}</h1>
 					</a>
 				</div>
 			</div>

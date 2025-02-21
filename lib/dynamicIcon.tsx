@@ -4,11 +4,11 @@ import * as fa6Icons from "react-icons/fa6";
 import {IconBaseProps, IconType} from "react-icons";
 
 interface IconProps extends IconBaseProps {
-	dynamicName: string;
+	iconName: string;
 }
 
-export default function DynamicIcon({ dynamicName, ...props } : IconProps) {
-	if (!dynamicName) return;
+export default function DynamicIcon({ iconName, ...props } : IconProps) {
+	if (!iconName) return;
 
 	const getGroup = (groupName: string) => {
 		const iconsMap = new Map();
@@ -17,8 +17,8 @@ export default function DynamicIcon({ dynamicName, ...props } : IconProps) {
 		return iconsMap.get(groupName.toLowerCase());
 	};
 
-	const group = dynamicName.split(" ")[0]
-	const ico = dynamicName.split(" ")[1]
+	const group = iconName.split(" ")[0]
+	const ico = iconName.split(" ")[1]
 
 	if (!group || !ico) return;
 

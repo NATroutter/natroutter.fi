@@ -52,9 +52,9 @@ export default function Anime({ currentlyWatching,latestCompleted,latestPlanToWa
 	return (
 		<div className="flex flex-col justify-center gap-10 m-auto w-full p-6 py-10">
 			<div className="p-4 gap-10 w-full max-w-[90vw] 3xl:w-[140rem] grid self-center place-items-center grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 lg+:grid-cols-2 xl:grid-cols-2 xl+:grid-cols-2 2xl:grid-cols-3">
-				<AnimeList name="Currently watching" showScore={false} data={currentlyWatching} page={page} showingCount={showItemCount}/>
+				<AnimeList name="Currently Watching" showScore={false} data={currentlyWatching} page={page} showingCount={showItemCount}/>
 				<AnimeList name="Latest Completed" showScore={true} data={latestCompleted} page={page} showingCount={showItemCount}/>
-				<AnimeList name="Latest plan to watch" showScore={false} data={latestPlanToWatch} page={page} showingCount={showItemCount}/>
+				<AnimeList name="Plan to Watch" showScore={false} data={latestPlanToWatch} page={page} showingCount={showItemCount}/>
 			</div>
 			<div className="flex justify-center">
 				<Pagination>

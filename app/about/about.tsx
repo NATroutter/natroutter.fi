@@ -48,7 +48,7 @@ export default function About({ data }: { data: AboutPage }) {
 				<div className="flex flex-col lg:flex-row">
 					<div className="text-left w-full max-w-lg p-5">
 						<h2 className="font-semibold text-5xl mb-4">{data.about_title}</h2>
-						<Markdown content={replaceTags(data.about)} className=""/>
+						<Markdown content={replaceTags(data.about)}/>
 					</div>
 
 					<div className="hidden xl:flex w-full min-w-lg max-w-lg my-auto p-5">
@@ -64,7 +64,7 @@ export default function About({ data }: { data: AboutPage }) {
 
 					<div className="text-left w-full max-w-lg mt-5 lg:mt-0 p-5">
 						<h2 className="font-semibold text-5xl mb-4">{data.skills_title}</h2>
-						<Markdown content={data.skills} className=""/>
+						<Markdown content={data.skills}/>
 					</div>
 				</div>
 

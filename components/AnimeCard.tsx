@@ -14,7 +14,7 @@ export function AnimeCard({ data, showScore }: { data: AnimeData, showScore:bool
 
 	return (
 		<Dialog>
-			<DialogTrigger className="flex flex-col text-left w-full">
+			<DialogTrigger className="flex flex-col text-left w-full" data-umami-event={`[ANIME] Expand (${data.node.id})`}>
 				<div className="flex p-1.5 m-3 h-[9rem]">
 					<div className="flex w-full h-full bg-card2 rounded-lg hover:scale-[1.03] md:hover:scale-[1.02] lg:hover:scale-[1.02] xl:hover:scale-[1.03] transition-transform duration-300 ease-in-out">
 						<div className="min-w-24 h-full">
@@ -64,15 +64,31 @@ export function AnimeCard({ data, showScore }: { data: AnimeData, showScore:bool
 								<p className="text-neutral-500">Episodes: <span className="text-theme">{data.node.num_episodes}</span></p>
 								<p className="text-neutral-500">Status: <span className="text-theme">{toCapitalizedCase(data.node.status)}</span></p>
 								<p className="text-neutral-500">Aired: <span className="text-theme">{data.node.start_date ? (formatDate(data.node.start_date)) : "???"}</span> to <span className="text-theme">{data.node.end_date ? (formatDate(data.node.end_date)) : "?"}</span></p>
-								<p className="text-neutral-500">Studios:
-									{data.node.studios.map((g,index)=>(
-										<span key={index} className="text-neutral-500"> <Link href={`https://myanimelist.net/anime/producer/${g.id}/`} target="_blank" className="text-theme hover:underline hover:text-themeHover">{g.name}</Link>{index != data.node.studios.length -1 ? ", " : ""}</span>
+								<p className="text-neutral-500"><span>Studios: </span>
+									{data.node.studios.map((studio,index)=>(
+										<span key={index} className="text-neutral-500">
+											<Link href={`https://myanimelist.net/anime/producer/${studio.id}/`} target="_blank"
+												  data-umami-event={`[ANIME] Show Studio (${studio.id})`}
+												  data-umami-event-url={`https://myanimelist.net/anime/producer/${studio.id}/`}
+												  className="text-theme hover:underline hover:text-themeHover">
+												{studio.name}
+											</Link>
+											{index != data.node.studios.length -1 ? ", " : ""}
+										</span>
 									))}
 								</p>
 								<p className="text-neutral-500">Source: <span className="text-theme">{toCapitalizedCase(data.node.source)}</span></p>
-								<p className="text-neutral-500">Genres:
-									{data.node.genres.slice(0,data.node.genres.length-1).map((g,index)=>(
-										<span key={index} className="text-neutral-500"> <Link href={`https://myanimelist.net/anime/genre/${g.id}/`} target="_blank" className="text-theme hover:underline hover:text-themeHover">{g.name}</Link>{index != data.node.genres.length -2 ? ", " : ""}</span>
+								<p className="text-neutral-500"><span>Genres: </span>
+									{data.node.genres.slice(0,data.node.genres.length-1).map((genre,index)=>(
+										<span key={index} className="text-neutral-500">
+											<Link href={`https://myanimelist.net/anime/genre/${genre.id}/`} target="_blank"
+												  data-umami-event={`[ANIME] Show Genre (${genre.id})`}
+												  data-umami-event-url={`https://myanimelist.net/anime/genre/${genre.id}/`}
+												  className="text-theme hover:underline hover:text-themeHover">
+												{genre.name}
+											</Link>
+											{index != data.node.genres.length -2 ? ", " : ""}
+										</span>
 									))}
 								</p>
 								<p className="text-neutral-500">Theme: <span className="text-theme">{data.node.genres.slice(-1)[0].name}</span></p>
@@ -85,8 +101,11 @@ export function AnimeCard({ data, showScore }: { data: AnimeData, showScore:bool
 								<p className="text-neutral-500">Ranked: <span className="text-theme">#{data.node.rank}</span></p>
 								<p className="text-neutral-500">Popularity: <span className="text-theme">#{data.node.popularity}</span></p>
 							</div>
-							<Link href={`https://myanimelist.net/anime/${data.node.id}`} target="_blank" className="flex w-full mt-10 m-auto">
-								<button className="bg-[#3557a5] hover:bg-[#253c73] active:bg-[#253c73] text-white transition-colors ease-in-out duration-300 px-4 py-2 m-auto w-full font-AGRevueCyr">MyAnimeList.net</button>
+							<Link href={`https://myanimelist.net/anime/${data.node.id}`} target="_blank"
+								  data-umami-event={`[ANIME] Show Anime (${data.node.id})`}
+								  data-umami-event-url={`https://myanimelist.net/anime/${data.node.id}`}
+								  className="flex w-full mt-10 m-auto">
+								<button className="bg-[#3557a5] hover:bg-[#253c73] active:bg-[#253c73] text-white transition-colors ease-in-out duration-300 px-4 py-2 m-auto w-full font-mal">MyAnimeList.net</button>
 							</Link>
 						</div>
 						<div className="flex flex-col w-fit">

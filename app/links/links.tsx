@@ -23,7 +23,10 @@ export default function Links({ data }: { data: LinkPage[] }) {
 					<div key={entryIndex} className="flex flex-col w-full h-full bg-card m-5 p-2 rounded-sm shadow-nav">
 						<h1 className="text-center text-2xl font-bold p-2">{entry.title}</h1>
 						{entry.expand.links.map((link,linkIndex) => (
-							<Link href={link.url} target="_blank" key={linkIndex} className="flex p-1.5 m-3">
+							<Link key={linkIndex} href={link.url} target="_blank"
+								  data-umami-event={`[LINKS] Link (${link.display_name})`}
+								  data-umami-event-url={link.url}
+								  className="flex p-1.5 m-3">
 								<div className="flex w-full h-full bg-card2 rounded-lg hover:scale-105 md:hover:scale-[1.02] lg+:hover:scale-105 transition-transform duration-300 ease-in-out">
 									<div className="w-20 h-20 aspect-square my-auto">
 										<Image

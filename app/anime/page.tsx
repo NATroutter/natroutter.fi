@@ -1,6 +1,15 @@
 import {AnimeData} from "@/types/animeData";
 import Anime from "@/app/anime/anime";
 
+export const metadata = {
+	title: 'Anime',
+	description: 'Dive into my anime journey! Check out my watching progress, including "Currently Watching," "Latest Completed," and "Plan to Watch" lists. Explore my anime history and discover what I’m enjoying next!',
+	openGraph: {
+		description: 'Dive into my anime journey! Check out my watching progress, including "Currently Watching," "Latest Completed," and "Plan to Watch" lists. Explore my anime history and discover what I’m enjoying next!'
+	}
+};
+
+
 const getAnimeData = async (status:string, limit:number, order:string) => {
 	const endpoint: string = "https://api.myanimelist.net/v2/users/NATroutter/animelist";
 	const fields: string = "list_status,rank,rating,status,nsfw,average_episode_duration,popularity,num_episodes,num_scoring_users,media_type,start_date,end_date,mean,source,main_picture,genres,alternative_titles,synopsis,studios";

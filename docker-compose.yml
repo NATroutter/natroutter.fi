@@ -6,8 +6,10 @@ services:
       context: ./
       dockerfile: Dockerfile
     environment:
-      - TURNSTILE_SECRET=change_me
-      - TURNSTILE_SITEKEY=change_me
+      - NEXT_PUBLIC_SITE_NAME=change_me
+      - NEXT_PUBLIC_BASE_ADDRESS=change_me
+      - NEXT_PUBLIC_API_ADDRESS=change_me
+      - MAL_CLIENT_ID=change_me
     ports:
       - 127.0.0.1:8500:3000
       #- 8400:3000

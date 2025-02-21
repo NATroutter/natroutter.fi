@@ -29,13 +29,23 @@ export function Navigator({ open, onStateChangeAction, data }: NavigatorProps) {
 					</div>
 				</div>
 			</button>
-			<ul className={`shadow-nav justify-center m-0 p-0 flex flex-col md:flex-row ${open ? "max-h-[100vh]" : "max-h-0 md:max-h-[100vh]"} transition-[max-height] duration-200 ease-in-out overflow-hidden`}>
+			<ul className={`
+			shadow-nav justify-center m-0 p-0 flex flex-col md:flex-row
+			${open ? "max-h-[100vh]" : "max-h-0 md:max-h-[100vh]"}
+			transition-[max-height] duration-200 ease-in-out overflow-hidden
+			`}>
 				{data.map((item, index) => (
-					<li key={index} className={`list-none md:hover:bg-header border-header ${index == 0 ? "md:border-l-2 md:border-r" : (index == data.length-1) ? "md:border-r-2 md:border-l" : "md:border-x"} ${pathname===item.link ? "bg-theme" : ""}`}>
-						<Link href={item.link} className="flex px-5 py-2 justify-center">
-							<div onClick={()=>onStateChangeAction(false)} className={`text-text no-underline font-bold hover:text-white hover:cursor-pointer ${pathname===item.link ? "text-white" : ""}`}>
+					<li key={index} className={
+						`list-none md:hover:bg-header border-header
+						md:border-x
+						first:md:border-l-2 first:md:border-r
+						last:md:border-r-2 last:md:border-l
+						${pathname===item.url ? "bg-theme" : ""}`
+					}>
+						<Link href={item.url} className="flex px-5 py-2 justify-center" data-umami-event={`[NAV] Open (${item.name})`}>
+							<div onClick={()=>onStateChangeAction(false)} className={`text-text no-underline font-bold hover:text-white hover:cursor-pointer ${pathname===item.url ? "text-white" : ""}`}>
 								<div className="flex m-auto justify-center text-center">
-									<DynamicIcon dynamicName={item.icon} className="hidden md:flex m-auto mr-1"/>
+									<DynamicIcon iconName={item.icon} className="hidden md:flex m-auto mr-1"/>
 									<p>{item.name}</p>
 								</div>
 							</div>
