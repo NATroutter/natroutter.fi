@@ -1,18 +1,19 @@
 import PocketBase from "pocketbase";
 import {AboutPage, FooterData, HomePage, LinkPage, NavData, PrivacyPage, ProjectPage} from "@/types/interfaces";
+import {config} from "@/config/config";
 
 //***************************************
 //*          DATABASE UTILITIES         *
 //***************************************
 export function getFileURL(collection: string, id:string, file:string) : string {
-	return `${process.env.NEXT_PUBLIC_API_ADDRESS}/api/files/${collection}/${id}/${file}`
+	return `${config.API_ADDRESS}/api/files/${collection}/${id}/${file}`
 }
 
 //***************************************
 //*          DATABASE GETTERS           *
 //***************************************
 export function getPocketBase() : PocketBase {
-	return new PocketBase("https://api.natroutter.fi");
+	return new PocketBase(config.API_ADDRESS);
 }
 
 export async function getHomePage() : Promise<HomePage|undefined> {
