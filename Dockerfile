@@ -1,5 +1,9 @@
 FROM node:18-alpine AS base
 
+ARG MAL_CLIENT_ID
+
+ENV MAL_CLIENT_ID=$MAL_CLIENT_ID
+
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 

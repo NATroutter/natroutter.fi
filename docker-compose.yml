@@ -7,7 +7,7 @@ services:
       context: https://github.com/NATroutter/natroutter.fi.git#master
       additional_contexts:
         - app=docker-image://natroutter-fi-frontend:latest
-    environment:
-      MAL_CLIENT_ID: change_me
+      args:
+        MAL_CLIENT_ID: change_me
     ports:
       - 8510:3000
