@@ -1,0 +1,5 @@
+export const config = {
+	SITE_NAME: process.env.NEXT_PUBLIC_SITE_NAME,
+	BASE_ADDRESS: process.env.NEXT_PUBLIC_BASE_ADDRESS,
+	API_ADDRESS: process.env.NEXT_PUBLIC_API_ADDRESS
+}

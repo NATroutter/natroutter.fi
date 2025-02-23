@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	--ThemeColor: theme("colors.theme");
+	--BackgroundColor: theme("colors.background");
+	--CardColor: theme("colors.card");
+	--Card2Color: theme("colors.card2");
+}
+
+@font-face { font-family: "mal"; src: url("../public/font/mal.ttf")}
+
+::-webkit-scrollbar {
+	width: 10px;
+}
+::-webkit-scrollbar-track {
+	background: var(--CardColor);
+}
+.hide-scrollbar-thumb::-webkit-scrollbar-thumb {
+	display: none;
+}
+::-webkit-scrollbar-thumb {
+	background: var(--Card2Color);
+}
+::-webkit-scrollbar-thumb:hover {
+	background: var(--Card2Color);
+}
