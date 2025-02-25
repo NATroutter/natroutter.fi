@@ -10,6 +10,10 @@ export default function Home({data} : {data:HomePage}) {
 
 	return (
 		<div className="flex flex-col m-auto w-[80vw] max-w-[60rem] p-6 py-10">
+			<div id="curly-brace">
+				<div id="left" className="brace"></div>
+				<div id="right" className="brace"></div>
+			</div>
 			<div className="flex flex-col border-theme p-7 rounded-[20px] border-solid border-l-[3px] border-0 gap-6">
 				<div className="">
 					<h2 className="text-3xl font-semibold">Hello it&#39;s Me</h2>
@@ -37,17 +41,6 @@ export default function Home({data} : {data:HomePage}) {
 						</Link>
 					</div>
 				</div>
-			</div>
-
-			<div className="flex">
-				<div>
-					<span className="border-theme w-[10px] h-[calc(50%_-_10px)] inline-block mt-[10px] [border-right:2px_solid_grey] rounded-br-[10px] -mr-[2px]"></span>
-					<span className="border-theme w-[10px] h-[calc(50%_-_10px)] inline-block mb-[10px] [border-left:2px_solid_grey] rounded-tl-[10px]"></span><br/>
-					<span className="border-theme w-[10px] h-[calc(50%_-_10px)] inline-block -mt-[6px] [border-right:2px_solid_grey] rounded-tr-[10px] -mr-[2px]"></span>
-					<span className="border-theme w-[10px] h-[calc(50%_-_10px)] inline-block -mb-[8px] [border-left:2px_solid_grey] rounded-bl-[10px]"></span>
-				</div>
-				<div className="w-[100px] h-[100px]">penis</div>
-				<div className="flex"> </div>
 			</div>
 		</div>
 	)

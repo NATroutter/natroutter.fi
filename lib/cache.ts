@@ -1,7 +1,7 @@
 import NodeCache from "node-cache";
 
 // Initialize the cache instance
-const cache = new NodeCache({ stdTTL: 3600 }); // Default TTL: 30 minutes
+const cache = new NodeCache({ stdTTL: 3600 });
 
 /**
  * Abstraction method for caching

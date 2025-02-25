@@ -2,23 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
 	env: {
-		MAL_CLIENT_ID: process.env.MAL_CLIENT_ID
+		POCKETBASE_ADDRESS: process.env.POCKETBASE_ADDRESS
 	},
+	output: "standalone",
 	images: {
-		remotePatterns: [
-			{
-				protocol: 'https',
-				hostname: 'cdn.myanimelist.net',
-				port: '',
-				pathname: '**',
-			},
-			{
-				protocol: 'https',
-				hostname: 'api.natroutter.fi',
-				port: '',
-				pathname: '**',
-			},
-		],
+		unoptimized: true
 	}
 };
 

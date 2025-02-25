@@ -8,20 +8,22 @@ import {withCache} from "@/lib/cache";
 //*            DATABASE UTILS           *
 //***************************************
 export function getFileURL(collection: string, id:string, file:string) : string {
-	return `https://api.natroutter.fi/api/files/${collection}/${id}/${file}`
+	const pb = getPocketBase();
+	return `${pb.baseURL}/api/files/${collection}/${id}/${file}`
 }
 
 //***************************************
 //*          DATABASE GETTERS           *
 //***************************************
-export async function getPocketBase() : Promise<PocketBase> {
-	return new PocketBase("https://api.natroutter.fi");
+export function getPocketBase() : PocketBase {
+	return new PocketBase(process.env.POCKETBASE_ADDRESS);
 }
 
 export async function getHomePage(): Promise<HomePage | undefined> {
+
 	return withCache(async ()=>{
 		try {
-			const pb = await getPocketBase();
+			const pb = getPocketBase();
 			return await pb.collection("page_home").getFirstListItem<HomePage | undefined>("", {
 				expand: "links",
 				next: { revalidate: 30 },
@@ -35,9 +37,11 @@ export async function getHomePage(): Promise<HomePage | undefined> {
 }
 
 export async function getAboutPage() : Promise<AboutPage|undefined> {
+	console.log("test22: " + process.env.POCKETBASE_ADDRESS)
+
 	return withCache(async ()=>{
 		try {
-			const pb = await getPocketBase();
+			const pb = getPocketBase();
 			return await pb.collection("page_about").getFirstListItem<AboutPage|undefined>("",{
 				next: { revalidate: 30 },
 				cache: 'no-store',
@@ -52,7 +56,7 @@ export async function getAboutPage() : Promise<AboutPage|undefined> {
 export async function getLinkPage() : Promise<LinkPage[]|undefined> {
 	return withCache(async ()=>{
 		try {
-			const pb = await getPocketBase();
+			const pb = getPocketBase();
 			return await pb.collection("page_links").getFullList<LinkPage>({
 				expand: "links",
 				sort: "-priority",
@@ -69,7 +73,7 @@ export async function getLinkPage() : Promise<LinkPage[]|undefined> {
 export async function getProjectsPage() : Promise<ProjectPage[] | undefined> {
 	return withCache(async ()=>{
 		try {
-			const pb = await getPocketBase();
+			const pb = getPocketBase();
 			return await pb.collection("page_projects").getFullList<ProjectPage>({
 				expand: "links",
 				sort: "-priority",
@@ -86,7 +90,7 @@ export async function getProjectsPage() : Promise<ProjectPage[] | undefined> {
 export async function getPrivacyPage() : Promise<PrivacyPage|undefined> {
 	return withCache(async ()=>{
 		try {
-			const pb = await getPocketBase();
+			const pb = getPocketBase();
 			return await pb.collection("page_privacy").getFirstListItem<PrivacyPage>("",{
 				next: { revalidate: 30 },
 				cache: 'no-store',
@@ -101,7 +105,7 @@ export async function getPrivacyPage() : Promise<PrivacyPage|undefined> {
 export async function getNavigatorData() : Promise<NavData[]|undefined> {
 	return withCache(async ()=>{
 		try	{
-			const pb = await getPocketBase();
+			const pb = getPocketBase();
 			return await pb.collection("navigator").getFullList<NavData>({
 				sort: "-priority",
 				next: { revalidate: 30 },
@@ -117,7 +121,7 @@ export async function getNavigatorData() : Promise<NavData[]|undefined> {
 export async function getFooterData() : Promise<FooterData|undefined> {
 	return withCache(async ()=> {
 		try {
-			const pb = await getPocketBase();
+			const pb = getPocketBase();
 			return await pb.collection("footer").getFirstListItem<FooterData>("", {
 				expand: "contact,quick,social",
 				next: { revalidate: 30 },

@@ -7,7 +7,11 @@ services:
       context: https://github.com/NATroutter/natroutter.fi.git#master
       additional_contexts:
         - app=docker-image://natroutter-fi-frontend:latest
-      args:
-        MAL_CLIENT_ID: change_me
     ports:
       - 8510:3000
+      #- 127.0.0.1:8510:3000
+    environment:
+      MAL_CLIENT_ID: change_me
+      POCKETBASE_ADDRESS: change_me
+      UMAMI_SCRIPT: change_me
+      UMAMI_TOKEN: change_me

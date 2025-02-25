@@ -99,8 +99,8 @@ export default async function RootLayout({children}: Readonly<{ children: React.
         </body>
         <Script
             async
-            src="https://analytics.nat.gg/script.js"
-            data-website-id="c16f0048-21a0-4403-a35b-65785a956e6f"
+            src={process.env.UMAMI_SCRIPT}
+            data-website-id={process.env.UMAMI_TOKEN}
         />
         </html>
     );
