@@ -32,7 +32,7 @@ export default function Projects({data} : {data : ProjectPage[]}) {
 										<Image
 											className="aspect-square w-full min-w-[25rem] max-w-[25rem] m-auto bg-card2"
 											src={getFileURL("page_projects", entry.id, entry.image)}
-											alt="Anime"
+											alt={entry.name}
 											sizes="100vw"
 											width={0}
 											height={0}
@@ -53,7 +53,7 @@ export default function Projects({data} : {data : ProjectPage[]}) {
 										<Image
 											className="hidden lg:flex mx-auto w-[20rem] bg-card2"
 											src={getFileURL("page_projects", entry.id, entry.image)}
-											alt="Project_picture"
+											alt={entry.name}
 											sizes="100vw"
 											width={0}
 											height={0}
@@ -89,7 +89,7 @@ export default function Projects({data} : {data : ProjectPage[]}) {
 									<Image
 										className="flex lg:hidden mx-auto w-[20rem] bg-card2"
 										src={getFileURL("page_projects", entry.id, entry.image)}
-										alt="Anime_picture"
+										alt={entry.name}
 										sizes="100vw"
 										width={0}
 										height={0}

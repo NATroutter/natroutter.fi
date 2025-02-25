@@ -9,7 +9,7 @@
 	--Card2Color: theme("colors.card2");
 }
 
-@font-face { font-family: "mal"; src: url("../public/font/mal.ttf")}
+@font-face { font-family: "mal"; src: url("@/public/font/mal.ttf")}
 
 ::-webkit-scrollbar {
 	width: 10px;

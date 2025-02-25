@@ -8,8 +8,7 @@ import {withCache} from "@/lib/cache";
 //*            DATABASE UTILS           *
 //***************************************
 export function getFileURL(collection: string, id:string, file:string) : string {
-	const pb = getPocketBase();
-	return `${pb.baseURL}/api/files/${collection}/${id}/${file}`
+	return `${process.env.POCKETBASE_ADDRESS}/api/files/${collection}/${id}/${file}`
 }
 
 //***************************************
@@ -20,13 +19,11 @@ export function getPocketBase() : PocketBase {
 }
 
 export async function getHomePage(): Promise<HomePage | undefined> {
-
 	return withCache(async ()=>{
 		try {
 			const pb = getPocketBase();
 			return await pb.collection("page_home").getFirstListItem<HomePage | undefined>("", {
 				expand: "links",
-				next: { revalidate: 30 },
 				cache: 'no-store',
 			});
 		} catch (err) {
@@ -37,13 +34,10 @@ export async function getHomePage(): Promise<HomePage | undefined> {
 }
 
 export async function getAboutPage() : Promise<AboutPage|undefined> {
-	console.log("test22: " + process.env.POCKETBASE_ADDRESS)
-
 	return withCache(async ()=>{
 		try {
 			const pb = getPocketBase();
 			return await pb.collection("page_about").getFirstListItem<AboutPage|undefined>("",{
-				next: { revalidate: 30 },
 				cache: 'no-store',
 			});
 		} catch (err) {
@@ -60,7 +54,6 @@ export async function getLinkPage() : Promise<LinkPage[]|undefined> {
 			return await pb.collection("page_links").getFullList<LinkPage>({
 				expand: "links",
 				sort: "-priority",
-				next: { revalidate: 30 },
 				cache: 'no-store',
 			});
 		} catch (err) {
@@ -77,7 +70,6 @@ export async function getProjectsPage() : Promise<ProjectPage[] | undefined> {
 			return await pb.collection("page_projects").getFullList<ProjectPage>({
 				expand: "links",
 				sort: "-priority",
-				next: { revalidate: 30 },
 				cache: 'no-store',
 			});
 		} catch (err) {
@@ -92,7 +84,6 @@ export async function getPrivacyPage() : Promise<PrivacyPage|undefined> {
 		try {
 			const pb = getPocketBase();
 			return await pb.collection("page_privacy").getFirstListItem<PrivacyPage>("",{
-				next: { revalidate: 30 },
 				cache: 'no-store',
 			});
 		} catch (err) {
@@ -108,7 +99,6 @@ export async function getNavigatorData() : Promise<NavData[]|undefined> {
 			const pb = getPocketBase();
 			return await pb.collection("navigator").getFullList<NavData>({
 				sort: "-priority",
-				next: { revalidate: 30 },
 				cache: 'no-store',
 			});
 		} catch (err) {
@@ -124,7 +114,6 @@ export async function getFooterData() : Promise<FooterData|undefined> {
 			const pb = getPocketBase();
 			return await pb.collection("footer").getFirstListItem<FooterData>("", {
 				expand: "contact,quick,social",
-				next: { revalidate: 30 },
 				cache: 'no-store',
 			});
 		} catch (err) {

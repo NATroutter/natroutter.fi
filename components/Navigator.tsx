@@ -8,8 +8,8 @@ import DynamicIcon from "@/lib/dynamicIcon";
 
 
 interface NavigatorProps {
-	open: boolean; // External state for controlling the menu
-	onStateChangeAction: (open: boolean) => void; // Callback to notify state changes
+	open: boolean;
+	onStateChangeAction: (open: boolean) => void;
 	data: NavData[];
 }
 

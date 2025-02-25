@@ -32,7 +32,7 @@ export default function Links({ data }: { data: LinkPage[] }) {
 										<Image
 											className="h-full aspect-square w-full m-auto"
 											src={getFileURL("links", link.id, link.image)}
-											alt="Anime"
+											alt={link.display_name}
 											sizes="100vw"
 											width={0}
 											height={0}
