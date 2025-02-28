@@ -9,10 +9,6 @@ export interface LinkData {
 	description: string;
 	url: string;
 }
-export interface TextData {
-	id: string;
-	content: string;
-}
 
 export interface NavData {
 	icon: string;
@@ -54,7 +50,6 @@ export interface AboutPage {
 export interface LinkPage {
 	id: string;
 	title: string;
-	category: 'dev' | 'social' | 'games' | 'projects' | 'other';
 	links: string[];
 	priority: number;
 	expand: expandLinks;
@@ -66,6 +61,7 @@ export interface ProjectPage {
 	description: string;
 	github: string;
 	links: string[]
+	priority: number;
 	expand: expandLinks;
 }
 

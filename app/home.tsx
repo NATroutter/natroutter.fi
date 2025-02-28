@@ -9,7 +9,7 @@ import AnimatedText from "@/components/AnimatedText";
 export default function Home({data} : {data:HomePage}) {
 
 	return (
-		<div className="flex flex-col m-auto w-[80vw] max-w-[60rem] p-6 py-10">
+		<div className="flex flex-col m-auto w-[80vw] max-w-[60rem] p-6 py-52">
 			<div id="curly-brace">
 				<div id="left" className="brace"></div>
 				<div id="right" className="brace"></div>

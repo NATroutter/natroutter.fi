@@ -1,7 +1,7 @@
 import NodeCache from "node-cache";
 
 // Initialize the cache instance
-const cache = new NodeCache({ stdTTL: 3600 });
+const cache = new NodeCache({ stdTTL: 86400 });
 
 /**
  * Abstraction method for caching
@@ -11,6 +11,12 @@ const cache = new NodeCache({ stdTTL: 3600 });
  * @returns {Promise<T>} - Returns the cached data or the result of the fetchFunction
  */
 export async function withCache<T>(func: () => Promise<T>, key: string): Promise<T> {
+	if (process.env.NODE_ENV === "development") {
+		console.warn("Skipping cache in development mode! : " + key)
+		return await func();
+	}
+
+
 	const cachedData = cache.get<T>(key);
 	if (cachedData) {
 		return cachedData;
