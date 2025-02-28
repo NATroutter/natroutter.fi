@@ -8,7 +8,7 @@ import {withCache} from "@/lib/cache";
 //*            DATABASE UTILS           *
 //***************************************
 export function getFileURL(collection: string, id:string, file:string) : string {
-	return `${process.env.POCKETBASE_ADDRESS}/api/files/${collection}/${id}/${file}`
+	return `${getPocketBase().baseURL}/api/files/${collection}/${id}/${file}`
 }
 
 //***************************************
