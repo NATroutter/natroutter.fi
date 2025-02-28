@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import * as React from "react";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
-import {getFileURL} from "@/lib/database";
 import {FaGithub} from "react-icons/fa";
 import Markdown from "@/components/Markdown";
 import DynamicIcon from "@/lib/dynamicIcon";
@@ -31,7 +30,7 @@ export default function Projects({data} : {data : ProjectPage[]}) {
 									<div className="bg-card m-5 mb-5 rounded-sm shadow-nav">
 										<Image
 											className="aspect-square w-full min-w-[25rem] max-w-[25rem] m-auto bg-card2"
-											src={getFileURL("page_projects", entry.id, entry.image)}
+											src={entry.image}
 											alt={entry.name}
 											sizes="100vw"
 											width={0}
@@ -52,7 +51,7 @@ export default function Projects({data} : {data : ProjectPage[]}) {
 									<div className="flex flex-col min-w-full max-w-full w-full lg:min-w-[20rem] lg:max-w-[20rem] lg:w-[20rem]">
 										<Image
 											className="hidden lg:flex mx-auto w-[20rem] bg-card2"
-											src={getFileURL("page_projects", entry.id, entry.image)}
+											src={entry.image}
 											alt={entry.name}
 											sizes="100vw"
 											width={0}
@@ -88,7 +87,7 @@ export default function Projects({data} : {data : ProjectPage[]}) {
 									</div>
 									<Image
 										className="flex lg:hidden mx-auto w-[20rem] bg-card2"
-										src={getFileURL("page_projects", entry.id, entry.image)}
+										src={entry.image}
 										alt={entry.name}
 										sizes="100vw"
 										width={0}

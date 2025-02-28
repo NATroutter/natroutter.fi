@@ -3,7 +3,6 @@
 import {AboutPage} from "@/types/interfaces";
 import Image from "next/image";
 import * as React from "react";
-import {getFileURL} from "@/lib/database";
 import Markdown from "@/components/Markdown";
 
 export default function About({ data }: { data: AboutPage }) {
@@ -37,7 +36,7 @@ export default function About({ data }: { data: AboutPage }) {
 				<div className="flex xl:hidden w-full min-w-lg max-w-lg m-auto p-5">
 					<Image
 						className="h-full w-full aspect-square m-auto rounded-full shadow-2xl"
-						src={getFileURL("page_about", data.id, data.image)}
+						src={data.image}
 						alt="Profile Picture"
 						sizes="100vw"
 						width={0}
@@ -54,7 +53,7 @@ export default function About({ data }: { data: AboutPage }) {
 					<div className="hidden xl:flex w-full min-w-lg max-w-lg my-auto p-5">
 						<Image
 							className="h-full w-full aspect-square m-auto rounded-full shadow-2xl"
-							src={getFileURL("page_about", data.id, data.image)}
+							src={data.image}
 							alt="Profile Picture"
 							sizes="100vw"
 							width={0}

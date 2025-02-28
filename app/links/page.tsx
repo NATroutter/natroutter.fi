@@ -1,6 +1,7 @@
 import Links from "@/app/links/links";
-import {getLinkPage} from "@/lib/database";
+import {getFileURL, getLinkPage} from "@/lib/database";
 import ContentError from "@/components/errors/ContentError";
+import * as React from "react";
 
 export const metadata = {
 	title: 'Links',
@@ -13,6 +14,12 @@ export const metadata = {
 export default async function LinksPage() {
 	const data = await getLinkPage()
 	if (!data) return (<ContentError/>);
+
+	data.map((entry)=> {
+		entry.expand.links.map((link)=>{
+			link.image = getFileURL("links", link.id, link.image)
+		})
+	})
 
 	return (
 		<Links data={data} />

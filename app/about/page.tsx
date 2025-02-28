@@ -1,5 +1,5 @@
 import About from "@/app/about/about";
-import {getAboutPage} from "@/lib/database";
+import {getAboutPage, getFileURL} from "@/lib/database";
 import ContentError from "@/components/errors/ContentError";
 
 export const metadata = {
@@ -13,6 +13,8 @@ export const metadata = {
 export default async function AboutPage() {
 	const data = await getAboutPage();
 	if (!data) return (<ContentError/>);
+
+	data.image = getFileURL("page_about", data.id, data.image)
 
 	return (
 		<About data={data} />

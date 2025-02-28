@@ -4,7 +4,6 @@ import Image from "next/image";
 import * as React from "react";
 import Link from "next/link";
 import {LinkPage} from "@/types/interfaces";
-import {getFileURL} from "@/lib/database";
 
 export default function Links({ data }: { data: LinkPage[] }) {
 	if (!data) {
@@ -31,7 +30,7 @@ export default function Links({ data }: { data: LinkPage[] }) {
 									<div className="w-20 h-20 aspect-square my-auto">
 										<Image
 											className="h-full aspect-square w-full m-auto"
-											src={getFileURL("links", link.id, link.image)}
+											src={link.image}
 											alt={link.display_name}
 											sizes="100vw"
 											width={0}

@@ -4,7 +4,7 @@ services:
     container_name: natroutter-fi-frontend
     restart: always
     build:
-      context: https://github.com/NATroutter/natroutter.fi.git#master
+      context: .
       additional_contexts:
         - app=docker-image://natroutter-fi-frontend:latest
     ports:
