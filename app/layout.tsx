@@ -85,7 +85,8 @@ export default async function RootLayout({children}: Readonly<{ children: React.
             {(NavData && (NavData.length > 0) && footerData) ? (
                 <>
                     <Header data={NavData}/>
-                    <main className="flex flex-col flex-grow mt-[7.5rem]">
+                    <main className="relative flex flex-col flex-grow min-h-screen pb-[7.5rem]">
+                        {/*mt-[7.5rem]*/}
                         {children}
                     </main>
                     <Footer data={footerData}/>

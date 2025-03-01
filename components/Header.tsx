@@ -32,8 +32,8 @@ export default function Header({data} : {data: NavData[]}) {
 	}, [open, width]);
 
 	return (
-		<header className="fixed top-0 left-0 right-0 z-10 w-full select-none">
-			<div className="relative bg-header shadow-header flex flex-row justify-between px-2 py-0 h-20">
+		<header className="z-10 w-full select-none">
+			<div className="bg-header shadow-header flex flex-row justify-between px-2 py-0 h-20">
 				<div className="flex flex-row">
 					<a className="flex flex-row" href="https://NATroutter.fi">
 						<Image
