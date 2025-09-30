@@ -1,7 +1,6 @@
 import Anime from "@/app/anime/anime";
 import ContentError from "@/components/errors/ContentError";
-import {getCompleted, getAnimeData, getPlanToWatch, getWatching} from "@/lib/mal";
-import { writeFile,readFile } from 'fs/promises';
+import {readFile} from 'fs/promises';
 import {AnimeEntry} from "@/types/animeData";
 
 export const metadata = {
@@ -18,6 +17,8 @@ export default async function AnimePage() {
 
 	const fileContent = await readFile('debug-output.json', 'utf-8');
 	const animeData = JSON.parse(fileContent) as AnimeEntry[];
+
+	// console.log("debug:",animeData)
 
 	if (!animeData) return (<ContentError/>)
 
