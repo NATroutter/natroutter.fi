@@ -50,9 +50,18 @@ export interface ListStatus {
 	tags: string[];
 }
 
-export interface AnimeData {
+export interface AnimeEntry {
 	node: Node;
 	list_status: ListStatus;
+}
+
+export interface AnimePaging {
+	next: string
+}
+
+export interface AnimeData {
+	data: AnimeEntry[];
+	paging: AnimePaging;
 }
 
 export function formatRating(rating: 'g' | 'pg' | 'pg_13' | 'r' | 'r+' | 'rx') : string {

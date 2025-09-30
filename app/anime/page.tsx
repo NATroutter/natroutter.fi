@@ -1,6 +1,8 @@
 import Anime from "@/app/anime/anime";
 import ContentError from "@/components/errors/ContentError";
-import {getCompleted, getPlanToWatch, getWatching} from "@/lib/mal";
+import {getCompleted, getAnimeData, getPlanToWatch, getWatching} from "@/lib/mal";
+import { writeFile,readFile } from 'fs/promises';
+import {AnimeEntry} from "@/types/animeData";
 
 export const metadata = {
 	title: 'Anime',
@@ -11,14 +13,16 @@ export const metadata = {
 };
 
 export default async function AnimePage() {
-	const currentlyWatching = await getWatching()
-	const latestCompleted = await getCompleted();
-	const latestPlanToWatch = await getPlanToWatch();
 
-	if (currentlyWatching && latestCompleted && latestPlanToWatch) {
-		return (<Anime currentlyWatching={currentlyWatching} latestCompleted={latestCompleted} latestPlanToWatch={latestPlanToWatch}/>);
-	} else {
-		return (<ContentError/>)
-	}
+	//const animeData = await getAnimeData();
+
+	const fileContent = await readFile('debug-output.json', 'utf-8');
+	const animeData = JSON.parse(fileContent) as AnimeEntry[];
+
+	if (!animeData) return (<ContentError/>)
+
+	//await writeFile('debug-output.json', JSON.stringify(animeData, null, 2), 'utf-8');
+
+	return (<Anime animeData={animeData}/>);
 
 }

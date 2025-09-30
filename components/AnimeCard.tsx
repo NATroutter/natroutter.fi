@@ -1,13 +1,13 @@
 'use client'
 
 import * as React from "react"
-import {AnimeData, formatRating} from "@/types/animeData";
+import {AnimeEntry, formatRating} from "@/types/animeData";
 import Image from "next/image";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {formatDate, toCapitalizedCase} from "@/lib/utils";
 import Link from "next/link";
 
-export function AnimeCard({ data, showScore }: { data: AnimeData, showScore:boolean }) {
+export function AnimeCard({ data, showScore }: { data: AnimeEntry, showScore:boolean }) {
 
 	const updated = new Date(data.list_status.updated_at);
 	const title_en = data.node.alternative_titles.en;
