@@ -10,9 +10,9 @@
 	--base-text-weight-bold: 700;
 	--fontStack-monospace: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
 	--focus-outlineColor: #1f6feb;
-	--fgColor-default: theme("colors.text");
-	--fgColor-muted: theme("colors.text");
-	--fgColor-accent: theme("colors.theme");
+	--fgColor-default: var(--color-text);
+	--fgColor-muted:  var(--color-text);
+	--fgColor-accent:  var(--color-theme);
 	--fgColor-success: #3fb950;
 	--fgColor-attention: #d29922;
 	--fgColor-danger: #f85149;

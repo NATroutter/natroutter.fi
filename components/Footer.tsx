@@ -11,13 +11,13 @@ export default function Footer({data}:{data:FooterData}) {
 	return (
 		<footer className="bg-header">
 			<div className="flex flex-col justify-center m-auto my-5">
-				<div className="grid place-self-center grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 w-full max-w-[90vw] 3xl:w-[160rem] place-items-center">
+				<div className="grid place-self-center grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 w-full max-w-[90vw] 3xl:w-640 place-items-center">
 					<FooterBox name="Contact Me">
 						<ul className="flex flex-col gap-2">
 							{data.expand.contact.map((item,index)=>(
 								<li key={index} className="flex">
 									<Link
-										className="flex my-auto hover:text-themeHover"
+										className="flex my-auto hover:text-theme-hover"
 										href={item.url}
 										target="_blank"
 										data-umami-event={`[FOOTER] Link (Contact > ${item.display_name})`}
@@ -37,7 +37,7 @@ export default function Footer({data}:{data:FooterData}) {
 							{data.expand.quick.map((item,index)=>(
 								<li key={index} className="flex">
 									<Link
-										className="flex my-auto hover:text-themeHover"
+										className="flex my-auto hover:text-theme-hover"
 										href={item.url}
 										target={(item.url.startsWith("http://") || item.url.startsWith("https://")) ? "_blank" : "_self"}
 										data-umami-event={`[FOOTER] Open (Quick > ${item.name})`}
@@ -58,7 +58,7 @@ export default function Footer({data}:{data:FooterData}) {
 							{data.expand.social.map((item,index)=>(
 								<li key={index} className="flex">
 									<Link
-										className="flex my-auto hover:text-themeHover"
+										className="flex my-auto hover:text-theme-hover"
 										href={item.url}
 										target="_blank"
 										data-umami-event={`[FOOTER] Link (About > ${item.display_name})`}

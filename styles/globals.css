@@ -1,15 +1,68 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-:root {
-	--ThemeColor: theme("colors.theme");
-	--BackgroundColor: theme("colors.background");
-	--CardColor: theme("colors.card");
-	--Card2Color: theme("colors.card2");
+@plugin 'tailwindcss-animate';
 
-	/*shadcn Theming*/
-	--radius: 0.625rem;
+@theme {
+
+	/*Tailwind Themes*/
+	--color-background: #31383f;
+	--color-navbar: #31383f;
+	--color-header: #1e2226;
+	--color-overlay: rgba(30, 34, 38, 0.16);
+	--color-card: #20252a;
+	--color-card2: #272d33;
+	--color-text: #abadae;
+	--color-text-hover: #ffffff;
+	--color-theme: #bb2e3a;
+	--color-theme-hover: #a12832;
+	--color-foreground: hsl(0 0% 98%);
+
+	--color-popover: hsl(0 0% 3.9%);
+	--color-popover-foreground: hsl(0 0% 98%);
+
+	--color-primary: hsl(0 0% 98%);
+	--color-primary-foreground: hsl(0 0% 9%);
+
+	--color-secondary: hsl(0 0% 14.9%);
+	--color-secondary-foreground: hsl(0 0% 98%);
+
+	--color-muted: hsl(0 0% 14.9%);
+	--color-muted-foreground: hsl(0 0% 63.9%);
+
+	--color-accent: hsl(0 0% 14.9%);
+	--color-accent-foreground: hsl(0 0% 98%);
+
+	--color-destructive: hsl(0 62.8% 30.6%);
+	--color-destructive-foreground: hsl(0 0% 98%);
+
+	--color-border: hsl(0 0% 14.9%);
+	--color-input: hsl(0 0% 14.9%);
+	--color-ring: hsl(0 0% 83.1%);
+
+	--color-chart-1: hsl(220 70% 50%);
+	--color-chart-2: hsl(160 60% 45%);
+	--color-chart-3: hsl(30 80% 55%);
+	--color-chart-4: hsl(280 65% 60%);
+	--color-chart-5: hsl(340 75% 55%);
+
+	--breakpoint-3xl: 2000px;
+	--breakpoint-4xl: 2400px;
+	--breakpoint-5xl: 2800px;
+	--breakpoint-6xl: 3840px;
+	--breakpoint-7xl: 5120px;
+
+	--shadow-nav: rgba(13, 15, 20, 0.7) 0px 3px 10px;
+	--shadow-header: rgba(15, 20, 25, 0.3) 0px 0px 5px;
+	--shadow-theme-glow: hsl(355 81% 46% / 1) 0 0 20px 2px;
+
+	--font-mal: mal, Helvetica, Arial, sans-serif;
+
+	--radius-lg: var(--radius);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-sm: calc(var(--radius) - 4px);
+
+	/*shadcn variables*/
+
 	--background: oklch(0.145 0 0);
 	--foreground: oklch(0.985 0 0);
 	--card: oklch(0.205 0 0);
@@ -43,20 +96,20 @@
 	--sidebar-ring: oklch(0.439 0 0);
 }
 
-@font-face { font-family: "mal"; src: url("../public/font/mal.ttf")}
+@font-face { font-family: "mal"; src: url("../public/font/mal.ttf");}
 
 ::-webkit-scrollbar {
 	width: 10px;
 }
 ::-webkit-scrollbar-track {
-	background: var(--CardColor);
+	background: var(--color-card);
 }
 .hide-scrollbar-thumb::-webkit-scrollbar-thumb {
 	display: none;
 }
 ::-webkit-scrollbar-thumb {
-	background: var(--Card2Color);
+	background: var(--color-card2);
 }
 ::-webkit-scrollbar-thumb:hover {
-	background: var(--Card2Color);
+	background: var(--color-card2);
 }

@@ -85,14 +85,14 @@ export default async function RootLayout({children}: Readonly<{ children: React.
             {(NavData && (NavData.length > 0) && footerData) ? (
                 <>
                     <Header data={NavData}/>
-                    <main className="relative flex flex-col flex-grow min-h-screen pb-[7.5rem]">
+                    <main className="relative flex flex-col grow min-h-screen pb-30">
                         {/*mt-[7.5rem]*/}
                         {children}
                     </main>
                     <Footer data={footerData}/>
                 </>
             ) : (
-                <main className="flex flex-col flex-grow justify-center m-auto text-center">
+                <main className="flex flex-col grow justify-center m-auto text-center">
                     <ServerError/>
                 </main>
             )}

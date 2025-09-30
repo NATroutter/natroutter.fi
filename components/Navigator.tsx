@@ -22,7 +22,7 @@ export function Navigator({ open, onStateChangeAction, data }: NavigatorProps) {
 
 	return (
 		<nav className="bg-header md:bg-navbar py-0">
-			<button onClick={()=>onStateChangeAction(!open)} className="md:hidden outline-none w-full px-5 py-2 m-0 hover:bg-themeHover border-header border-b-themeHover border-solid border-b-4 bg-theme">
+			<button onClick={()=>onStateChangeAction(!open)} className="md:hidden outline-hidden w-full px-5 py-2 m-0 hover:bg-theme-hover border-header border-b-theme-hover border-solid border-b-4 bg-theme">
 				<div className={`text-white no-underline font-bold hover:cursor-pointer`}>
 					<div className="flex m-auto justify-center text-center">
 						<p>Navigator</p>
@@ -31,15 +31,15 @@ export function Navigator({ open, onStateChangeAction, data }: NavigatorProps) {
 			</button>
 			<ul className={`
 			shadow-nav justify-center m-0 p-0 flex flex-col md:flex-row
-			${open ? "max-h-[100vh]" : "max-h-0 md:max-h-[100vh]"}
+			${open ? "max-h-screen" : "max-h-0 md:max-h-screen"}
 			transition-[max-height] duration-200 ease-in-out overflow-hidden
 			`}>
 				{data.map((item, index) => (
 					<li key={index} className={
 						`list-none md:hover:bg-header border-header
 						md:border-x
-						first:md:border-l-2 first:md:border-r
-						last:md:border-r-2 last:md:border-l
+						md:first:border-l-2 md:first:border-r
+						md:last:border-r-2 md:last:border-l
 						${pathname===item.url ? "bg-theme" : ""}`
 					}>
 						<Link href={item.url} className="flex px-5 py-2 justify-center" data-umami-event={`[NAV] Open (${item.name})`}>

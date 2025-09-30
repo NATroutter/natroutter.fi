@@ -9,7 +9,7 @@ import AnimatedText from "@/components/AnimatedText";
 export default function Home({data} : {data:HomePage}) {
 
 	return (
-		<div className="flex flex-col m-auto w-[80vw] max-w-[60rem] justify-center">
+		<div className="flex flex-col m-auto w-[80vw] max-w-240 justify-center">
 			<div id="curly-brace">
 				<div id="left" className="brace"></div>
 				<div id="right" className="brace"></div>
@@ -37,7 +37,7 @@ export default function Home({data} : {data:HomePage}) {
 					</div>
 					<div>
 						<Link href="/projects">
-							<button data-umami-event={`[HOME] (Explore My Work)`} className="bg-theme px-5 py-3 rounded-full shadow-themeGlow font-semibold hover:scale-105 transition-transform duration-300 ease-in-out">Explore My Work</button>
+							<button data-umami-event={`[HOME] (Explore My Work)`} className="bg-theme px-5 py-3 rounded-full shadow-theme-glow font-semibold hover:scale-105 transition-transform duration-300 ease-in-out">Explore My Work</button>
 						</Link>
 					</div>
 				</div>

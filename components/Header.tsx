@@ -49,7 +49,7 @@ export default function Header({data} : {data: NavData[]}) {
 				</div>
 			</div>
 			<Navigator data={data} open={open} onStateChangeAction={(s=>setOpen(s))}/>
-			<div className={`${open ? "block md:hidden" : "hidden"} relative h-[100vh] inset-0 bg-black bg-opacity-50 z-20`}></div>
+			<div className={`${open ? "block md:hidden" : "hidden"} relative h-screen inset-0 bg-black bg-opacity-50 z-20`}></div>
 		</header>
 	)
 }

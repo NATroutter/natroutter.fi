@@ -15,7 +15,7 @@ export function AnimeCard({ data, showScore }: { data: AnimeEntry, showScore:boo
 	return (
 		<Dialog>
 			<DialogTrigger className="flex flex-col text-left w-full" data-umami-event={`[ANIME] Expand (${data.node.id})`}>
-				<div className="flex p-1.5 m-3 h-[9rem]">
+				<div className="flex p-1.5 m-3 h-36">
 					<div className="flex w-full h-full bg-card2 rounded-lg hover:scale-[1.03] md:hover:scale-[1.02] lg:hover:scale-[1.02] xl:hover:scale-[1.03] transition-transform duration-300 ease-in-out">
 						<div className="min-w-24 h-full">
 							<Image
@@ -44,8 +44,8 @@ export function AnimeCard({ data, showScore }: { data: AnimeEntry, showScore:boo
 					</div>
 				</div>
 			</DialogTrigger>
-			<DialogContent className="border-none outline-none bg-background min-w-[70%] max-h-[90vh] w-full overflow-y-auto">
-				<DialogHeader className="outline-none w-full">
+			<DialogContent className="border-none outline-hidden bg-background min-w-[70%] max-h-[90vh] w-full overflow-y-auto">
+				<DialogHeader className="outline-hidden w-full">
 					<DialogTitle className="hidden"/>
 					<DialogDescription className="hidden"/>
 					<div className="flex flex-col-reverse lg:flex-row gap-4 text-left">
@@ -70,7 +70,7 @@ export function AnimeCard({ data, showScore }: { data: AnimeEntry, showScore:boo
 											<Link href={`https://myanimelist.net/anime/producer/${studio.id}/`} target="_blank"
 												  data-umami-event={`[ANIME] Show Studio (${studio.id})`}
 												  data-umami-event-url={`https://myanimelist.net/anime/producer/${studio.id}/`}
-												  className="text-theme hover:underline hover:text-themeHover">
+												  className="text-theme hover:underline hover:text-theme-hover">
 												{studio.name}
 											</Link>
 											{index != data.node.studios.length -1 ? ", " : ""}
@@ -84,7 +84,7 @@ export function AnimeCard({ data, showScore }: { data: AnimeEntry, showScore:boo
 											<Link href={`https://myanimelist.net/anime/genre/${genre.id}/`} target="_blank"
 												  data-umami-event={`[ANIME] Show Genre (${genre.id})`}
 												  data-umami-event-url={`https://myanimelist.net/anime/genre/${genre.id}/`}
-												  className="text-theme hover:underline hover:text-themeHover">
+												  className="text-theme hover:underline hover:text-theme-hover">
 												{genre.name}
 											</Link>
 											{index != data.node.genres.length -2 ? ", " : ""}
