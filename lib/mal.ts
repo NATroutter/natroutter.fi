@@ -43,6 +43,9 @@ export async function getAnimeData(): Promise<AnimeEntry[] | undefined> {
 	}, "anime_data");
 }
 
+export function getPlanToWatch(data: AnimeEntry[]): AnimeEntry[] {
+	return data.filter(anime => anime.list_status.status === "plan_to_watch");
+}
 export function getWatching(data: AnimeEntry[]): AnimeEntry[] {
 	return data.filter(anime => anime.list_status.status === "watching");
 }
@@ -50,8 +53,11 @@ export function getWatching(data: AnimeEntry[]): AnimeEntry[] {
 export function getCompleted(data: AnimeEntry[]): AnimeEntry[] {
 	return data.filter(anime => anime.list_status.status === "completed");
 }
-export function getPlanToWatch(data: AnimeEntry[]): AnimeEntry[] {
-	return data.filter(anime => anime.list_status.status === "plan_to_watch");
+export function getOnHold(data: AnimeEntry[]): AnimeEntry[] {
+	return data.filter(anime => anime.list_status.status === "on_hold");
+}
+export function getDropped(data: AnimeEntry[]): AnimeEntry[] {
+	return data.filter(anime => anime.list_status.status === "dropped");
 }
 
 //

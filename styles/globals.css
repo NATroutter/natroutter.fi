@@ -19,7 +19,7 @@
 	--color-theme-hover: #a12832;
 	--color-foreground: hsl(0 0% 98%);
 
-	--color-popover: var(--color-card);
+	--color-popover: var(--color-background);
 	--color-popover-foreground: var(--color-text);
 
 	--color-primary: hsl(0 0% 98%);
@@ -41,11 +41,16 @@
 	--color-input: hsl(0 0% 14.9%);
 	--color-ring: hsl(0 0% 83.1%);
 
-	--color-chart-1: hsl(220 70% 50%);
-	--color-chart-2: hsl(160 60% 45%);
-	--color-chart-3: hsl(30 80% 55%);
-	--color-chart-4: hsl(280 65% 60%);
-	--color-chart-5: hsl(340 75% 55%);
+	--color-chart-1: hsl(220 70% 50%);  /* Blue */
+	--color-chart-2: hsl(160 60% 45%);  /* Teal */
+	--color-chart-3: hsl(30 80% 55%);   /* Orange */
+	--color-chart-4: hsl(280 65% 60%);  /* Purple */
+	--color-chart-5: hsl(340 75% 55%);  /* Pink/Magenta */
+	--color-chart-6: hsl(120 65% 45%);  /* Green */
+	--color-chart-7: hsl(200 70% 50%);  /* Cyan */
+	--color-chart-8: hsl(50 75% 55%);   /* Yellow */
+	--color-chart-9: hsl(260 70% 55%);  /* Violet */
+	--color-chart-10: hsl(10 80% 58%);  /* Red */
 
 	--breakpoint-3xl: 2000px;
 	--breakpoint-4xl: 2400px;
@@ -65,13 +70,20 @@
 
 	/*shadcn variables*/
 
-	--chart-1: oklch(0.488 0.243 264.376);
-	--chart-2: oklch(0.696 0.17 162.48);
-	--chart-3: oklch(0.769 0.188 70.08);
-	--chart-4: oklch(0.627 0.265 303.9);
-	--chart-5: oklch(0.645 0.246 16.439);
+	--chart-1: var(--color-chart-1);
+	--chart-2: var(--color-chart-2);
+	--chart-3: var(--color-chart-3);
+	--chart-4: var(--color-chart-4);
+	--chart-5: var(--color-chart-5);
+	--chart-6: var(--color-chart-6);
+	--chart-7: var(--color-chart-7);
+	--chart-8: var(--color-chart-8);
+	--chart-9: var(--color-chart-9);
+	--chart-10: var(--color-chart-10);
 	--chart-theme: var(--color-theme);
 	--radius: 0.625rem;
+
+
 }
 
 @font-face { font-family: "mal"; src: url("../public/font/mal.ttf");}

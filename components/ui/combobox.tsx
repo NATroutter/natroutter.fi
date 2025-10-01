@@ -28,11 +28,13 @@ interface ComboboxProps<T extends ComboEntry> {
 	comboData: T[]
 	onSelect?: (value: string) => void
 	defaultValue?: string
+	className?: string
+	CheckMark?: boolean
 }
 
-export default function Combobox<T extends ComboEntry>({ placeholder, comboData, onSelect , defaultValue} : ComboboxProps<T>) {
+export default function Combobox<T extends ComboEntry>({ placeholder, comboData, onSelect, className, CheckMark = true} : ComboboxProps<T>) {
 	const [open, setOpen] = React.useState(false)
-	const [value, setValue] = React.useState(defaultValue ?? "")
+	const [value, setValue] = React.useState(comboData[0].value)
 
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
@@ -41,15 +43,15 @@ export default function Combobox<T extends ComboEntry>({ placeholder, comboData,
 					variant="outline"
 					role="combobox"
 					aria-expanded={open}
-					className="w-[200px] justify-between"
+					className={cn("w-[200px] justify-center p-1.5", className)}
 				>
-					{value
-						? comboData.find((entry) => entry.value === value)?.label
-						: placeholder}
-					<ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+					<div className="flex flex-row m-auto justify-between w-full">
+						<span className="text-left my-auto">{value ? comboData.find((entry) => entry.value === value)?.label : placeholder}</span>
+						<ChevronsUpDownIcon className="my-auto h-4 w-4 shrink-0 opacity-50" />
+					</div>
 				</Button>
 			</PopoverTrigger>
-			<PopoverContent className="w-[200px] p-0">
+			<PopoverContent className={cn("w-[200px] p-0", className)}>
 				<Command>
 					<CommandList>
 						<CommandEmpty>No entries found.</CommandEmpty>
@@ -59,18 +61,19 @@ export default function Combobox<T extends ComboEntry>({ placeholder, comboData,
 									key={entry.value}
 									value={entry.value}
 									onSelect={(currentValue) => {
-										const newValue = currentValue === value ? "" : currentValue
+										const newValue = currentValue === value ? comboData[0].value : currentValue
 										setValue(newValue)
 										setOpen(false)
 										onSelect?.(newValue)
 									}}
 								>
-									<CheckIcon
-										className={cn(
-											"mr-2 h-4 w-4",
-											value === entry.value ? "opacity-100" : "opacity-0"
-										)}
-									/>
+									{CheckMark && (
+										<CheckIcon
+											className={cn(
+												"mr-2 h-4 w-4", value === entry.value ? "opacity-100" : "opacity-0"
+											)}
+										/>
+									)}
 									{entry.label}
 								</CommandItem>
 							))}

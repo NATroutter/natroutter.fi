@@ -6,43 +6,21 @@ import Image from "next/image";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {formatDate, toCapitalizedCase} from "@/lib/utils";
 import Link from "next/link";
+import {ReactNode} from "react";
 
-export function AnimeCard({ data, showScore }: { data: AnimeEntry, showScore:boolean }) {
+interface AnimeCardProps {
+	data: AnimeEntry;
+	children?: ReactNode;
+}
 
-	const updated = new Date(data.list_status.updated_at);
+export function AnimeDialog({ data, children }: AnimeCardProps) {
+
 	const title_en = data.node.alternative_titles.en;
 
 	return (
 		<Dialog>
-			<DialogTrigger className="flex flex-col text-left w-full" data-umami-event={`[ANIME] Expand (${data.node.id})`}>
-				<div className="flex p-1.5 m-3 h-36">
-					<div className="flex w-full h-full bg-card2 rounded-lg hover:scale-[1.03] md:hover:scale-[1.02] lg:hover:scale-[1.02] xl:hover:scale-[1.03] transition-transform duration-300 ease-in-out">
-						<div className="min-w-24 h-full">
-							<Image
-								className="h-full w-full m-auto"
-								src={data.node.main_picture.large}
-								alt="Anime"
-								sizes="100vw"
-								width={0}
-								height={0}
-							/>
-						</div>
-						<div className="flex flex-col justify-between px-2 py-1 w-full">
-							<div className="flex flex-col justify-between">
-								<h2 className="text-xl font-semibold line-clamp-1">{title_en.length > 0 ? title_en : data.node.title}</h2>
-								<h3 className="text-sm leading-none line-clamp-1 text-neutral-500">{data.node.alternative_titles.ja}</h3>
-							</div>
-							<div className="flex flex-row justify-between">
-								<div>
-									<p className="text-sm text-neutral-400 font-semibold italic text-nowrap">{data.node.mean ? ("Rating: " + data.node.mean) : "Rating: ?"} {showScore && (" | Score: "+data.list_status.score)}</p>
-								</div>
-								<div className="flex flex-col justify-end">
-									<p className="text-sm text-neutral-500 font-semibold italic text-nowrap">{updated.getDay()}.{updated.getMonth()}.{updated.getFullYear()} {updated.getHours()}:{updated.getMinutes()}</p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+			<DialogTrigger asChild data-umami-event={`[ANIME] Expand (${data.node.id})`}>
+				{children ?? title_en}
 			</DialogTrigger>
 			<DialogContent className="border-none outline-hidden bg-background min-w-[70%] max-h-[90vh] w-full overflow-y-auto">
 				<DialogHeader className="outline-hidden w-full">
@@ -112,7 +90,7 @@ export function AnimeCard({ data, showScore }: { data: AnimeEntry, showScore:boo
 							<div className="flex flex-col">
 								<h1 className="text-2xl">{title_en.length > 0 ? title_en : data.node.title}</h1>
 								<h2 className="text-base text-neutral-500">{data.node.alternative_titles.ja}</h2>
-								{showScore && (<p className="mt-2 text-theme font-bold">My Score: <span className="text-theme">{data.list_status.score}</span></p>)}
+								<p className="mt-2 text-theme font-bold">My Score: <span className="text-theme">{data.list_status.score}</span></p>
 							</div>
 							<div className="mt-8">
 								<p>{data.node.synopsis.replace("[Written by MAL Rewrite]", "")}</p>

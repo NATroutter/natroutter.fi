@@ -31,7 +31,7 @@ const MONTH_LABELS = [
 const chartConfig: ChartConfig = {
 	count: {
 		label: "Watched",
-		color: "var(--chart-theme)",
+		color: "var(--chart-4)",
 	},
 }
 
@@ -63,7 +63,7 @@ export default function ChartWatchByMonth({selectedYear, chartData}: ChartWatchB
 	}, [chartData, selectedYear])
 
 	return (
-		<Card className="py-0">
+		<Card className="py-0 w-full">
 			<CardHeader className="flex flex-col items-stretch border-b border-card2-b p-0! sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
 					<CardTitle>Anime Completed by Month</CardTitle>
@@ -76,7 +76,7 @@ export default function ChartWatchByMonth({selectedYear, chartData}: ChartWatchB
 				</div>
 			</CardHeader>
 
-			<CardContent className="px-2 sm:p-6">
+			<CardContent className="px-2 p-6">
 				<ChartContainer
 					config={chartConfig}
 					className="aspect-auto h-[250px] w-full"
