@@ -1,24 +1,11 @@
 "use client"
 
-import { Label, Pie, PieChart } from "recharts"
+import {Pie, PieChart} from "recharts"
 
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card"
-import {
-	ChartConfig,
-	ChartContainer,
-	ChartLegend,
-	ChartLegendContent,
-	ChartTooltip,
-	ChartTooltipContent,
-} from "@/components/ui/chart"
+import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
+import {ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
 import * as React from "react"
-import { AnimeEntry } from "@/types/animeData"
+import {AnimeEntry} from "@/types/animeData"
 
 const chartConfig: ChartConfig = {
 	older: {

@@ -1,12 +1,12 @@
 "use client"
 
-import {Label, Pie, PieChart} from "recharts"
+import {Pie, PieChart} from "recharts"
 
 import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
 import {ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
 import * as React from "react";
-import {AnimeEntry} from "@/types/animeData";
 import {useMemo} from "react";
+import {AnimeEntry} from "@/types/animeData";
 
 export const description = "A pie chart showing anime watch status distribution"
 

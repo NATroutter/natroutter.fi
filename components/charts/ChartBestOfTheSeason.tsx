@@ -30,7 +30,7 @@ export default function ChartBestOfTheSeason({ selectedYear, chartData }: ChartA
 			</CardHeader>
 			<CardContent className="px-2 p-6">
 				{/*TODO fix positioning center the items (tailwind autocomplete broken so this is still not done....)*/}
-				<div className="gap-4 w-full c grid mx-auto grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
+				<div className="gap-4 w-full  grid mx-auto grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
 					{topAnimePerSeason.map((item, index) => {
 						const seasons: Season[] = ["Winter", "Spring", "Summer", "Fall"]
 						const season = seasons[index]
