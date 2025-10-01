@@ -17,6 +17,7 @@ import {
 	ChartTooltipContent,
 } from "@/components/ui/chart"
 import { AnimeEntry } from "@/types/animeData"
+import {useMemo} from "react";
 
 type MonthData = {
 	month: string
@@ -33,7 +34,7 @@ const chartConfig: ChartConfig = {
 		label: "Watched",
 		color: "var(--chart-4)",
 	},
-}
+} satisfies ChartConfig
 
 interface ChartWatchByMonthProps {
 	selectedYear: string
@@ -41,7 +42,7 @@ interface ChartWatchByMonthProps {
 }
 
 export default function ChartWatchByMonth({selectedYear, chartData}: ChartWatchByMonthProps) {
-	const monthData: MonthData[] = React.useMemo(() => {
+	const monthData: MonthData[] = useMemo(() => {
 		const isAllYears = selectedYear === "all"
 		const year = Number(selectedYear)
 		const monthCount = Array(12).fill(0)

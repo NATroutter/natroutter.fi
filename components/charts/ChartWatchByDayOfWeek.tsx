@@ -17,6 +17,7 @@ import {
 	ChartTooltipContent,
 } from "@/components/ui/chart"
 import { AnimeEntry } from "@/types/animeData"
+import {useMemo} from "react";
 
 type DayData = {
 	day: string
@@ -30,7 +31,7 @@ const chartConfig: ChartConfig = {
 		label: "Watched",
 		color: "var(--chart-5)",
 	},
-}
+} satisfies ChartConfig
 
 interface ChartWatchByDayOfWeekProps {
 	selectedYear: string
@@ -38,7 +39,7 @@ interface ChartWatchByDayOfWeekProps {
 }
 
 export default function ChartWatchByDayOfWeek({selectedYear, chartData}: ChartWatchByDayOfWeekProps) {
-	const dayData: DayData[] = React.useMemo(() => {
+	const dayData: DayData[] = useMemo(() => {
 		const isAllYears = selectedYear === "all"
 		const year = Number(selectedYear)
 		const dayCount = Array(7).fill(0)

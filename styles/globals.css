@@ -41,16 +41,16 @@
 	--color-input: hsl(0 0% 14.9%);
 	--color-ring: hsl(0 0% 83.1%);
 
-	--color-chart-1: hsl(220 70% 50%);  /* Blue */
-	--color-chart-2: hsl(160 60% 45%);  /* Teal */
-	--color-chart-3: hsl(30 80% 55%);   /* Orange */
-	--color-chart-4: hsl(280 65% 60%);  /* Purple */
-	--color-chart-5: hsl(340 75% 55%);  /* Pink/Magenta */
-	--color-chart-6: hsl(120 65% 45%);  /* Green */
-	--color-chart-7: hsl(200 70% 50%);  /* Cyan */
-	--color-chart-8: hsl(50 75% 55%);   /* Yellow */
-	--color-chart-9: hsl(260 70% 55%);  /* Violet */
-	--color-chart-10: hsl(10 80% 58%);  /* Red */
+	--color-chart-1: hsl(220 70% 50%);
+	--color-chart-2: hsl(160 60% 45%);
+	--color-chart-3: hsl(30 80% 55%);
+	--color-chart-4: hsl(280 65% 60%);
+	--color-chart-5: hsl(340 75% 55%);
+	--color-chart-6: hsl(120 65% 45%);
+	--color-chart-7: hsl(200 70% 50%);
+	--color-chart-8: hsl(50 75% 55%);
+	--color-chart-9: hsl(260 70% 55%);
+	--color-chart-10: hsl(10 80% 58%);
 
 	--breakpoint-3xl: 2000px;
 	--breakpoint-4xl: 2400px;

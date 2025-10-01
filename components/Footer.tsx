@@ -5,6 +5,7 @@ import {FooterData} from "@/types/interfaces";
 import Link from "next/link";
 import DynamicIcon from "@/lib/dynamicIcon";
 import Markdown from "@/components/Markdown";
+import {ReactNode} from "react";
 
 export default function Footer({data}:{data:FooterData}) {
 
@@ -86,7 +87,7 @@ export default function Footer({data}:{data:FooterData}) {
 	)
 }
 
-function FooterBox({name, children}: { name: string, children: React.ReactNode; }) {
+function FooterBox({name, children}: { name: string, children: ReactNode; }) {
 	return (
 		<div className="flex flex-col gap-2 max-w-80 px-5 py-3 w-full h-full">
 			<h1 className="flex text-2xl font-bold">{name}</h1>

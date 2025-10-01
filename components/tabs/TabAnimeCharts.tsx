@@ -7,17 +7,19 @@ import Combobox from "@/components/ui/combobox";
 import * as React from "react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import ChartWatchByDayOfWeek from "@/components/charts/ChartWatchByDayOfWeek";
-import ChartAnimeCount from "@/components/charts/ChartAnimeCount";
+import ChartAnimeWatchStatus from "@/components/charts/ChartAnimeWatchStatus";
 import ChartAnimeScores from "@/components/charts/ChartAnimeScores";
 import ChartAnimeGenres from "@/components/charts/ChartAnimeGenres";
 import ChartBestOfTheSeason from "@/components/charts/ChartBestOfTheSeason";
+import ChartStudioWatchCount from "@/components/charts/ChartStudioWatchCount";
+import ChartNSFWAnalysis from "@/components/charts/ChartNSFWAnalysis";
+import ChartAnimeYearPreference from "@/components/charts/ChartAnimeYearPreference";
+import {useMemo, useState} from "react";
 
 export default function TabAnimeCharts({ animeData }: { animeData: AnimeEntry[]}) {
-	const [selectedYear, setSelectedYear] = React.useState<string>(
-		new Date().getFullYear().toString()
-	)
+	const [selectedYear, setSelectedYear] = useState<string>("all")
 
-	const availableYears = React.useMemo(() => {
+	const availableYears = useMemo(() => {
 		const yearsSet = new Set<number>()
 
 		for (const anime of animeData) {
@@ -62,15 +64,20 @@ export default function TabAnimeCharts({ animeData }: { animeData: AnimeEntry[]}
 			<ChartBestOfTheSeason selectedYear={selectedYear} chartData={animeData}/>
 
 			<div className="flex flex-col sm:flex-row gap-5">
-				<ChartAnimeCount selectedYear={selectedYear} chartData={animeData}/>
+				<ChartAnimeWatchStatus selectedYear={selectedYear} chartData={animeData}/>
 				<ChartAnimeScores selectedYear={selectedYear} chartData={animeData}/>
+				<ChartNSFWAnalysis selectedYear={selectedYear} chartData={animeData}/>
+				<ChartAnimeYearPreference selectedYear={selectedYear} chartData={animeData}/>
 			</div>
-
-			<ChartAnimeGenres selectedYear={selectedYear} chartData={animeData}/>
 
 			<div className="flex flex-col lg:flex-row gap-5 w-full">
 				<ChartWatchByMonth selectedYear={selectedYear} chartData={latestCompleted}/>
 				<ChartWatchByDayOfWeek selectedYear={selectedYear} chartData={latestCompleted}/>
+			</div>
+
+			<div className="flex flex-col lg:flex-row gap-5 w-full">
+				<ChartAnimeGenres selectedYear={selectedYear} chartData={animeData}/>
+				<ChartStudioWatchCount selectedYear={selectedYear} chartData={animeData}/>
 			</div>
 		</div>
 	);

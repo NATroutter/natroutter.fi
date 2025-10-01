@@ -1,105 +1,89 @@
 "use client"
 
-import {Pie, PieChart} from "recharts"
+import { Label, Pie, PieChart } from "recharts"
 
-import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
-import {ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card"
+import {
+	ChartConfig,
+	ChartContainer,
+	ChartLegend,
+	ChartLegendContent,
+	ChartTooltip,
+	ChartTooltipContent,
+} from "@/components/ui/chart"
 import * as React from "react"
-import {useMemo} from "react"
-import {AnimeEntry, formatScore} from "@/types/animeData"
+import { AnimeEntry } from "@/types/animeData"
+import {useMemo} from "react";
 
 const chartConfig: ChartConfig = {
-	score_10: {
-		label: formatScore(10),
+	white: {
+		label: "Safe for Work",
 		color: "var(--chart-1)",
 	},
-	score_9: {
-		label: formatScore(9),
+	gray: {
+		label: "Questionable",
 		color: "var(--chart-2)",
 	},
-	score_8: {
-		label: formatScore(8),
+	black: {
+		label: "Not Safe for Work",
 		color: "var(--chart-3)",
-	},
-	score_7: {
-		label: formatScore(7),
-		color: "var(--chart-4)",
-	},
-	score_6: {
-		label: formatScore(6),
-		color: "var(--chart-5)",
-	},
-	score_5: {
-		label: formatScore(5),
-		color: "var(--chart-6)",
-	},
-	score_4: {
-		label: formatScore(4),
-		color: "var(--chart-7)",
-	},
-	score_3: {
-		label: formatScore(3),
-		color: "var(--chart-8)",
-	},
-	score_2: {
-		label: formatScore(2),
-		color: "var(--chart-9)",
-	},
-	score_1: {
-		label: formatScore(1),
-		color: "var(--chart-10)",
 	},
 } satisfies ChartConfig
 
-interface ChartAnimeScoresProps {
+interface ChartNSFWProps {
 	selectedYear: string
 	chartData: AnimeEntry[]
 }
 
-export default function ChartAnimeScores({
+export default function ChartNSFWAnalysis({
 	selectedYear,
 	chartData
-}: ChartAnimeScoresProps) {
-	const scoreCounts = useMemo(() => {
+}: ChartNSFWProps) {
+	const nsfwCounts = useMemo(() => {
 		const isAllYears = selectedYear === "all"
 		const year = Number(selectedYear)
-		const counts: Record<number, number> = {}
+		const counts: Record<string, number> = {}
 
 		for (const entry of chartData) {
-			const score = entry.list_status?.score
-			if (!score || score < 1 || score > 10) continue
+			const nsfw = entry.node.nsfw
+			if (!nsfw || !['white', 'gray', 'black'].includes(nsfw)) continue
 
 			if (!isAllYears) {
-				const entryYear = new Date(entry.list_status.updated_at).getFullYear()
+				const entryYear = new Date(entry.list_status?.updated_at).getFullYear()
 				if (entryYear !== year) continue
 			}
 
-			counts[score] = (counts[score] || 0) + 1
+			counts[nsfw] = (counts[nsfw] || 0) + 1
 		}
 
 		return counts
 	}, [chartData, selectedYear])
 
 	const pieChartData = useMemo(() => {
-		return Object.entries(scoreCounts)
-			.map(([score, count]) => ({
-				score: `score_${score}`,
-				scoreValue: Number(score),
+		return Object.entries(nsfwCounts)
+			.map(([nsfw, count]) => ({
+				nsfw,
 				count,
-				fill: chartConfig[`score_${score}` as keyof typeof chartConfig].color,
+				fill: chartConfig[nsfw as keyof typeof chartConfig].color,
 			}))
-			.sort((a, b) => b.scoreValue - a.scoreValue) // Sort by score descending
-	}, [scoreCounts])
+			.sort((a, b) => b.count - a.count) // Sort by count descending
+	}, [nsfwCounts])
 
 	return (
 		<Card className="flex flex-col aspect-square mx-auto w-full max-h-[400px]">
 			<CardHeader className="flex flex-col items-stretch border-b border-card2-b p-0! sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
-					<CardTitle>Anime Score Distribution</CardTitle>
+					<CardTitle>NSFW Tag Analysis</CardTitle>
 					<CardDescription>
 						{selectedYear === "all"
-							? "Distribution of anime by score across all years."
-							: `Distribution of anime by score in ${selectedYear}.`
+							? "Distribution of anime by NSFW tag across all years."
+							: `Distribution of anime by NSFW tag in ${selectedYear}.`
 						}
 					</CardDescription>
 				</div>
@@ -134,14 +118,14 @@ export default function ChartAnimeScores({
 						<Pie
 							data={pieChartData}
 							dataKey="count"
-							nameKey="score"
+							nameKey="nsfw"
 							outerRadius={90}
 							strokeWidth={1}
-							stroke="0"
 							label
-						/>
+						>
+						</Pie>
 						<ChartLegend
-							content={<ChartLegendContent nameKey="score" />}
+							content={<ChartLegendContent nameKey="nsfw" />}
 							className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center text-nowrap"
 						/>
 					</PieChart>

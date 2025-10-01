@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import {getFooterData, getNavigatorData} from "@/lib/database";
 import Script from 'next/script'
 import ServerError from "@/components/errors/ServerError";
+import {ReactNode} from "react";
 
 const montserrat = Montserrat({
     variable: "--font-montserrat",
@@ -74,7 +75,7 @@ export const viewport: Viewport = {
     themeColor: '#bb2e3a',
 }
 
-export default async function RootLayout({children}: Readonly<{ children: React.ReactNode; }>) {
+export default async function RootLayout({children}: Readonly<{ children: ReactNode; }>) {
     const NavData = await getNavigatorData();
     const footerData = await getFooterData();
 

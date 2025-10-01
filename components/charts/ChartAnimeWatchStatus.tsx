@@ -6,6 +6,7 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/comp
 import {ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
 import * as React from "react";
 import {AnimeEntry} from "@/types/animeData";
+import {useMemo} from "react";
 
 export const description = "A pie chart showing anime watch status distribution"
 
@@ -35,9 +36,9 @@ const chartConfig = {
 	},
 } satisfies ChartConfig
 
-export default function ChartAnimeCount({ selectedYear, chartData }: { selectedYear: string, chartData: AnimeEntry[] }) {
+export default function ChartAnimeWatchStatus({ selectedYear, chartData }: { selectedYear: string, chartData: AnimeEntry[] }) {
 	// Filter data by year if not "all"
-	const filteredData = React.useMemo(() => {
+	const filteredData = useMemo(() => {
 		if (selectedYear === "all") {
 			return chartData;
 		}
@@ -49,7 +50,7 @@ export default function ChartAnimeCount({ selectedYear, chartData }: { selectedY
 	}, [chartData, selectedYear]);
 
 	// Count anime by status
-	const statusCounts = React.useMemo(() => {
+	const statusCounts = useMemo(() => {
 		const counts = {
 			plan_to_watch: 0,
 			watching: 0,
@@ -77,8 +78,6 @@ export default function ChartAnimeCount({ selectedYear, chartData }: { selectedY
 		{ status: "dropped", count: statusCounts.dropped, fill: "var(--chart-5)" },
 	].filter(item => item.count > 0); // Only show statuses with count > 0
 
-	const totalAnime = Object.values(statusCounts).reduce((sum, count) => sum + count, 0);
-
 	return (
 		<Card className="flex flex-col aspect-square mx-auto w-full max-h-[400px]">
 		{/*// <Card className="flex flex-col">*/}
@@ -99,44 +98,35 @@ export default function ChartAnimeCount({ selectedYear, chartData }: { selectedY
 					className="mx-auto aspect-square max-h-[300px]"
 				>
 					<PieChart className="p-0">
-						<ChartTooltip content={<ChartTooltipContent hideLabel />} />
+						<ChartTooltip
+							content={
+								<ChartTooltipContent
+									hideLabel
+									className="w-[180px]"
+									formatter={(value, name) => (
+										<>
+											<div
+												className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
+												style={{ "--color-bg": `var(--color-${name})`,} as React.CSSProperties}
+											/>
+											{chartConfig[name as keyof typeof chartConfig]?.label || name}
+											<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
+												{value}
+											</div>
+										</>
+									)}
+								/>
+							}
+							cursor={false}
+						/>
 						<Pie
 							data={pieChartData}
 							dataKey="count"
 							nameKey="status"
-							innerRadius={60}
 							outerRadius={90}
 							strokeWidth={1}
+							label
 						>
-							<Label
-								content={({ viewBox }) => {
-									if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-										return (
-											<text
-												x={viewBox.cx}
-												y={viewBox.cy}
-												textAnchor="middle"
-												dominantBaseline="middle"
-											>
-												<tspan
-													x={viewBox.cx}
-													y={viewBox.cy}
-													className="fill-foreground text-3xl font-bold"
-												>
-													{totalAnime.toLocaleString()}
-												</tspan>
-												<tspan
-													x={viewBox.cx}
-													y={(viewBox.cy || 0) + 24}
-													className="fill-muted-foreground"
-												>
-													Total Anime
-												</tspan>
-											</text>
-										)
-									}
-								}}
-							/>
 						</Pie>
 						<ChartLegend
 							content={<ChartLegendContent nameKey="status" />}

@@ -5,6 +5,7 @@ import {getTopRatedAnimePerSeason, Season} from "@/lib/seasonalAnimeUtils";
 import Image from "next/image";
 import * as React from "react";
 import {AnimeEntry} from "@/types/animeData";
+import {AnimeDialog} from "@/components/AnimeDialog";
 
 interface ChartAnimeScoresProps {
 	selectedYear: string
@@ -28,7 +29,8 @@ export default function ChartBestOfTheSeason({ selectedYear, chartData }: ChartA
 				</div>
 			</CardHeader>
 			<CardContent className="px-2 p-6">
-				<div className="flex justify-between gap-4 w-full">
+				{/*TODO fix positioning center the items (tailwind autocomplete broken so this is still not done....)*/}
+				<div className="gap-4 w-full c grid mx-auto grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
 					{topAnimePerSeason.map((item, index) => {
 						const seasons: Season[] = ["Winter", "Spring", "Summer", "Fall"]
 						const season = seasons[index]
@@ -37,7 +39,7 @@ export default function ChartBestOfTheSeason({ selectedYear, chartData }: ChartA
 							return (
 								<div
 									key={season}
-									className="flex flex-col bg-card2/80 p-4 gap-3 rounded-2xl opacity-50 flex-1 max-w-[280px]"
+									className="flex flex-col bg-card2/80 p-4 gap-3 rounded-2xl opacity-50 flex-1 max-w-[280px] hover:scale-105 transition-transform duration-300 ease-in-out"
 								>
 									<h1 className="text-2xl font-bold text-center">{season}</h1>
 									<div className="relative w-full aspect-[2/3] overflow-hidden rounded-xl bg-muted flex items-center justify-center">
@@ -51,29 +53,30 @@ export default function ChartBestOfTheSeason({ selectedYear, chartData }: ChartA
 						}
 
 						return (
-							<div
-								key={`${item.season}-${item.year}`}
-								className="flex flex-col bg-card2 p-4 gap-3 rounded-2xl flex-1 max-w-[280px]"
-							>
-								<h1 className="text-2xl font-bold text-center">{item.season}</h1>
+							<AnimeDialog key={`${item.season}-${item.year}`} data={item.anime}>
+								<div
+									className="flex flex-col bg-card2 p-4 gap-3 rounded-2xl flex-1 max-w-[280px] hover:scale-105 transition-transform duration-300 ease-in-out"
+								>
+									<h1 className="text-2xl font-bold text-center">{item.season}</h1>
 
-								<div className="relative w-full aspect-[2/3] overflow-hidden rounded-xl shadow-2xl">
-									<Image
-										className="object-cover"
-										src={item.anime.node.main_picture.medium}
-										alt={item.anime.node.title}
-										fill
-										sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-									/>
+									<div className="relative w-full aspect-[2/3] overflow-hidden rounded-xl shadow-2xl">
+										<Image
+											className="object-cover"
+											src={item.anime.node.main_picture.medium}
+											alt={item.anime.node.title}
+											fill
+											sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+										/>
+									</div>
+
+									<h2 className="text-lg font-medium line-clamp-2 text-center">
+										{item.anime.node.title}
+									</h2>
+									<p className="text-sm text-muted-foreground text-center">
+										Score: {item.anime.list_status.score}
+									</p>
 								</div>
-
-								<h2 className="text-lg font-medium line-clamp-2 text-center">
-									{item.anime.node.title}
-								</h2>
-								<p className="text-sm text-muted-foreground text-center">
-									Score: {item.anime.list_status.score}
-								</p>
-							</div>
+							</AnimeDialog>
 						)
 					})}
 				</div>

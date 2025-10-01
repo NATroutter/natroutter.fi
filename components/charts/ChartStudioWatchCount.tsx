@@ -19,64 +19,61 @@ import {
 import { AnimeEntry } from "@/types/animeData"
 import {useMemo} from "react";
 
-type GenreData = {
-	genre: string
+type StudioData = {
+	studio: string
 	count: number
 }
 
 const chartConfig: ChartConfig = {
 	count: {
 		label: "Watched",
-		color: "var(--chart-3)",
+		color: "var(--chart-2)",
 	},
 } satisfies ChartConfig
 
-interface ChartAnimeGenresProps {
+interface ChartStudioWatchCountProps {
 	selectedYear: string
 	chartData: AnimeEntry[]
 }
 
-export default function ChartAnimeGenres({
+export default function ChartStudioWatchCount({
 	selectedYear,
 	chartData
-}: ChartAnimeGenresProps) {
-	const genreData: GenreData[] = useMemo(() => {
+}: ChartStudioWatchCountProps) {
+	const studioData: StudioData[] = useMemo(() => {
 		const isAllYears = selectedYear === "all"
 		const year = Number(selectedYear)
 		const counts: Record<string, number> = {}
 
 		for (const entry of chartData) {
-			const genres = entry.node?.genres
-			if (!genres || genres.length === 0) continue
+			const studios = entry.node?.studios
+			if (!studios || studios.length === 0) continue
 
 			if (!isAllYears) {
-				const updatedAt = entry.list_status?.updated_at
-				if (!updatedAt) continue
-
-				const entryYear = new Date(updatedAt).getFullYear()
+				const entryYear = new Date(entry.list_status?.updated_at).getFullYear()
 				if (entryYear !== year) continue
 			}
 
-			for (const genre of genres) {
-				counts[genre.name] = (counts[genre.name] || 0) + 1
+			for (const studio of studios) {
+				counts[studio.name] = (counts[studio.name] || 0) + 1
 			}
 		}
 
 		return Object.entries(counts)
-			.map(([genre, count]) => ({ genre, count }))
+			.map(([studio, count]) => ({ studio, count }))
 			.sort((a, b) => b.count - a.count)
-			.slice(0, 15) // Limit to top 15 genres for readability
+			.slice(0, 15) // Limit to top 15 studios for readability
 	}, [chartData, selectedYear])
 
 	return (
 		<Card className="py-0 w-full">
 			<CardHeader className="flex flex-col items-stretch border-b border-card2-b p-0! sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
-					<CardTitle>Most Watched Genres</CardTitle>
+					<CardTitle>Most Watched Studios</CardTitle>
 					<CardDescription>
 						{selectedYear === "all"
-							? "Top genres watched across all years."
-							: `Top genres watched in ${selectedYear}.`
+							? "Top studios watched across all years."
+							: `Top studios watched in ${selectedYear}.`
 						}
 					</CardDescription>
 				</div>
@@ -89,21 +86,22 @@ export default function ChartAnimeGenres({
 				>
 					<BarChart
 						accessibilityLayer
-						data={genreData}
+						data={studioData}
 						layout="vertical"
 						margin={{ left: 12, right: 12 }}
+
 					>
 						<CartesianGrid horizontal={false} />
 						<YAxis
-							dataKey="genre"
+							dataKey="studio"
 							type="category"
 							tickLine={false}
 							axisLine={false}
 							tickMargin={8}
-							width={75}
+							width={120}
 							hide
 						/>
-						<XAxis type="number" hide />
+						<XAxis type="number" hide/>
 						<ChartTooltip
 							content={
 								<ChartTooltipContent
@@ -115,7 +113,7 @@ export default function ChartAnimeGenres({
 						/>
 						<Bar dataKey="count" fill={chartConfig.count.color} radius={4}>
 							<LabelList
-								dataKey="genre"
+								dataKey="studio"
 								position="insideLeft"
 								offset={8}
 								className="fill-(--color-header) font-semibold"
