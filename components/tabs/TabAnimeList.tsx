@@ -29,7 +29,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import {AnimeEntry, formatMediaType, WATCH_STATUS_LABELS, WatchStatus} from "@/types/animeData"
+import {AnimeEntry, formatMediaType, formatSource, WATCH_STATUS_LABELS, WatchStatus} from "@/types/animeData"
 import Combobox from "@/components/ui/combobox"
 import { getCompleted, getDropped, getOnHold, getPlanToWatch, getWatching } from "@/lib/mal"
 import {AnimeDialog} from "@/components/AnimeDialog"
@@ -174,6 +174,26 @@ export default function TabAnimeList({ animeData }: TabAnimeListProps) {
 				return <div className="text-nowrap">{watched > 0 ? watched+" / "+total : ""}</div>
 			},
 		},
+		{
+			accessorFn: (row) => row.node.source,
+			id: "source",
+			header: ({ column }) => {
+				return (
+					<button
+						className="flex items-center hover:text-foreground"
+						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+					>
+						Source
+						<span className="ml-2">
+            {column.getIsSorted() === "asc" ? "↑" : column.getIsSorted() === "desc" ? "↓" : "↕"}
+          </span>
+					</button>
+				)
+			},
+			cell: ({ row }) => (
+				<div className="capitalize text-ellipsis">{formatSource(row.original.node.source)}</div>
+			),
+		},
 	], [])
 
 	const titleMap: Record<WatchStatus | "all", string> = {
@@ -239,8 +259,8 @@ export default function TabAnimeList({ animeData }: TabAnimeListProps) {
 	}, [searchValue, table])
 
 	return (
-		<Card className="w-full py-0">
-			<CardHeader className="flex flex-col items-stretch border-b border-card2-b p-0 sm:flex-row">
+		<Card className="w-full h-full py-0">
+			<CardHeader className="flex flex-col items-stretch border-b bg-card-header border-card-inner-border p-0 sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pb-3 pt-4">
 					<CardTitle>{titleMap[selectedList]}</CardTitle>
 					<CardDescription>
@@ -275,7 +295,7 @@ export default function TabAnimeList({ animeData }: TabAnimeListProps) {
 						/>
 					</div>
 				</div>
-				<div className="w-full overflow-hidden rounded-md border border-card2-b bg-card2">
+				<div className="w-full overflow-hidden rounded-md border border-card-inner-border bg-card2">
 					<Table>
 						<TableHeader>
 							{table.getHeaderGroups().map((headerGroup) => (

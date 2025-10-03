@@ -7,6 +7,7 @@ import {ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartToolt
 import * as React from "react"
 import {useMemo} from "react"
 import {AnimeEntry, formatScore} from "@/types/animeData"
+import {ChartSettings} from "@/components/ChartSettingsDialog";
 
 const chartConfig: ChartConfig = {
 	score_10: {
@@ -52,20 +53,20 @@ const chartConfig: ChartConfig = {
 } satisfies ChartConfig
 
 interface ChartAnimeScoresProps {
-	selectedYear: string
-	chartData: AnimeEntry[]
+	settings: ChartSettings
+	animeData: AnimeEntry[]
 }
 
 export default function ChartAnimeScores({
-	selectedYear,
-	chartData
+	settings,
+	animeData
 }: ChartAnimeScoresProps) {
-	const scoreCounts = useMemo(() => {
-		const isAllYears = selectedYear === "all"
-		const year = Number(selectedYear)
+	const chartData = useMemo(() => {
+		const isAllYears = settings.viewingYear === "all"
+		const year = Number(settings.viewingYear)
 		const counts: Record<number, number> = {}
 
-		for (const entry of chartData) {
+		for (const entry of animeData) {
 			const score = entry.list_status?.score
 			if (!score || score < 1 || score > 10) continue
 
@@ -77,29 +78,27 @@ export default function ChartAnimeScores({
 			counts[score] = (counts[score] || 0) + 1
 		}
 
-		return counts
-	}, [chartData, selectedYear])
-
-	const pieChartData = useMemo(() => {
-		return Object.entries(scoreCounts)
+		const totalCount = Object.values(counts).reduce((sum, count) => sum + count, 0)
+		return Object.entries(counts)
 			.map(([score, count]) => ({
 				score: `score_${score}`,
 				scoreValue: Number(score),
 				count,
+				percentage: totalCount > 0 ? parseFloat(((count / totalCount) * 100).toFixed(1)) : 0,
 				fill: chartConfig[`score_${score}` as keyof typeof chartConfig].color,
 			}))
 			.sort((a, b) => b.scoreValue - a.scoreValue) // Sort by score descending
-	}, [scoreCounts])
+	}, [animeData, settings])
 
 	return (
-		<Card className="flex flex-col aspect-square mx-auto w-full max-h-[400px]">
-			<CardHeader className="flex flex-col items-stretch border-b border-card2-b p-0! sm:flex-row">
+		<Card className="flex flex-col mx-auto w-full h-full max-h-[400px] shadow-xl">
+			<CardHeader className="flex flex-col items-stretch border-b bg-card-header border-card-inner-border p-0! sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
 					<CardTitle>Anime Score Distribution</CardTitle>
 					<CardDescription>
-						{selectedYear === "all"
+						{settings.viewingYear === "all"
 							? "Distribution of anime by score across all years."
-							: `Distribution of anime by score in ${selectedYear}.`
+							: `Distribution of anime by score in ${settings.viewingYear}.`
 						}
 					</CardDescription>
 				</div>
@@ -115,15 +114,28 @@ export default function ChartAnimeScores({
 								<ChartTooltipContent
 									hideLabel
 									className="w-[180px]"
-									formatter={(value, name) => (
+									formatter={(value, name, item) => (
 										<>
 											<div
 												className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
-												style={{ "--color-bg": `var(--color-${name})`,} as React.CSSProperties}
+												style={
+													{
+														"--color-bg": `var(--color-${name})`,
+													} as React.CSSProperties
+												}
 											/>
-											{chartConfig[name as keyof typeof chartConfig]?.label || name}
+											{chartConfig[name as keyof typeof chartConfig]?.label ||
+												name}
 											<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
 												{value}
+											</div>
+											{/* Add this after the last item */}
+											<div className="mt-1.5 flex basis-full items-center border-t pt-1.5 text-xs font-medium">
+												Percentage
+												<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
+													{item.payload.percentage}
+													<span className="text-muted-foreground font-normal">%</span>
+												</div>
 											</div>
 										</>
 									)}
@@ -132,7 +144,7 @@ export default function ChartAnimeScores({
 							cursor={false}
 						/>
 						<Pie
-							data={pieChartData}
+							data={chartData}
 							dataKey="count"
 							nameKey="score"
 							outerRadius={90}

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis} from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 
 import {
 	Card,
@@ -20,66 +20,82 @@ import { AnimeEntry } from "@/types/animeData"
 import {useMemo} from "react";
 import {ChartSettings} from "@/components/ChartSettingsDialog";
 
+type Month = {
+	short: string
+	full: string
+}
+
+const Labels: Month[] = [
+	{ short: "Jan", full: "January" },
+	{ short: "Feb", full: "February" },
+	{ short: "Mar", full: "March" },
+	{ short: "Apr", full: "April" },
+	{ short: "May", full: "May" },
+	{ short: "Jun", full: "June" },
+	{ short: "Jul", full: "July" },
+	{ short: "Aug", full: "August" },
+	{ short: "Sep", full: "September" },
+	{ short: "Oct", full: "October" },
+	{ short: "Nov", full: "November" },
+	{ short: "Dec", full: "December" }
+];
+
 const chartConfig: ChartConfig = {
 	count: {
-		label: "Watched",
-		color: "var(--chart-3)",
+		label: "Completed",
+		color: "var(--chart-4)",
 	},
 } satisfies ChartConfig
 
-interface ChartAnimeGenresProps {
+interface ChartAnimeUpdatesByMonthProps {
 	settings: ChartSettings
 	animeData: AnimeEntry[]
 }
 
-export default function ChartAnimeGenres({
-	settings,
-	animeData
-}: ChartAnimeGenresProps) {
+
+export default function ChartAnimeUpdatesByMonth({settings, animeData}: ChartAnimeUpdatesByMonthProps) {
 	const chartData = useMemo(() => {
 		const isAllYears = settings.viewingYear === "all"
 		const year = Number(settings.viewingYear)
-		const counts: Record<string, number> = {}
 
-		for (const entry of animeData) {
-			const genres = entry.node?.genres
-			if (!genres || genres.length === 0) continue
+		const monthArr = Array(12).fill(0)
+
+		animeData.forEach((entry) => {
+
+			const updatedAt = entry.list_status?.updated_at
+			if (!updatedAt) return
+
+			const date = new Date(updatedAt)
 
 			if (!isAllYears) {
-				const updatedAt = entry.list_status?.updated_at
-				if (!updatedAt) continue
-
-				const entryYear = new Date(updatedAt).getFullYear()
-				if (entryYear !== year) continue
+				const startYear = date.getFullYear()
+				if (startYear !== year) return
 			}
 
-			for (const genre of genres) {
-				counts[genre.name] = (counts[genre.name] || 0) + 1
-			}
-		}
+			monthArr[date.getMonth()]++
+		})
 
-		const totalCount = Object.values(counts).reduce((sum, count) => sum + count, 0)
+		const totalCount = monthArr.reduce((sum, count) => sum + count, 0)
 
-		return Object.entries(counts)
-			.map(([genre, count]) => ({
-				genre,
+		return monthArr
+			.map((count, index) => ({
+				month: Labels[index].short,
+				fullMonth: Labels[index].full,
 				count,
 				percentage: totalCount > 0 ? parseFloat(((count / totalCount) * 100).toFixed(1)) : 0,
 				fill: chartConfig.count.color,
 			}))
-			.sort((a, b) => b.count - a.count)
-			.slice(0,20)
 	}, [animeData, settings])
 
 	return (
 		<Card className="py-0 w-full shadow-xl">
 			<CardHeader className="flex flex-col items-stretch border-b bg-card-header border-card-inner-border p-0! sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
-					<CardTitle>Top-20 Most Watched Genres</CardTitle>
+					<CardTitle>Anime Updates by Month</CardTitle>
 					<CardDescription>
 						{settings.viewingYear === "all"
-							? "Genres watched across all years."
-							: `Genres watched in ${settings.viewingYear}.`
+							? "Amount of Anime list updates I made each month across all years."
+							: `Amount of Anime list updates I made each month in ${settings.viewingYear}.`
 						}
 					</CardDescription>
 				</div>
@@ -88,25 +104,21 @@ export default function ChartAnimeGenres({
 			<CardContent className="px-2 p-6">
 				<ChartContainer
 					config={chartConfig}
-					className="aspect-auto h-[400px] w-full"
+					className="aspect-auto h-[250px] w-full"
 				>
 					<BarChart
 						accessibilityLayer
 						data={chartData}
-						layout="vertical"
 						margin={{ left: 12, right: 12 }}
 					>
-						<CartesianGrid horizontal={false} />
-						<YAxis
-							dataKey="genre"
-							type="category"
+						<CartesianGrid vertical={false} />
+						<XAxis
+							dataKey="month"
 							tickLine={false}
 							axisLine={false}
 							tickMargin={8}
-							width={120}
-							interval={0}
+							minTickGap={16}
 						/>
-						<XAxis type="number" hide />
 						<ChartTooltip
 							content={
 								<ChartTooltipContent
@@ -116,12 +128,13 @@ export default function ChartAnimeGenres({
 										<>
 											<div
 												className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
-												style={{"--color-bg": chartConfig.count.color,} as React.CSSProperties}
+												style={{"--color-bg": chartConfig.count.color} as React.CSSProperties}
 											/>
-											{item.payload.genre}
+											{item.payload.fullMonth}
 											<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
 												{value}
 											</div>
+											{/* Add this after the last item */}
 											<div className="mt-1.5 flex basis-full items-center border-t pt-1.5 text-xs font-medium">
 												Percentage
 												<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
@@ -134,9 +147,7 @@ export default function ChartAnimeGenres({
 								/>
 							}
 						/>
-						<Bar dataKey="count" fill={chartConfig.count.color} radius={4}>
-
-						</Bar>
+						<Bar dataKey="count" fill={chartConfig.count.color} />
 					</BarChart>
 				</ChartContainer>
 			</CardContent>

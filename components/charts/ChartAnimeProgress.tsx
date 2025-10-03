@@ -5,98 +5,112 @@ import {Pie, PieChart} from "recharts"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
 import {ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
 import * as React from "react"
+import {useMemo} from "react"
 import {AnimeEntry} from "@/types/animeData"
 import {ChartSettings} from "@/components/ChartSettingsDialog";
 
 const chartConfig: ChartConfig = {
-	older: {
-		label: "Before 2000",
+	notStarted: {
+		label: "(0%)",
 		color: "var(--chart-1)",
 	},
-	mid_2000s: {
-		label: "2000 - 2010",
+	justStarted: {
+		label: "(<25%)",
 		color: "var(--chart-2)",
 	},
-	mid_2010s: {
-		label: "2010 - 2020",
+	halfWay: {
+		label: "(25-50%)",
 		color: "var(--chart-3)",
 	},
-	recent: {
-		label: "2020+",
+	mostlyDone: {
+		label: "(50-75%)",
 		color: "var(--chart-4)",
+	},
+	almostComplete: {
+		label: "(75-99%)",
+		color: "var(--chart-5)",
+	},
+	completed: {
+		label: "(100%)",
+		color: "var(--chart-6)",
 	},
 } satisfies ChartConfig
 
-interface ChartAnimePreferenceProps {
+interface ChartProgressBreakdownProps {
 	settings: ChartSettings
 	animeData: AnimeEntry[]
 }
 
-export default function ChartAnimeYearPreference({
+export default function ChartAnimeProgress({
 	settings,
 	animeData
-}: ChartAnimePreferenceProps) {
-	const chartData = React.useMemo(() => {
+}: ChartProgressBreakdownProps) {
+	const chartData = useMemo(() => {
 		const isAllYears = settings.viewingYear === "all"
 		const year = Number(settings.viewingYear)
 		const counts: Record<string, number> = {
-			older: 0,
-			mid_2000s: 0,
-			mid_2010s: 0,
-			recent: 0
+			notStarted: 0,
+			justStarted: 0,
+			halfWay: 0,
+			mostlyDone: 0,
+			almostComplete: 0,
+			completed: 0,
 		}
 
 		for (const entry of animeData) {
-			// Skip entries that I have not watched yet
-			if (entry.list_status.status != "completed") continue;
-			// Skip entries without start_date
-			if (!entry.node.start_date) continue
+			const episodesWatched = entry.list_status.num_episodes_watched || 0
+			const totalEpisodes = entry.node.num_episodes || 0
 
-			const startDate = new Date(entry.node.start_date)
+			// Skip entries with unknown total episodes
+			if (totalEpisodes === 0) continue
 
-			// Only consider entries with valid dates
-			if (isNaN(startDate.getTime())) continue
-
-			// Apply year filter if not "all"
 			if (!isAllYears) {
-				const entryYear = new Date(entry.list_status.updated_at).getFullYear()
-				if (entryYear !== year) continue
+				const startYear = entry.node.start_date
+					? new Date(entry.node.start_date).getFullYear()
+					: null
+				if (startYear !== year) continue
 			}
 
-			const releaseYear = startDate.getFullYear()
+			// Calculate progress percentage
+			const progressPercent = (episodesWatched / totalEpisodes) * 100
 
-			// Categorize by release decade
-			if (releaseYear < 2000) {
-				counts.older += 1
-			} else if (releaseYear >= 2000 && releaseYear < 2010) {
-				counts.mid_2000s += 1
-			} else if (releaseYear >= 2010 && releaseYear < 2020) {
-				counts.mid_2010s += 1
+			if (progressPercent === 0) {
+				counts.notStarted++
+			} else if (progressPercent < 25) {
+				counts.justStarted++
+			} else if (progressPercent < 50) {
+				counts.halfWay++
+			} else if (progressPercent < 75) {
+				counts.mostlyDone++
+			} else if (progressPercent < 100) {
+				counts.almostComplete++
 			} else {
-				counts.recent += 1
+				counts.completed++
 			}
 		}
 
 		const totalCount = Object.values(counts).reduce((sum, count) => sum + count, 0)
+
 		return Object.entries(counts)
-			.map(([category, count]) => ({
-				category,
+			.map(([progress, count]) => ({
+				progress,
 				count,
 				percentage: totalCount > 0 ? parseFloat(((count / totalCount) * 100).toFixed(1)) : 0,
-				fill: chartConfig[category as keyof typeof chartConfig].color,
+				fill: chartConfig[progress as keyof typeof chartConfig].color,
 			}))
 			.filter(item => item.count > 0) // Only show categories with data
+			.sort((a, b) => b.count - a.count) // Sort by count descending
 	}, [animeData, settings])
 
 	return (
 		<Card className="flex flex-col mx-auto w-full h-full max-h-[400px] shadow-xl">
 			<CardHeader className="flex flex-col items-stretch border-b bg-card-header border-card-inner-border p-0! sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
-					<CardTitle>New vs. Old Anime Preference</CardTitle>
+					<CardTitle>Progress Breakdown</CardTitle>
 					<CardDescription>
 						{settings.viewingYear === "all"
-							? "Distribution of anime by release year across all years."
-							: `Distribution of anime by release year in ${settings.viewingYear}.`
+							? "Distribution of anime by watch progress across all years."
+							: `Distribution of anime by watch progress for ${settings.viewingYear}.`
 						}
 					</CardDescription>
 				</div>
@@ -144,14 +158,14 @@ export default function ChartAnimeYearPreference({
 						<Pie
 							data={chartData}
 							dataKey="count"
-							nameKey="category"
+							nameKey="progress"
 							outerRadius={90}
 							strokeWidth={1}
 							label
 						>
 						</Pie>
 						<ChartLegend
-							content={<ChartLegendContent nameKey="category" />}
+							content={<ChartLegendContent nameKey="progress" />}
 							className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center text-nowrap"
 						/>
 					</PieChart>

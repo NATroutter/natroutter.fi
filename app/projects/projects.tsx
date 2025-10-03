@@ -21,7 +21,7 @@ export default function Projects({data} : {data : ProjectPage[]}) {
 
 	return(
 		<div className="flex flex-col justify-center gap-10 m-auto w-full p-6 py-10">
-			<div className="p-4 gap-10 w-full max-w-[90vw] 3xl:w-640 grid self-center place-items-center grid-cols-1 lg:grid-cols-2 xl+:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6">
+			<div className="p-4 gap-10 w-full max-w-[90vw] 2xl:w-640 grid self-center place-items-center grid-cols-1 lg:grid-cols-2 xxl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6">
 				{data.map((entry, index) => (
 					<Dialog key={index}>
 						<DialogTrigger data-umami-event={`[PROJECTS] Expand (${entry.name})`}>
@@ -29,7 +29,7 @@ export default function Projects({data} : {data : ProjectPage[]}) {
 								<div className="hover:scale-105 transition-transform duration-300 ease-in-out">
 									<div className="bg-card m-5 mb-5 rounded-sm shadow-nav">
 										<Image
-											className="aspect-square w-full min-w-100 max-w-100 m-auto bg-card2"
+											className="aspect-square w-full min-w-100 max-w-100 m-auto bg-card-inner"
 											src={entry.image}
 											alt={entry.name}
 											sizes="100vw"
@@ -50,7 +50,7 @@ export default function Projects({data} : {data : ProjectPage[]}) {
 								<div className="flex flex-col-reverse lg:flex-row gap-4 text-left">
 									<div className="flex flex-col min-w-full max-w-full w-full lg:min-w-[20rem] lg:max-w-[20rem] lg:w-[20rem]">
 										<Image
-											className="hidden lg:flex mx-auto w-[20rem] bg-card2"
+											className="hidden lg:flex mx-auto w-[20rem] bg-card-inner"
 											src={entry.image}
 											alt={entry.name}
 											sizes="100vw"
@@ -86,7 +86,7 @@ export default function Projects({data} : {data : ProjectPage[]}) {
 										</div>
 									</div>
 									<Image
-										className="flex lg:hidden mx-auto w-[20rem] bg-card2"
+										className="flex lg:hidden mx-auto w-[20rem] bg-card-inner"
 										src={entry.image}
 										alt={entry.name}
 										sizes="100vw"

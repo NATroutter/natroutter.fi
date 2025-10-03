@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/chart"
 import { AnimeEntry } from "@/types/animeData"
 import {useMemo} from "react";
+import {ChartSettings} from "@/components/ChartSettingsDialog";
 
 type StudioData = {
 	studio: string
@@ -32,20 +33,21 @@ const chartConfig: ChartConfig = {
 } satisfies ChartConfig
 
 interface ChartStudioWatchCountProps {
-	selectedYear: string
-	chartData: AnimeEntry[]
+	settings: ChartSettings
+	animeData: AnimeEntry[]
 }
 
-export default function ChartStudioWatchCount({
-	selectedYear,
-	chartData
+export default function ChartAnimeStudio({
+	settings,
+	animeData
 }: ChartStudioWatchCountProps) {
-	const studioData: StudioData[] = useMemo(() => {
-		const isAllYears = selectedYear === "all"
-		const year = Number(selectedYear)
+
+	const chartData = useMemo(() => {
+		const isAllYears = settings.viewingYear === "all"
+		const year = Number(settings.viewingYear)
 		const counts: Record<string, number> = {}
 
-		for (const entry of chartData) {
+		for (const entry of animeData) {
 			const studios = entry.node?.studios
 			if (!studios || studios.length === 0) continue
 
@@ -59,21 +61,29 @@ export default function ChartStudioWatchCount({
 			}
 		}
 
+		const totalCount = Object.values(counts).reduce((sum, count) => sum + count, 0)
+
 		return Object.entries(counts)
-			.map(([studio, count]) => ({ studio, count }))
+			.map(([studio, count]) => ({
+				studio,
+				count,
+				percentage: totalCount > 0 ? parseFloat(((count / totalCount) * 100).toFixed(1)) : 0,
+				fill: chartConfig.count.color,
+			}))
 			.sort((a, b) => b.count - a.count)
-			.slice(0, 15) // Limit to top 15 studios for readability
-	}, [chartData, selectedYear])
+			.slice(0,20)
+	}, [animeData, settings])
+
 
 	return (
-		<Card className="py-0 w-full">
-			<CardHeader className="flex flex-col items-stretch border-b border-card2-b p-0! sm:flex-row">
+		<Card className="py-0 w-full shadow-xl">
+			<CardHeader className="flex flex-col items-stretch border-b bg-card-header border-card-inner-border p-0! sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
-					<CardTitle>Most Watched Studios</CardTitle>
+					<CardTitle>Top-20 Most Watched Studios</CardTitle>
 					<CardDescription>
-						{selectedYear === "all"
-							? "Top studios watched across all years."
-							: `Top studios watched in ${selectedYear}.`
+						{settings.viewingYear === "all"
+							? "Studios watched across all years."
+							: `Studios watched in ${settings.viewingYear}.`
 						}
 					</CardDescription>
 				</div>
@@ -86,7 +96,7 @@ export default function ChartStudioWatchCount({
 				>
 					<BarChart
 						accessibilityLayer
-						data={studioData}
+						data={chartData}
 						layout="vertical"
 						margin={{ left: 12, right: 12 }}
 
@@ -99,33 +109,38 @@ export default function ChartStudioWatchCount({
 							axisLine={false}
 							tickMargin={8}
 							width={120}
-							hide
+							interval={0}
 						/>
 						<XAxis type="number" hide/>
 						<ChartTooltip
 							content={
 								<ChartTooltipContent
+									hideLabel
 									className="w-[180px]"
-									nameKey="count"
-									labelFormatter={(value) => `${value}`}
+									formatter={(value, name, item) => (
+										<>
+											<div
+												className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
+												style={{"--color-bg": chartConfig.count.color,} as React.CSSProperties}
+											/>
+											{item.payload.studio}
+											<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
+												{value}
+											</div>
+											<div className="mt-1.5 flex basis-full items-center border-t pt-1.5 text-xs font-medium">
+												Percentage
+												<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
+													{item.payload.percentage}
+													<span className="text-muted-foreground font-normal">%</span>
+												</div>
+											</div>
+										</>
+									)}
 								/>
 							}
 						/>
 						<Bar dataKey="count" fill={chartConfig.count.color} radius={4}>
-							<LabelList
-								dataKey="studio"
-								position="insideLeft"
-								offset={8}
-								className="fill-(--color-header) font-semibold"
-								fontSize={12}
-							/>
-							<LabelList
-								dataKey="count"
-								position="right"
-								offset={8}
-								className="fill-(--color-text)"
-								fontSize={12}
-							/>
+
 						</Bar>
 					</BarChart>
 				</ChartContainer>

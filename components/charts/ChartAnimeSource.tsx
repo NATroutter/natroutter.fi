@@ -1,49 +1,38 @@
 "use client"
 
 import * as React from "react"
-import {Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis} from "recharts"
+import {useMemo} from "react"
+import {Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts"
 
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card"
-import {
-	ChartConfig,
-	ChartContainer,
-	ChartTooltip,
-	ChartTooltipContent,
-} from "@/components/ui/chart"
-import { AnimeEntry } from "@/types/animeData"
-import {useMemo} from "react";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
+import {ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
+import {AnimeEntry, formatSource} from "@/types/animeData"
 import {ChartSettings} from "@/components/ChartSettingsDialog";
 
 const chartConfig: ChartConfig = {
 	count: {
 		label: "Watched",
-		color: "var(--chart-3)",
+		color: "var(--chart-8)",
 	},
 } satisfies ChartConfig
 
-interface ChartAnimeGenresProps {
+interface ChartAnimeSourceProps {
 	settings: ChartSettings
 	animeData: AnimeEntry[]
 }
 
-export default function ChartAnimeGenres({
+export default function ChartAnimeSource({
 	settings,
 	animeData
-}: ChartAnimeGenresProps) {
+}: ChartAnimeSourceProps) {
 	const chartData = useMemo(() => {
 		const isAllYears = settings.viewingYear === "all"
 		const year = Number(settings.viewingYear)
 		const counts: Record<string, number> = {}
 
 		for (const entry of animeData) {
-			const genres = entry.node?.genres
-			if (!genres || genres.length === 0) continue
+			const source = entry.node?.source
+			if (!source) continue
 
 			if (!isAllYears) {
 				const updatedAt = entry.list_status?.updated_at
@@ -53,33 +42,31 @@ export default function ChartAnimeGenres({
 				if (entryYear !== year) continue
 			}
 
-			for (const genre of genres) {
-				counts[genre.name] = (counts[genre.name] || 0) + 1
-			}
+			const formattedSource = formatSource(source)
+			counts[formattedSource] = (counts[formattedSource] || 0) + 1
 		}
 
 		const totalCount = Object.values(counts).reduce((sum, count) => sum + count, 0)
 
 		return Object.entries(counts)
-			.map(([genre, count]) => ({
-				genre,
+			.map(([source, count]) => ({
+				source,
 				count,
 				percentage: totalCount > 0 ? parseFloat(((count / totalCount) * 100).toFixed(1)) : 0,
 				fill: chartConfig.count.color,
 			}))
 			.sort((a, b) => b.count - a.count)
-			.slice(0,20)
 	}, [animeData, settings])
 
 	return (
 		<Card className="py-0 w-full shadow-xl">
 			<CardHeader className="flex flex-col items-stretch border-b bg-card-header border-card-inner-border p-0! sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
-					<CardTitle>Top-20 Most Watched Genres</CardTitle>
+					<CardTitle>Anime by Source Material</CardTitle>
 					<CardDescription>
 						{settings.viewingYear === "all"
-							? "Genres watched across all years."
-							: `Genres watched in ${settings.viewingYear}.`
+							? "Distribution of anime by source material across all years."
+							: `Distribution of anime by source material in ${settings.viewingYear}.`
 						}
 					</CardDescription>
 				</div>
@@ -98,13 +85,12 @@ export default function ChartAnimeGenres({
 					>
 						<CartesianGrid horizontal={false} />
 						<YAxis
-							dataKey="genre"
+							dataKey="source"
 							type="category"
 							tickLine={false}
 							axisLine={false}
 							tickMargin={8}
 							width={120}
-							interval={0}
 						/>
 						<XAxis type="number" hide />
 						<ChartTooltip
@@ -118,7 +104,7 @@ export default function ChartAnimeGenres({
 												className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
 												style={{"--color-bg": chartConfig.count.color,} as React.CSSProperties}
 											/>
-											{item.payload.genre}
+											{item.payload.source}
 											<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
 												{value}
 											</div>

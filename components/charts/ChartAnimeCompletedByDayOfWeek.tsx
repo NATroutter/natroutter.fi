@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis} from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 
 import {
 	Card,
@@ -20,66 +20,81 @@ import { AnimeEntry } from "@/types/animeData"
 import {useMemo} from "react";
 import {ChartSettings} from "@/components/ChartSettingsDialog";
 
+type Day = {
+	short: string
+	full: string
+}
+
+const Labels: Day[] = [
+	{ short: "Mon", full: "Monday" },
+	{ short: "Tue", full: "Tuesday" },
+	{ short: "Wed", full: "Wednesday" },
+	{ short: "Thu", full: "Thursday" },
+	{ short: "Fri", full: "Friday" },
+	{ short: "Sat", full: "Saturday" },
+	{ short: "Sun", full: "Sunday" }
+];
+
 const chartConfig: ChartConfig = {
 	count: {
-		label: "Watched",
-		color: "var(--chart-3)",
+		label: "Completed",
+		color: "var(--chart-7)",
 	},
 } satisfies ChartConfig
 
-interface ChartAnimeGenresProps {
+interface ChartAnimeCompletedByDayOfWeekProps {
 	settings: ChartSettings
 	animeData: AnimeEntry[]
 }
 
-export default function ChartAnimeGenres({
-	settings,
-	animeData
-}: ChartAnimeGenresProps) {
+
+export default function ChartAnimeCompletedByDayOfWeek({settings, animeData}: ChartAnimeCompletedByDayOfWeekProps) {
 	const chartData = useMemo(() => {
 		const isAllYears = settings.viewingYear === "all"
 		const year = Number(settings.viewingYear)
-		const counts: Record<string, number> = {}
 
-		for (const entry of animeData) {
-			const genres = entry.node?.genres
-			if (!genres || genres.length === 0) continue
+		const dayArr = Array(7).fill(0)
+
+
+		animeData.forEach((entry) => {
+			if (entry.list_status?.status !== "completed") return
+
+			const updatedAt = entry.list_status?.updated_at
+			if (!updatedAt) return
+
+			const date = new Date(updatedAt)
 
 			if (!isAllYears) {
-				const updatedAt = entry.list_status?.updated_at
-				if (!updatedAt) continue
-
-				const entryYear = new Date(updatedAt).getFullYear()
-				if (entryYear !== year) continue
+				const startYear = date.getFullYear()
+				if (startYear !== year) return
 			}
 
-			for (const genre of genres) {
-				counts[genre.name] = (counts[genre.name] || 0) + 1
-			}
-		}
+			const dayIndex = date.getDay()
+			const adjustedIndex = dayIndex === 0 ? 6 : dayIndex - 1
+			dayArr[adjustedIndex]++
+		})
 
-		const totalCount = Object.values(counts).reduce((sum, count) => sum + count, 0)
+		const totalCount = dayArr.reduce((sum, count) => sum + count, 0)
 
-		return Object.entries(counts)
-			.map(([genre, count]) => ({
-				genre,
+		return dayArr
+			.map((count, index) => ({
+				day: Labels[index].short,
+				fullDay: Labels[index].full,
 				count,
 				percentage: totalCount > 0 ? parseFloat(((count / totalCount) * 100).toFixed(1)) : 0,
 				fill: chartConfig.count.color,
 			}))
-			.sort((a, b) => b.count - a.count)
-			.slice(0,20)
 	}, [animeData, settings])
 
 	return (
 		<Card className="py-0 w-full shadow-xl">
 			<CardHeader className="flex flex-col items-stretch border-b bg-card-header border-card-inner-border p-0! sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
-					<CardTitle>Top-20 Most Watched Genres</CardTitle>
+					<CardTitle>Anime Completed by Day of Week</CardTitle>
 					<CardDescription>
 						{settings.viewingYear === "all"
-							? "Genres watched across all years."
-							: `Genres watched in ${settings.viewingYear}.`
+							? "Amount of Anime I completed each day of week across all years."
+							: `Amount of Anime I completed each day of week in ${settings.viewingYear}.`
 						}
 					</CardDescription>
 				</div>
@@ -88,25 +103,21 @@ export default function ChartAnimeGenres({
 			<CardContent className="px-2 p-6">
 				<ChartContainer
 					config={chartConfig}
-					className="aspect-auto h-[400px] w-full"
+					className="aspect-auto h-[250px] w-full"
 				>
 					<BarChart
 						accessibilityLayer
 						data={chartData}
-						layout="vertical"
 						margin={{ left: 12, right: 12 }}
 					>
-						<CartesianGrid horizontal={false} />
-						<YAxis
-							dataKey="genre"
-							type="category"
+						<CartesianGrid vertical={false} />
+						<XAxis
+							dataKey="day"
 							tickLine={false}
 							axisLine={false}
 							tickMargin={8}
-							width={120}
-							interval={0}
+							minTickGap={16}
 						/>
-						<XAxis type="number" hide />
 						<ChartTooltip
 							content={
 								<ChartTooltipContent
@@ -116,12 +127,13 @@ export default function ChartAnimeGenres({
 										<>
 											<div
 												className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
-												style={{"--color-bg": chartConfig.count.color,} as React.CSSProperties}
+												style={{"--color-bg": `blue`,} as React.CSSProperties}
 											/>
-											{item.payload.genre}
+											{item.payload.fullDay}
 											<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
 												{value}
 											</div>
+											{/* Add this after the last item */}
 											<div className="mt-1.5 flex basis-full items-center border-t pt-1.5 text-xs font-medium">
 												Percentage
 												<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
@@ -134,9 +146,7 @@ export default function ChartAnimeGenres({
 								/>
 							}
 						/>
-						<Bar dataKey="count" fill={chartConfig.count.color} radius={4}>
-
-						</Bar>
+						<Bar dataKey="count" fill="blue" />
 					</BarChart>
 				</ChartContainer>
 			</CardContent>

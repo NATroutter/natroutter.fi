@@ -16,7 +16,7 @@ export default function Links({ data }: { data: LinkPage[] }) {
 
 	return(
 		<div className="flex flex-col justify-center gap-10 m-auto w-full p-6">
-			<div className="p-4 gap-10 w-full max-w-[90vw] 3xl:w-640 grid self-center place-items-center grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 lg+:grid-cols-2 xl:grid-cols-2 xl+:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4 4xl:3xl:grid-cols-5">
+			<div className="p-4 gap-10 w-full max-w-[90vw] 2xl:w-640 grid self-center place-items-center grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 2lg:grid-cols-2 xl:grid-cols-2 xxl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4 4xl:3xl:grid-cols-5">
 
 				{data.map((entry, entryIndex) => (
 					<div key={entryIndex} className="flex flex-col w-full h-full bg-card m-5 p-2 rounded-sm shadow-nav">
@@ -26,7 +26,7 @@ export default function Links({ data }: { data: LinkPage[] }) {
 								  data-umami-event={`[LINKS] Link (${link.display_name})`}
 								  data-umami-event-url={link.url}
 								  className="flex p-1.5 m-3">
-								<div className="flex w-full h-full bg-card2 rounded-lg hover:scale-105 md:hover:scale-[1.02] lg+:hover:scale-105 transition-transform duration-300 ease-in-out">
+								<div className="flex w-full h-full bg-card-inner rounded-lg hover:scale-105 md:hover:scale-[1.02] 2lg:hover:scale-105 transition-transform duration-300 ease-in-out">
 									<div className="w-20 h-20 aspect-square my-auto">
 										<Image
 											className="h-full aspect-square w-full m-auto"

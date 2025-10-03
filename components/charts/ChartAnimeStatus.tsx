@@ -7,13 +7,11 @@ import {ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartToolt
 import * as React from "react";
 import {useMemo} from "react";
 import {AnimeEntry} from "@/types/animeData";
+import {ChartSettings} from "@/components/ChartSettingsDialog";
 
 export const description = "A pie chart showing anime watch status distribution"
 
 const chartConfig = {
-	total: {
-		label: "Total",
-	},
 	plan_to_watch: {
 		label: "Plan To Watch",
 		color: "var(--chart-1)",
@@ -36,58 +34,49 @@ const chartConfig = {
 	},
 } satisfies ChartConfig
 
-export default function ChartAnimeWatchStatus({ selectedYear, chartData }: { selectedYear: string, chartData: AnimeEntry[] }) {
-	// Filter data by year if not "all"
-	const filteredData = useMemo(() => {
-		if (selectedYear === "all") {
-			return chartData;
+export default function ChartAnimeStatus({ settings, animeData }: { settings: ChartSettings, animeData: AnimeEntry[] }) {
+	const chartData = useMemo(() => {
+		const isAllYears = settings.viewingYear === "all"
+		const year = Number(settings.viewingYear)
+		const counts: Record<string, number> = {}
+
+		for (const entry of animeData) {
+			const rating = entry.list_status.status
+			if (!rating) continue
+
+			if (!isAllYears) {
+				const updatedAt = entry.list_status?.updated_at
+				if (!updatedAt) continue
+
+				const entryYear = new Date(updatedAt).getFullYear()
+				if (entryYear !== year) continue
+			}
+
+			counts[rating] = (counts[rating] || 0) + 1
 		}
 
-		return chartData.filter(entry => {
-			const entryYear = new Date(entry.list_status.updated_at).getFullYear().toString();
-			return entryYear === selectedYear;
-		});
-	}, [chartData, selectedYear]);
+		const totalCount = Object.values(counts).reduce((sum, count) => sum + count, 0)
+		return Object.entries(counts)
+			.map(([status, count]) => ({
+				status,
+				count,
+				percentage: totalCount > 0 ? parseFloat(((count / totalCount) * 100).toFixed(1)) : 0,
+				fill: chartConfig[status as keyof typeof chartConfig].color,
+			}))
+			.sort((a, b) => b.count - a.count)
+	}, [animeData, settings])
 
-	// Count anime by status
-	const statusCounts = useMemo(() => {
-		const counts = {
-			plan_to_watch: 0,
-			watching: 0,
-			completed: 0,
-			on_hold: 0,
-			dropped: 0,
-		};
-
-		filteredData.forEach(entry => {
-			const status = entry.list_status.status;
-			if (status in counts) {
-				counts[status as keyof typeof counts]++;
-			}
-		});
-
-		return counts;
-	}, [filteredData]);
-
-	// Create chart data from counts
-	const pieChartData = [
-		{ status: "plan_to_watch", count: statusCounts.plan_to_watch, fill: "var(--chart-1)" },
-		{ status: "watching", count: statusCounts.watching, fill: "var(--chart-2)" },
-		{ status: "completed", count: statusCounts.completed, fill: "var(--chart-3)" },
-		{ status: "on_hold", count: statusCounts.on_hold, fill: "var(--chart-4)" },
-		{ status: "dropped", count: statusCounts.dropped, fill: "var(--chart-5)" },
-	].filter(item => item.count > 0); // Only show statuses with count > 0
 
 	return (
-		<Card className="flex flex-col aspect-square mx-auto w-full max-h-[400px]">
+		<Card className="flex flex-col mx-auto w-full h-full max-h-[400px] shadow-xl">
 		{/*// <Card className="flex flex-col">*/}
-			<CardHeader className="flex flex-col items-stretch border-b border-card2-b p-0! sm:flex-row">
+			<CardHeader className="flex flex-col items-stretch border-b bg-card-header border-card-inner-border p-0! sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
 					<CardTitle>Anime Watch Status Distribution</CardTitle>
 					<CardDescription>
-						{selectedYear === "all"
+						{settings.viewingYear === "all"
 							? "Distribution of anime by watch status across all years."
-							: `Distribution of anime by watch status in ${selectedYear}.`
+							: `Distribution of anime by watch status in ${settings.viewingYear}.`
 						}
 					</CardDescription>
 				</div>
@@ -103,15 +92,28 @@ export default function ChartAnimeWatchStatus({ selectedYear, chartData }: { sel
 								<ChartTooltipContent
 									hideLabel
 									className="w-[180px]"
-									formatter={(value, name) => (
+									formatter={(value, name, item) => (
 										<>
 											<div
 												className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
-												style={{ "--color-bg": `var(--color-${name})`,} as React.CSSProperties}
+												style={
+													{
+														"--color-bg": `var(--color-${name})`,
+													} as React.CSSProperties
+												}
 											/>
-											{chartConfig[name as keyof typeof chartConfig]?.label || name}
+											{chartConfig[name as keyof typeof chartConfig]?.label ||
+												name}
 											<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
 												{value}
+											</div>
+											{/* Add this after the last item */}
+											<div className="mt-1.5 flex basis-full items-center border-t pt-1.5 text-xs font-medium">
+												Percentage
+												<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
+													{item.payload.percentage}
+													<span className="text-muted-foreground font-normal">%</span>
+												</div>
 											</div>
 										</>
 									)}
@@ -120,7 +122,7 @@ export default function ChartAnimeWatchStatus({ selectedYear, chartData }: { sel
 							cursor={false}
 						/>
 						<Pie
-							data={pieChartData}
+							data={chartData}
 							dataKey="count"
 							nameKey="status"
 							outerRadius={90}

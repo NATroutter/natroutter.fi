@@ -1,6 +1,7 @@
 import type {Metadata, Viewport} from "next";
+// import "@/styles/markdown.css"; //TODO Fix enabling this breaks the tailwind auto complete system
 import "@/styles/globals.css";
-import "@/styles/markdown.css";
+
 
 import {Montserrat} from "next/font/google";
 
@@ -11,6 +12,7 @@ import {getFooterData, getNavigatorData} from "@/lib/database";
 import Script from 'next/script'
 import ServerError from "@/components/errors/ServerError";
 import {ReactNode} from "react";
+import {Toaster} from "@/components/ui/sonner";
 
 const montserrat = Montserrat({
     variable: "--font-montserrat",
@@ -90,11 +92,13 @@ export default async function RootLayout({children}: Readonly<{ children: ReactN
                         {/*mt-[7.5rem]*/}
                         {children}
                     </main>
+	                <Toaster />
                     <Footer data={footerData}/>
                 </>
             ) : (
                 <main className="flex flex-col grow justify-center m-auto text-center">
                     <ServerError/>
+	                <Toaster />
                 </main>
             )}
 

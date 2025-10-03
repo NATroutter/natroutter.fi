@@ -2,101 +2,89 @@
 
 import {Pie, PieChart} from "recharts"
 
-import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
-import {ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
+import {ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart"
 import * as React from "react"
+import {useMemo} from "react"
 import {AnimeEntry} from "@/types/animeData"
 import {ChartSettings} from "@/components/ChartSettingsDialog";
 
 const chartConfig: ChartConfig = {
-	older: {
-		label: "Before 2000",
+	g: {
+		label: "G",
 		color: "var(--chart-1)",
 	},
-	mid_2000s: {
-		label: "2000 - 2010",
+	pg: {
+		label: "PG",
 		color: "var(--chart-2)",
 	},
-	mid_2010s: {
-		label: "2010 - 2020",
+	pg_13: {
+		label: "PG-13",
 		color: "var(--chart-3)",
 	},
-	recent: {
-		label: "2020+",
+	r: {
+		label: "R",
 		color: "var(--chart-4)",
+	},
+	"r+": {
+		label: "R+",
+		color: "var(--chart-5)",
+	},
+	rx: {
+		label: "NC-17",
+		color: "var(--chart-6)",
 	},
 } satisfies ChartConfig
 
-interface ChartAnimePreferenceProps {
+interface ChartAnimeRatingsProps {
 	settings: ChartSettings
 	animeData: AnimeEntry[]
 }
 
-export default function ChartAnimeYearPreference({
+export default function ChartAnimeRatings({
 	settings,
 	animeData
-}: ChartAnimePreferenceProps) {
-	const chartData = React.useMemo(() => {
+}: ChartAnimeRatingsProps) {
+	const chartData = useMemo(() => {
 		const isAllYears = settings.viewingYear === "all"
 		const year = Number(settings.viewingYear)
-		const counts: Record<string, number> = {
-			older: 0,
-			mid_2000s: 0,
-			mid_2010s: 0,
-			recent: 0
-		}
+		const counts: Record<string, number> = {}
 
 		for (const entry of animeData) {
-			// Skip entries that I have not watched yet
-			if (entry.list_status.status != "completed") continue;
-			// Skip entries without start_date
-			if (!entry.node.start_date) continue
+			const rating = entry.node?.rating
+			if (!rating) continue
 
-			const startDate = new Date(entry.node.start_date)
-
-			// Only consider entries with valid dates
-			if (isNaN(startDate.getTime())) continue
-
-			// Apply year filter if not "all"
 			if (!isAllYears) {
-				const entryYear = new Date(entry.list_status.updated_at).getFullYear()
+				const updatedAt = entry.list_status?.updated_at
+				if (!updatedAt) continue
+
+				const entryYear = new Date(updatedAt).getFullYear()
 				if (entryYear !== year) continue
 			}
 
-			const releaseYear = startDate.getFullYear()
-
-			// Categorize by release decade
-			if (releaseYear < 2000) {
-				counts.older += 1
-			} else if (releaseYear >= 2000 && releaseYear < 2010) {
-				counts.mid_2000s += 1
-			} else if (releaseYear >= 2010 && releaseYear < 2020) {
-				counts.mid_2010s += 1
-			} else {
-				counts.recent += 1
-			}
+			counts[rating] = (counts[rating] || 0) + 1
 		}
 
 		const totalCount = Object.values(counts).reduce((sum, count) => sum + count, 0)
 		return Object.entries(counts)
-			.map(([category, count]) => ({
-				category,
+			.map(([rating, count]) => ({
+				rating,
 				count,
 				percentage: totalCount > 0 ? parseFloat(((count / totalCount) * 100).toFixed(1)) : 0,
-				fill: chartConfig[category as keyof typeof chartConfig].color,
+				fill: chartConfig[rating as keyof typeof chartConfig].color,
 			}))
-			.filter(item => item.count > 0) // Only show categories with data
+			.sort((a, b) => b.count - a.count)
 	}, [animeData, settings])
 
 	return (
 		<Card className="flex flex-col mx-auto w-full h-full max-h-[400px] shadow-xl">
 			<CardHeader className="flex flex-col items-stretch border-b bg-card-header border-card-inner-border p-0! sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
-					<CardTitle>New vs. Old Anime Preference</CardTitle>
+					<CardTitle>Age Rating Distribution</CardTitle>
 					<CardDescription>
 						{settings.viewingYear === "all"
-							? "Distribution of anime by release year across all years."
-							: `Distribution of anime by release year in ${settings.viewingYear}.`
+							? "Distribution of age ratings across all years."
+							: `Distribution of age ratings in ${settings.viewingYear}.`
 						}
 					</CardDescription>
 				</div>
@@ -144,14 +132,14 @@ export default function ChartAnimeYearPreference({
 						<Pie
 							data={chartData}
 							dataKey="count"
-							nameKey="category"
+							nameKey="rating"
 							outerRadius={90}
 							strokeWidth={1}
 							label
 						>
 						</Pie>
 						<ChartLegend
-							content={<ChartLegendContent nameKey="category" />}
+							content={<ChartLegendContent nameKey="rating" />}
 							className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center text-nowrap"
 						/>
 					</PieChart>

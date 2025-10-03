@@ -1,83 +1,66 @@
 'use client'
 
 import {AnimeEntry} from "@/types/animeData";
-import {getCompleted} from "@/lib/mal";
-import ChartWatchByMonth from "@/components/charts/ChartWatchByMonth";
+import ChartAnimeCompletedByMonth from "@/components/charts/ChartAnimeCompletedByMonth";
 import Combobox from "@/components/ui/combobox";
 import * as React from "react";
+import {useMemo, useState} from "react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import ChartWatchByDayOfWeek from "@/components/charts/ChartWatchByDayOfWeek";
-import ChartAnimeWatchStatus from "@/components/charts/ChartAnimeWatchStatus";
+import ChartAnimeCompletedByDayOfWeek from "@/components/charts/ChartAnimeCompletedByDayOfWeek";
+import ChartAnimeStatus from "@/components/charts/ChartAnimeStatus";
 import ChartAnimeScores from "@/components/charts/ChartAnimeScores";
 import ChartAnimeGenres from "@/components/charts/ChartAnimeGenres";
-import ChartBestOfTheSeason from "@/components/charts/ChartBestOfTheSeason";
-import ChartStudioWatchCount from "@/components/charts/ChartStudioWatchCount";
-import ChartNSFWAnalysis from "@/components/charts/ChartNSFWAnalysis";
+import ChartAnimeSeasonsBest from "@/components/charts/ChartAnimeSeasonsBest";
+import ChartAnimeStudio from "@/components/charts/ChartAnimeStudio";
+import ChartAnimeNsfw from "@/components/charts/ChartAnimeNsfw";
 import ChartAnimeYearPreference from "@/components/charts/ChartAnimeYearPreference";
-import {useMemo, useState} from "react";
+import ChartAnimeQuickStats from "@/components/charts/ChartAnimeQuickStats";
+import ChartAnimeRatings from "@/components/charts/ChartAnimeRatings";
+import ChartAnimeSource from "@/components/charts/ChartAnimeSource";
+import ChartAnimePopularity from "@/components/charts/ChartAnimePopularity";
+import ChartAnimeProgress from "@/components/charts/ChartAnimeProgress";
+import ChartAnimeSeason from "@/components/charts/ChartAnimeSeason";
+import ChartAnimeUpdatesByDayOfWeek from "@/components/charts/ChartAnimeUpdatesByDayOfWeek";
+import ChartAnimeUpdatesByMonth from "@/components/charts/ChartAnimeUpdatesByMonth";
+import {ChartSettings} from "@/components/ChartSettingsDialog";
 
-export default function TabAnimeCharts({ animeData }: { animeData: AnimeEntry[]}) {
-	const [selectedYear, setSelectedYear] = useState<string>("all")
-
-	const availableYears = useMemo(() => {
-		const yearsSet = new Set<number>()
-
-		for (const anime of animeData) {
-			const updatedAt = anime.list_status?.updated_at
-			if (!updatedAt) continue
-			const year = new Date(updatedAt).getFullYear()
-			yearsSet.add(year)
-		}
-		return ["All", ...Array.from(yearsSet).sort((a, b) => b - a)]
-	}, [animeData])
-
-	// const currentlyWatching = getWatching(animeData)
-	const latestCompleted = getCompleted(animeData);
-	// const latestPlanToWatch = getPlanToWatch(animeData);
+export default function TabAnimeCharts({ animeData, chartSettings }: { animeData: AnimeEntry[], chartSettings: ChartSettings}) {
 
 	return (
 		<div className="flex flex-col gap-5">
-			<Card className="py-0 w-full">
-				<CardHeader className="flex flex-col items-stretch border-b border-card2-b p-0! sm:flex-row">
-					<div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
-						<CardTitle>Chart settings</CardTitle>
-					</div>
-				</CardHeader>
 
-				<CardContent className="px-2 p-6">
+			<ChartAnimeQuickStats settings={chartSettings} animeData={animeData}/>
+			<ChartAnimeSeasonsBest settings={chartSettings} animeData={animeData}/>
 
-					<div className="flex flex-col">
-						<p className="text-sm">Viewing Year:</p>
-						<Combobox
-							comboData={availableYears.map((e) => ({
-								label: e.toString(),
-								value: e.toString().toLowerCase(),
-							}))}
-							onSelect={(e) => setSelectedYear(e)}
-							placeholder="Select a year"
-						/>
-					</div>
+			<div className="grid place-content-between gap-5 grid-cols-1 sm:grid-cols-2 xxl:grid-cols-4">
+				<ChartAnimeStatus settings={chartSettings} animeData={animeData}/>
+				<ChartAnimeScores settings={chartSettings} animeData={animeData}/>
+				<ChartAnimeNsfw settings={chartSettings} animeData={animeData}/>
+				<ChartAnimeYearPreference settings={chartSettings} animeData={animeData}/>
+			</div>
 
-				</CardContent>
-			</Card>
-
-			<ChartBestOfTheSeason selectedYear={selectedYear} chartData={animeData}/>
-
-			<div className="flex flex-col sm:flex-row gap-5">
-				<ChartAnimeWatchStatus selectedYear={selectedYear} chartData={animeData}/>
-				<ChartAnimeScores selectedYear={selectedYear} chartData={animeData}/>
-				<ChartNSFWAnalysis selectedYear={selectedYear} chartData={animeData}/>
-				<ChartAnimeYearPreference selectedYear={selectedYear} chartData={animeData}/>
+			<div className="grid place-content-between gap-5 grid-cols-1 sm:grid-cols-2 xxl:grid-cols-4">
+				<ChartAnimeRatings settings={chartSettings} animeData={animeData}/>
+				<ChartAnimePopularity settings={chartSettings} animeData={animeData}/>
+				<ChartAnimeProgress settings={chartSettings} animeData={animeData}/>
+				<ChartAnimeSeason settings={chartSettings} animeData={animeData}/>
 			</div>
 
 			<div className="flex flex-col lg:flex-row gap-5 w-full">
-				<ChartWatchByMonth selectedYear={selectedYear} chartData={latestCompleted}/>
-				<ChartWatchByDayOfWeek selectedYear={selectedYear} chartData={latestCompleted}/>
+				<ChartAnimeUpdatesByMonth settings={chartSettings} animeData={animeData}/>
+				<ChartAnimeUpdatesByDayOfWeek settings={chartSettings} animeData={animeData}/>
 			</div>
 
 			<div className="flex flex-col lg:flex-row gap-5 w-full">
-				<ChartAnimeGenres selectedYear={selectedYear} chartData={animeData}/>
-				<ChartStudioWatchCount selectedYear={selectedYear} chartData={animeData}/>
+				<ChartAnimeCompletedByMonth settings={chartSettings} animeData={animeData}/>
+				<ChartAnimeCompletedByDayOfWeek settings={chartSettings} animeData={animeData}/>
+			</div>
+
+			<ChartAnimeSource settings={chartSettings} animeData={animeData}/>
+
+			<div className="flex flex-col lg:flex-row gap-5 w-full">
+				<ChartAnimeGenres settings={chartSettings} animeData={animeData}/>
+				<ChartAnimeStudio settings={chartSettings} animeData={animeData}/>
 			</div>
 		</div>
 	);

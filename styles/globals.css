@@ -1,23 +1,77 @@
 @import 'tailwindcss';
+@import "tw-animate-css";
 
-@plugin 'tailwindcss-animate';
+@import './markdown.css';
 
 @theme {
+	/*--color-background: #31383f;*/
+	/*--color-navbar: #31383f;*/
+	/*--color-header: #1e2226;*/
+	/*--color-overlay: rgba(30, 34, 38, 0.16);*/
+	/*--color-card: #20252a;*/
+	/*--color-card2: #272d33;*/
+	/*--color-card-b: #2d323a;*/
+	/*--color-card2-b: #454545;*/
+	/*--color-text: #abadae;*/
+	/*--color-text-hover: #ffffff;*/
+	/*--color-theme: #bb2e3a;*/
+	/*--color-theme-hover: #a12832;*/
+	/*--color-foreground: hsl(0 0% 98%);*/
 
-	/*Tailwind Themes*/
-	--color-background: #31383f;
-	--color-navbar: #31383f;
+	--color-background: #0b0c14;
+
 	--color-header: #1e2226;
-	--color-overlay: rgba(30, 34, 38, 0.16);
-	--color-card: #20252a;
-	--color-card2: #272d33;
-	--color-card-b: #2d323a;
-	--color-card2-b: #454545;
-	--color-text: #abadae;
-	--color-text-hover: #ffffff;
+	--color-navbar: #31383f;
+
+	--color-footer: #05060f;
+	--color-footer-border: #0e101a;
+
+	--color-border: #1b1e29;
+	--color-input: hsl(0 0% 14.9%);
+	--color-ring: hsl(0 0% 83.1%);
+
+	--color-overlay: #0f101a;
+
+	--color-card: #0f101a;
+	--color-card-header: #13141f;
+	--color-card-border: #1c1e2a;
+
+	--color-card-inner: #1f2331;
+	--color-card-inner-border: #1c1e2a;
+
+	--color-btn: #101828;
+	--color-btn-border: #2a3245;
+
+	--color-text: #ffffff;
+	--color-text-secondary: #939db8;
+	--color-text-third: #646e87;
+	/*--color-text-hover: #ffffff;*/
+
+	--color-theme-btn: #da6262;
 	--color-theme: #bb2e3a;
-	--color-theme-hover: #a12832;
-	--color-foreground: hsl(0 0% 98%);
+	--color-theme-secondary: #a12832;
+
+	--color-toast-error-bg: color-mix(in oklab, oklch(0.70 0.19 22.23) 10%, var(--color-background));
+	--color-toast-error-text: oklch(0.70 0.19 22.23);
+	--color-toast-error-border: oklch(0.70 0.19 22.23);
+
+	--color-toast-warn-bg: color-mix(in oklab, var(--color-amber-600) 10%, var(--color-background));
+	--color-toast-warn-text: var(--color-amber-400);
+	--color-toast-warn-border: var(--color-amber-400);
+
+	--color-toast-success-bg: color-mix(in oklab, var(--color-green-600) 10%, var(--color-background));
+	--color-toast-success-text: var(--color-green-400);
+	--color-toast-success-border: var(--color-green-400);
+
+	--color-toast-info-bg: color-mix(in oklab, var(--color-sky-600) 10%, var(--color-background));
+	--color-toast-info-text: var(--color-sky-400);
+	--color-toast-info-border: var(--color-sky-400);
+
+	/*----------------------------------*/
+
+	--color-finished-airing: #1262c6;
+	--color-currently-airing: #a0612d;
+	--color-not-yet-aired: #1ea54a;
 
 	--color-popover: var(--color-background);
 	--color-popover-foreground: var(--color-text);
@@ -31,15 +85,20 @@
 	--color-muted: hsl(210 13% 16%);
 	--color-muted-foreground: hsl(0 0% 63.9%);
 
-	--color-accent: var(--color-theme-hover);
+	--color-accent: var(--color-theme-secondary);
 	--color-accent-foreground: hsl(0 0% 98%);
 
 	--color-destructive: hsl(0 62.8% 30.6%);
 	--color-destructive-foreground: hsl(0 0% 98%);
 
-	--color-border: hsl(0 0% 14.9%);
-	--color-input: hsl(0 0% 14.9%);
-	--color-ring: hsl(0 0% 83.1%);
+
+	--breakpoint-2lg: 72rem;
+	--breakpoint-xxl: 92rem;
+	--breakpoint-3xl: 125rem;
+	--breakpoint-4xl: 150rem;
+	--breakpoint-5xl: 175rem;
+	--breakpoint-6xl: 240rem;
+	--breakpoint-7xl: 320rem;
 
 	--color-chart-1: hsl(220 70% 50%);
 	--color-chart-2: hsl(160 60% 45%);
@@ -51,12 +110,7 @@
 	--color-chart-8: hsl(50 75% 55%);
 	--color-chart-9: hsl(260 70% 55%);
 	--color-chart-10: hsl(10 80% 58%);
-
-	--breakpoint-3xl: 2000px;
-	--breakpoint-4xl: 2400px;
-	--breakpoint-5xl: 2800px;
-	--breakpoint-6xl: 3840px;
-	--breakpoint-7xl: 5120px;
+	--color-chart-theme: var(--color-theme);
 
 	--shadow-nav: rgba(13, 15, 20, 0.7) 0px 3px 10px;
 	--shadow-header: rgba(15, 20, 25, 0.3) 0px 0px 5px;
@@ -67,9 +121,9 @@
 	--radius-lg: var(--radius);
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-sm: calc(var(--radius) - 4px);
+}
 
-	/*shadcn variables*/
-
+:root {
 	--chart-1: var(--color-chart-1);
 	--chart-2: var(--color-chart-2);
 	--chart-3: var(--color-chart-3);
@@ -82,8 +136,6 @@
 	--chart-10: var(--color-chart-10);
 	--chart-theme: var(--color-theme);
 	--radius: 0.625rem;
-
-
 }
 
 @font-face { font-family: "mal"; src: url("../public/font/mal.ttf");}
@@ -98,8 +150,9 @@
 	display: none;
 }
 ::-webkit-scrollbar-thumb {
-	background: var(--color-card2);
+	background: var(--color-card-inner);
+	border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-	background: var(--color-card2);
+	background: var(--color-card-inner);
 }
