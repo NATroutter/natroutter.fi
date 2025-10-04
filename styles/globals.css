@@ -20,14 +20,18 @@
 	--color-card-border: #1c1e2a;
 
 	--color-card-inner: #1f2331;
+	--color-card-inner-focus: #2a2e3c;
 	--color-card-inner-border: #1c1e2a;
 
 	--color-btn: #101828;
 	--color-btn-border: #2a3245;
 
-	--color-text: #ffffff;
-	--color-text-secondary: #939db8;
-	--color-text-third: #646e87;
+
+	--color-text: #ffffff; /*TODO YEET THIS | change to --color-primary*/
+	--color-text-secondary: #939db8; /*TODO YEET THIS| change to --color-primary-muted*/
+	--color-text-third: #646e87; /*TODO YEET THIS | idk*/
+
+
 	/*--color-text-hover: #ffffff;*/
 
 	--color-theme-btn: #da6262;
@@ -59,21 +63,10 @@
 	--color-popover: var(--color-background);
 	--color-popover-foreground: var(--color-text);
 
-	--color-primary: hsl(0 0% 98%);
-	--color-primary-foreground: hsl(0 0% 9%);
+	--color-primary: hsl(0 0% 100%);
+	--color-primary-muted: color-mix(in srgb, var(--color-primary) 40%, transparent);
 
-	--color-secondary: hsl(0 0% 14.9%);
-	--color-secondary-foreground: hsl(0 0% 98%);
-
-	--color-muted: hsl(210 13% 16%);
-	--color-muted-foreground: hsl(0 0% 63.9%);
-
-	--color-accent: var(--color-theme-secondary);
-	--color-accent-foreground: hsl(0 0% 98%);
-
-	--color-destructive: hsl(0 62.8% 30.6%);
-	--color-destructive-foreground: hsl(0 0% 98%);
-
+	--color-accent: var(--color-theme);
 
 	--breakpoint-2lg: 72rem;
 	--breakpoint-xxl: 92rem;
