@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from "react"
-import {AnimeEntry, AnimeInfo, formatRatingPG, formatStatus} from "@/types/animeData";
+import {AlternativeTitles, AnimeEntry, AnimeInfo, formatRatingPG, formatStatus} from "@/types/animeData";
 import Image from "next/image";
 import {toCapitalizedCase} from "@/lib/utils";
 import {Card, CardContent} from "@/components/ui/card";
@@ -50,17 +50,19 @@ export function AnimeCard({ data, animation=true }: AnimeCardProps) {
 	const displayGenres = anime.genres?.slice(0, 3) || [];
 	const hasMoreGenres = anime.genres && anime.genres.length > 3;
 
+	const titles : AlternativeTitles = anime.alternative_titles;
+
 	return (
 		<AnimeDialog data={data}>
-			<Card className={`select-none w-full h-full min-h-[200px] max-w-[400px] overflow-hidden cursor-pointer bg-transparent shadow-xl border border-card-border ${animation && "hover:scale-103 transition-transform duration-300 ease-in-out"}`}>
+			<Card className={`select-none w-full h-full min-h-[200px] max-w-[400px] overflow-hidden cursor-pointer bg-card-inner shadow-xl border border-card-border ${animation && "hover:scale-103 transition-transform duration-300 ease-in-out"}`}>
 				<CardContent className="p-2 flex gap-4 w-full h-full">
 					{/* Left side - Anime Poster */}
 					<div className="flex-shrink-0 overflow-hidden rounded-xl">
 						<div className="relative w-full h-full max-w-[140px]">
 							<div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent z-10 pointer-events-none" />
 							<Image
-								className="h-full w-full m-auto"
-								src={anime.main_picture.large}
+								className="h-full w-full m-auto pointer-events-none"
+								src={anime.main_picture.medium || anime.main_picture.large}
 								alt={anime.title}
 								sizes="100vw"
 								width={0}
@@ -83,7 +85,7 @@ export function AnimeCard({ data, animation=true }: AnimeCardProps) {
 							{/*Status*/}
 							<div className="flex flex-col items-start gap-2 text-xs m-0">
 								{anime.status && (
-									<span className={`${statusColor} px-2 py-1 font-medium rounded border border-card-inner-border`}>
+									<span className={`${statusColor} px-2 py-1 font-medium rounded border bg-card border-card-border`}>
 										{formatStatus(anime.status)}
 									</span>
 								)}
@@ -100,7 +102,7 @@ export function AnimeCard({ data, animation=true }: AnimeCardProps) {
 							{/*Title*/}
 							<div className="flex flex-col m-0">
 								<h3 className="font-semibold text-base line-clamp-2 leading-tight m-0 my-3 overflow-hidden break-words">
-									{anime.title}
+									{titles.en.length > 0 ? titles.en : anime.title}
 								</h3>
 							</div>
 
@@ -139,13 +141,13 @@ export function AnimeCard({ data, animation=true }: AnimeCardProps) {
 									{displayGenres.map((genre, index) => (
 										<span
 											key={index}
-											className="bg-card-inner text-secondary-foreground px-2 py-0.5 rounded text-xs font-medium"
+											className="bg-card border border-card text-secondary-foreground px-2 py-0.5 rounded text-xs font-medium"
 										>
 										{genre.name}
 									</span>
 									))}
 									{hasMoreGenres && (
-										<span className="bg-card-inner text-secondary-foreground px-2 py-0.5 rounded text-xs font-medium">
+										<span className="bg-card border border-card text-secondary-foreground px-2 py-0.5 rounded text-xs font-medium">
 										+{anime.genres.length - 3}
 									</span>
 									)}

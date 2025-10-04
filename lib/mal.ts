@@ -31,11 +31,8 @@ export async function getAnimeData(): Promise<AnimeEntry[] | undefined> {
 
 		while (nextURL) {
 			const resp = await requestData(nextURL);
-
 			if (!resp || !resp.data) break;
-
 			allData.push(...resp.data);
-
 			nextURL = resp.paging?.next;
 		}
 
@@ -49,7 +46,6 @@ export function getPlanToWatch(data: AnimeEntry[]): AnimeEntry[] {
 export function getWatching(data: AnimeEntry[]): AnimeEntry[] {
 	return data.filter(anime => anime.list_status.status === "watching");
 }
-
 export function getCompleted(data: AnimeEntry[]): AnimeEntry[] {
 	return data.filter(anime => anime.list_status.status === "completed");
 }
@@ -59,64 +55,3 @@ export function getOnHold(data: AnimeEntry[]): AnimeEntry[] {
 export function getDropped(data: AnimeEntry[]): AnimeEntry[] {
 	return data.filter(anime => anime.list_status.status === "dropped");
 }
-
-//
-// export async function getWatching() : Promise<AnimeData[]|undefined> {
-// 	return withCache(async ()=>{
-// 		const response = await fetch(endpoint + '?fields=' + fields + '&limit=' + "100" + '&status=' + "watching" + '&sort=' + "list_updated_at" + "&nsfw=1", {
-// 			method: "GET",
-// 			headers: {
-// 				"X-MAL-CLIENT-ID": process.env.MAL_CLIENT_ID as string
-// 			},
-// 			cache: 'no-store',
-// 		})
-// 		if (response.ok) {
-// 			const json = await response.json()
-// 			return json.data.map((anime: AnimeData) => ({
-// 				...anime,
-// 			})) as AnimeData[];
-// 		}
-// 		logger.error("Failed to fetch anime data from MyAnimeList.net : ("+response.status+") " +  response.statusText)
-// 		return undefined
-// 	},"anime_watching")
-// }
-//
-// export async function getCompleted() : Promise<AnimeData[]|undefined> {
-// 	return withCache(async ()=>{
-// 		const response = await fetch(endpoint + '?fields=' + fields + '&limit=' + "100" + '&status=' + "completed" + '&sort=' + "list_updated_at" + "&nsfw=1", {
-// 			method: "GET",
-// 			headers: {
-// 				"X-MAL-CLIENT-ID": process.env.MAL_CLIENT_ID as string
-// 			},
-// 			cache: 'no-store',
-// 		})
-// 		if (response.ok) {
-// 			const json = await response.json()
-// 			return json.data.map((anime: AnimeData) => ({
-// 				...anime,
-// 			})) as AnimeData[];
-// 		}
-// 		logger.error("Failed to fetch anime data from MyAnimeList.net : ("+response.status+") " +  response.statusText)
-// 		return undefined
-// 	}, "anime_completed")
-// }
-//
-// export async function getPlanToWatch() : Promise<AnimeData[]|undefined> {
-// 	return withCache(async ()=>{
-// 		const response = await fetch(endpoint + '?fields=' + fields + '&limit=' + "100" + '&status=' + "plan_to_watch" + '&sort=' + "list_updated_at" + "&nsfw=1", {
-// 			method: "GET",
-// 			headers: {
-// 				"X-MAL-CLIENT-ID": process.env.MAL_CLIENT_ID as string
-// 			},
-// 			cache: 'no-store',
-// 		})
-// 		if (response.ok) {
-// 			const json = await response.json()
-// 			return json.data.map((anime: AnimeData) => ({
-// 				...anime,
-// 			})) as AnimeData[];
-// 		}
-// 		logger.error("Failed to fetch anime data from MyAnimeList.net : ("+response.status+") " +  response.statusText)
-// 		return undefined
-// 	}, "anime_plan_to_watch")
-// }

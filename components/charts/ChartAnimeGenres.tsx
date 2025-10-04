@@ -1,23 +1,12 @@
 "use client"
 
 import * as React from "react"
-import {Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis} from "recharts"
+import {useMemo} from "react"
+import {Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts"
 
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card"
-import {
-	ChartConfig,
-	ChartContainer,
-	ChartTooltip,
-	ChartTooltipContent,
-} from "@/components/ui/chart"
-import { AnimeEntry } from "@/types/animeData"
-import {useMemo} from "react";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
+import {ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
+import {AnimeEntry} from "@/types/animeData"
 import {ChartSettings} from "@/components/ChartSettingsDialog";
 
 const chartConfig: ChartConfig = {

@@ -1,23 +1,6 @@
 @import 'tailwindcss';
-@import "tw-animate-css";
-
-@import './markdown.css';
 
 @theme {
-	/*--color-background: #31383f;*/
-	/*--color-navbar: #31383f;*/
-	/*--color-header: #1e2226;*/
-	/*--color-overlay: rgba(30, 34, 38, 0.16);*/
-	/*--color-card: #20252a;*/
-	/*--color-card2: #272d33;*/
-	/*--color-card-b: #2d323a;*/
-	/*--color-card2-b: #454545;*/
-	/*--color-text: #abadae;*/
-	/*--color-text-hover: #ffffff;*/
-	/*--color-theme: #bb2e3a;*/
-	/*--color-theme-hover: #a12832;*/
-	/*--color-foreground: hsl(0 0% 98%);*/
-
 	--color-background: #0b0c14;
 
 	--color-header: #1e2226;

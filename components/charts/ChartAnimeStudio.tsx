@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis} from "recharts"
+import {Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts"
 
 import {
 	Card,
@@ -19,11 +19,6 @@ import {
 import { AnimeEntry } from "@/types/animeData"
 import {useMemo} from "react";
 import {ChartSettings} from "@/components/ChartSettingsDialog";
-
-type StudioData = {
-	studio: string
-	count: number
-}
 
 const chartConfig: ChartConfig = {
 	count: {

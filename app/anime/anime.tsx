@@ -1,62 +1,74 @@
 'use client'
 
 import {AnimeEntry} from "@/types/animeData";
+import ChartAnimeCompletedByMonth from "@/components/charts/ChartAnimeCompletedByMonth";
 import * as React from "react";
-import TabAnimeCharts from "@/components/tabs/TabAnimeCharts";
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import TabAnimeList from "@/components/tabs/TabAnimeList";
-import {AnimeCard} from "@/components/AnimeCard";
-import {useEffect, useState} from "react";
-import ChartSettingsDialog, {defaultSettings, ChartSettings} from "@/components/ChartSettingsDialog";
+import {useState} from "react";
+import ChartAnimeCompletedByDayOfWeek from "@/components/charts/ChartAnimeCompletedByDayOfWeek";
+import ChartAnimeStatus from "@/components/charts/ChartAnimeStatus";
+import ChartAnimeScores from "@/components/charts/ChartAnimeScores";
+import ChartAnimeGenres from "@/components/charts/ChartAnimeGenres";
+import ChartAnimeSeasonsBest from "@/components/charts/ChartAnimeSeasonsBest";
+import ChartAnimeStudio from "@/components/charts/ChartAnimeStudio";
+import ChartAnimeNsfw from "@/components/charts/ChartAnimeNsfw";
+import ChartAnimeYearPreference from "@/components/charts/ChartAnimeYearPreference";
+import ChartAnimeQuickStats from "@/components/charts/ChartAnimeQuickStats";
+import ChartAnimeRatings from "@/components/charts/ChartAnimeRatings";
+import ChartAnimeSource from "@/components/charts/ChartAnimeSource";
+import ChartAnimePopularity from "@/components/charts/ChartAnimePopularity";
+import ChartAnimeProgress from "@/components/charts/ChartAnimeProgress";
+import ChartAnimeSeason from "@/components/charts/ChartAnimeSeason";
+import ChartAnimeUpdatesByDayOfWeek from "@/components/charts/ChartAnimeUpdatesByDayOfWeek";
+import ChartAnimeUpdatesByMonth from "@/components/charts/ChartAnimeUpdatesByMonth";
+import ChartSettingsDialog, {ChartSettings, defaultSettings} from "@/components/ChartSettingsDialog";
 import {IoSettings} from "react-icons/io5";
 
 export default function Anime({ animeData }: { animeData: AnimeEntry[]}) {
-	const [activeTab, setActiveTab] = useState("charts")
 	const [chartSettings, setChartSettings] = useState<ChartSettings>(defaultSettings)
-
-	useEffect(() => {
-		const stored = localStorage.getItem("activeTab")
-		if (stored) setActiveTab(stored)
-	}, [])
-
-	const handleTabChange = (tab: string) => {
-		setActiveTab(tab)
-		localStorage.setItem("activeTab", tab)
-	}
 
 	return (
 		<div className="flex flex-col justify-center mx-auto w-full p-6">
 			<div className="gap-5 w-full max-w-[90vw] 2xl:w-640 flex flex-col self-center place-items-center">
+				<div className="flex flex-col gap-5">
 
-				<Tabs defaultValue={activeTab} value={activeTab} className="w-full" onValueChange={handleTabChange}>
-					<TabsList className="flex relative gap-0 py-0 mb-5 h-full text-text">
-						<TabsTrigger className="m-0 rounded-[0px] py-3 duration-300 transition-colors border-card-border border-l" value="charts">Statistics</TabsTrigger>
-						<TabsTrigger className="m-0 rounded-[0px] py-3 duration-300 transition-colors border-card-border border-l border-r" value="anime_list">Anime List</TabsTrigger>
-						<TabsTrigger className="m-0 rounded-[0px] py-3 duration-300 transition-colors border-card-border border-r" value="favourites">Favourites</TabsTrigger>
-						{(activeTab == "charts") && (
-							<div className="absolute left-5">
-								<ChartSettingsDialog animeData={animeData} settings={chartSettings} onSettingsSave={(value)=>setChartSettings(value)}>
-									<IoSettings size={20} className="text-text-secondary hover:text-text/90 duration-300 transition-colors" />
-								</ChartSettingsDialog>
-							</div>
-						)}
-					</TabsList>
-					<TabsContent value="charts">
-						<TabAnimeCharts chartSettings={chartSettings} animeData={animeData}></TabAnimeCharts>
-					</TabsContent>
-					<TabsContent value="anime_list" className="w-full">
-						<TabAnimeList animeData={animeData}></TabAnimeList>
-					</TabsContent>
-					<TabsContent value="favourites">
-						<div className="flex flex-row flex-wrap gap-5 justify-center">
-							{/*<AnimeCard  data={test} />*/}
-							{animeData.slice(0,animeData.length-1).map((entry,index) => (
-								<AnimeCard key={index} data={entry} />
-							))}
-						</div>
-					</TabsContent>
-				</Tabs>
+					<ChartSettingsDialog animeData={animeData} settings={chartSettings} onSettingsSave={(value)=>setChartSettings(value)}>
+						<IoSettings size={20} className="text-text-secondary hover:text-text/90 duration-300 transition-colors" />
+					</ChartSettingsDialog>
 
+					<ChartAnimeQuickStats settings={chartSettings} animeData={animeData}/>
+					<ChartAnimeSeasonsBest settings={chartSettings} animeData={animeData}/>
+
+					<div className="grid place-content-between gap-5 grid-cols-1 sm:grid-cols-2 xxl:grid-cols-4">
+						<ChartAnimeStatus settings={chartSettings} animeData={animeData}/>
+						<ChartAnimeScores settings={chartSettings} animeData={animeData}/>
+						<ChartAnimeNsfw settings={chartSettings} animeData={animeData}/>
+						<ChartAnimeYearPreference settings={chartSettings} animeData={animeData}/>
+					</div>
+
+					<div className="grid place-content-between gap-5 grid-cols-1 sm:grid-cols-2 xxl:grid-cols-4">
+						<ChartAnimeRatings settings={chartSettings} animeData={animeData}/>
+						<ChartAnimePopularity settings={chartSettings} animeData={animeData}/>
+						<ChartAnimeProgress settings={chartSettings} animeData={animeData}/>
+						<ChartAnimeSeason settings={chartSettings} animeData={animeData}/>
+					</div>
+
+					<div className="flex flex-col lg:flex-row gap-5 w-full">
+						<ChartAnimeUpdatesByMonth settings={chartSettings} animeData={animeData}/>
+						<ChartAnimeUpdatesByDayOfWeek settings={chartSettings} animeData={animeData}/>
+					</div>
+
+					<div className="flex flex-col lg:flex-row gap-5 w-full">
+						<ChartAnimeCompletedByMonth settings={chartSettings} animeData={animeData}/>
+						<ChartAnimeCompletedByDayOfWeek settings={chartSettings} animeData={animeData}/>
+					</div>
+
+					<ChartAnimeSource settings={chartSettings} animeData={animeData}/>
+
+					<div className="flex flex-col lg:flex-row gap-5 w-full">
+						<ChartAnimeGenres settings={chartSettings} animeData={animeData}/>
+						<ChartAnimeStudio settings={chartSettings} animeData={animeData}/>
+					</div>
+				</div>
 			</div>
 		</div>
 	);

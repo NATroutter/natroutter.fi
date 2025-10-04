@@ -1,6 +1,6 @@
-import Anime from "@/app/anime/anime";
 import ContentError from "@/components/errors/ContentError";
 import {getAnimeData} from "@/lib/mal";
+import AnimeList from "@/app/anime/list/list";
 
 export const metadata = {
 	title: 'Anime',
@@ -10,8 +10,8 @@ export const metadata = {
 	}
 };
 
-export default async function AnimePage() {
+export default async function AnimeListPage() {
 	const animeData = await getAnimeData();
 	if (!animeData) return (<ContentError/>)
-	return (<Anime animeData={animeData}/>);
+	return (<AnimeList animeData={animeData}/>);
 }
