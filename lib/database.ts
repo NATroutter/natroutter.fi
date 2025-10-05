@@ -93,21 +93,6 @@ export async function getPrivacyPage() : Promise<PrivacyPage|undefined> {
 	}, "privacy_page_data")
 }
 
-export async function getNavigatorData() : Promise<NavData[]|undefined> {
-	return withCache(async ()=>{
-		try	{
-			const pb = getPocketBase();
-			return await pb.collection("navigator").getFullList<NavData>({
-				sort: "-priority",
-				cache: 'no-store',
-			});
-		} catch (err) {
-			printError(err, "Failed to fetch data for Navigator");
-			return undefined;
-		}
-	}, "navigator_data")
-}
-
 export async function getFooterData() : Promise<FooterData|undefined> {
 	return withCache(async ()=> {
 		try {

@@ -1,43 +1,68 @@
 @import 'tailwindcss';
+@import "tw-animate-css";
 
 @theme {
-	--color-background: #0b0c14;
+	--color-background: #31383f;
+	--color-foreground: #abadae;
+	--color-muted: color-mix(in srgb, var(--color-foreground) 40%, transparent);
+
+	--color-primary: #bb2e3a;
+	--color-secondary: #a12832;
 
 	--color-header: #1e2226;
-	--color-navbar: #31383f;
+	--color-header-border: #0e101a;
 
-	--color-footer: #05060f;
+	--color-footer: #1e2226;
 	--color-footer-border: #0e101a;
 
 	--color-border: #1b1e29;
 	--color-input: hsl(0 0% 14.9%);
 	--color-ring: hsl(0 0% 83.1%);
 
-	--color-overlay: #0f101a;
+	/*TODO change colors that has not been changed from the previous theme*/
 
-	--color-card: #0f101a;
+	--color-card: #20252a;
 	--color-card-header: #13141f;
 	--color-card-border: #1c1e2a;
+	--color-card-foreground: var(--color-foreground);
 
-	--color-card-inner: #1f2331;
+	--color-card-inner: #272d33;
 	--color-card-inner-focus: #2a2e3c;
 	--color-card-inner-border: #1c1e2a;
+	--color-card-inner-foreground: var(--color-foreground);
 
-	--color-btn: #101828;
-	--color-btn-border: #2a3245;
+	--color-btn: var(--color-card-inner);
+	--color-btn-border: var(--color-card-inner-border);
+	--color-btn-hover: var(--color-card-inner-focus);
+	--color-btn-foreground: var(--color-foreground);
 
+	--color-popover: var(--color-card-inner);
+	--color-popover-border: var(--color-card-inner-border);
+	--color-popover-focus: var(--color-card-inner-focus);
+	--color-popover-foreground: var(--color-foreground);
 
-	--color-text: #ffffff; /*TODO YEET THIS | change to --color-primary*/
-	--color-text-secondary: #939db8; /*TODO YEET THIS| change to --color-primary-muted*/
-	--color-text-third: #646e87; /*TODO YEET THIS | idk*/
+	--shadow-nav: rgba(13, 15, 20, 0.7) 0px 3px 10px; /*TODO YEET?*/
+	--shadow-header: rgba(15, 20, 25, 0.3) 0px 0px 5px; /*TODO YEET?*/
+	--shadow-primary-glow: hsl(355 81% 46% / 1) 0 0 20px 2px;
 
+	--color-overlay: #0f101a;
 
-	/*--color-text-hover: #ffffff;*/
+	--color-finished-airing: #1262c6;
+	--color-currently-airing: #a0612d;
+	--color-not-yet-aired: #1ea54a;
 
-	--color-theme-btn: #da6262;
-	--color-theme: #bb2e3a;
-	--color-theme-secondary: #a12832;
+	--color-chart-1: hsl(220 70% 50%);
+	--color-chart-2: hsl(160 60% 45%);
+	--color-chart-3: hsl(30 80% 55%);
+	--color-chart-4: hsl(280 65% 60%);
+	--color-chart-5: hsl(340 75% 55%);
+	--color-chart-6: hsl(120 65% 45%);
+	--color-chart-7: hsl(200 70% 50%);
+	--color-chart-8: hsl(50 75% 55%);
+	--color-chart-9: hsl(260 70% 55%);
+	--color-chart-10: hsl(10 80% 58%);
 
+	/*TODO Make it simpler?*/
 	--color-toast-error-bg: color-mix(in oklab, oklch(0.70 0.19 22.23) 10%, var(--color-background));
 	--color-toast-error-text: oklch(0.70 0.19 22.23);
 	--color-toast-error-border: oklch(0.70 0.19 22.23);
@@ -54,20 +79,6 @@
 	--color-toast-info-text: var(--color-sky-400);
 	--color-toast-info-border: var(--color-sky-400);
 
-	/*----------------------------------*/
-
-	--color-finished-airing: #1262c6;
-	--color-currently-airing: #a0612d;
-	--color-not-yet-aired: #1ea54a;
-
-	--color-popover: var(--color-background);
-	--color-popover-foreground: var(--color-text);
-
-	--color-primary: hsl(0 0% 100%);
-	--color-primary-muted: color-mix(in srgb, var(--color-primary) 40%, transparent);
-
-	--color-accent: var(--color-theme);
-
 	--breakpoint-2lg: 72rem;
 	--breakpoint-xxl: 92rem;
 	--breakpoint-3xl: 125rem;
@@ -76,27 +87,12 @@
 	--breakpoint-6xl: 240rem;
 	--breakpoint-7xl: 320rem;
 
-	--color-chart-1: hsl(220 70% 50%);
-	--color-chart-2: hsl(160 60% 45%);
-	--color-chart-3: hsl(30 80% 55%);
-	--color-chart-4: hsl(280 65% 60%);
-	--color-chart-5: hsl(340 75% 55%);
-	--color-chart-6: hsl(120 65% 45%);
-	--color-chart-7: hsl(200 70% 50%);
-	--color-chart-8: hsl(50 75% 55%);
-	--color-chart-9: hsl(260 70% 55%);
-	--color-chart-10: hsl(10 80% 58%);
-	--color-chart-theme: var(--color-theme);
-
-	--shadow-nav: rgba(13, 15, 20, 0.7) 0px 3px 10px;
-	--shadow-header: rgba(15, 20, 25, 0.3) 0px 0px 5px;
-	--shadow-theme-glow: hsl(355 81% 46% / 1) 0 0 20px 2px;
-
 	--font-mal: mal, Helvetica, Arial, sans-serif;
 
 	--radius-lg: var(--radius);
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-sm: calc(var(--radius) - 4px);
+
 }
 
 :root {
@@ -110,7 +106,6 @@
 	--chart-8: var(--color-chart-8);
 	--chart-9: var(--color-chart-9);
 	--chart-10: var(--color-chart-10);
-	--chart-theme: var(--color-theme);
 	--radius: 0.625rem;
 }
 

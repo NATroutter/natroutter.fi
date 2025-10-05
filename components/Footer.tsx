@@ -6,6 +6,10 @@ import Link from "next/link";
 import DynamicIcon from "@/lib/dynamicIcon";
 import Markdown from "@/components/Markdown";
 import {ReactNode} from "react";
+import {FaLink, FaProjectDiagram, FaTv, FaUser} from "react-icons/fa";
+import {IconType} from "react-icons";
+import {navigatorLinks} from "@/components/Navigator";
+
 
 export default function Footer({data}:{data:FooterData}) {
 
@@ -18,14 +22,14 @@ export default function Footer({data}:{data:FooterData}) {
 							{data.expand.contact.map((item,index)=>(
 								<li key={index} className="flex">
 									<Link
-										className="flex my-auto hover:text-theme-hover"
+										className="flex my-auto hover:text-secondary"
 										href={item.url}
 										target="_blank"
 										data-umami-event={`[FOOTER] Link (Contact > ${item.display_name})`}
 										data-umami-event-url={item.url}
 									>
 										<div>
-											<DynamicIcon className="p-1.5 text-text" iconName={item.icon} size={30}/>
+											<DynamicIcon className="p-1.5 text-foreground" iconName={item.icon} size={30}/>
 										</div>
 										<p className="my-auto ml-2 font-semibold">{item.display_name}</p>
 									</Link>
@@ -35,17 +39,17 @@ export default function Footer({data}:{data:FooterData}) {
 					</FooterBox>
 					<FooterBox name="Quick Links">
 						<ul className="flex flex-col gap-2">
-							{data.expand.quick.map((item,index)=>(
+							{navigatorLinks.filter(item=>item.quick).map((item,index)=>(
 								<li key={index} className="flex">
 									<Link
-										className="flex my-auto hover:text-theme-hover"
+										className="flex my-auto hover:text-secondary"
 										href={item.url}
 										target={(item.url.startsWith("http://") || item.url.startsWith("https://")) ? "_blank" : "_self"}
 										data-umami-event={`[FOOTER] Open (Quick > ${item.name})`}
 										data-umami-event-url={item.url}
 									>
 										<div>
-											<DynamicIcon className="p-1.5 text-text" iconName={item.icon} size={30}/>
+											<item.icon className="p-1.5 text-foreground" size={30}/>
 										</div>
 										<p className="my-auto ml-2 font-semibold">{item.name}</p>
 									</Link>
@@ -54,19 +58,19 @@ export default function Footer({data}:{data:FooterData}) {
 						</ul>
 					</FooterBox>
 					<FooterBox name="About Me">
-						<Markdown content={data.about_me} className="text-text-secondary"/>
+						<Markdown content={data.about_me} className="text-muted"/>
 						{/*<ul className="flex flex-row gap-2">*/}
 						{/*	{data.expand.social.map((item,index)=>(*/}
 						{/*		<li key={index} className="flex">*/}
 						{/*			<Link*/}
-						{/*				className="flex my-auto hover:text-theme-hover"*/}
+						{/*				className="flex my-auto hover:text-secondary"*/}
 						{/*				href={item.url}*/}
 						{/*				target="_blank"*/}
 						{/*				data-umami-event={`[FOOTER] Link (About > ${item.display_name})`}*/}
 						{/*				data-umami-event-url={item.url}*/}
 						{/*			>*/}
 						{/*				<div>*/}
-						{/*					<DynamicIcon className="p-1.5 text-text" iconName={item.icon} size={30}/>*/}
+						{/*					<DynamicIcon className="p-1.5 text-foreground" iconName={item.icon} size={30}/>*/}
 						{/*				</div>*/}
 						{/*			</Link>*/}
 						{/*		</li>*/}
@@ -76,11 +80,11 @@ export default function Footer({data}:{data:FooterData}) {
 				</div>
 				<div className="flex flex-col justify-center text-center p-5">
 					<Link
-						className="text-sm text-text-third hover:text-text-third/80"
+						className="text-sm text-muted hover:text-foreground"
 						href="/privacy"
 						data-umami-event={`[FOOTER] Open (Privacy)`}
 					>Privacy Policy</Link>
-					<p className="text-sm text-text-third">{data.copyright.replace("{year}", (new Date().getFullYear()).toString())}</p>
+					<p className="text-sm text-muted">{data.copyright.replace("{year}", (new Date().getFullYear()).toString())}</p>
 				</div>
 			</div>
 		</footer>
@@ -91,7 +95,7 @@ function FooterBox({name, children}: { name: string, children: ReactNode; }) {
 	return (
 		<div className="flex flex-col gap-2 max-w-80 px-5 py-3 w-full h-full">
 			<h1 className="flex text-2xl font-bold">{name}</h1>
-			<div className="flex flex-col ml-2 gap-4 text-text-secondary">
+			<div className="flex flex-col ml-2 gap-4 text-muted">
 				{children}
 			</div>
 		</div>

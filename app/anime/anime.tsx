@@ -32,7 +32,7 @@ export default function Anime({ animeData }: { animeData: AnimeEntry[]}) {
 				<div className="flex flex-col gap-5">
 
 					<ChartSettingsDialog animeData={animeData} settings={chartSettings} onSettingsSave={(value)=>setChartSettings(value)}>
-						<IoSettings size={20} className="text-text-secondary hover:text-text/90 duration-300 transition-colors" />
+						<IoSettings size={20} className="text-muted hover:text-foreground duration-300 transition-colors" />
 					</ChartSettingsDialog>
 
 					<ChartAnimeQuickStats settings={chartSettings} animeData={animeData}/>

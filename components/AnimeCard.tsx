@@ -20,7 +20,7 @@ export function AnimeCard({ data, animation=true }: AnimeCardProps) {
 			<Card className={`select-none w-full h-full min-h-[200px] max-w-[400px] overflow-hidden cursor-pointer bg-transparent shadow-xl border border-card-border ${animation && "hover:scale-103 transition-transform duration-300 ease-in-out"}`}>
 				<CardContent className="p-2 flex gap-4 w-full h-full">
 					<div className="h-[200px] w-full flex justify-center">
-						<p className="text-center my-auto text-text-secondary">No anime data</p>
+						<p className="text-center my-auto text-muted">No anime data</p>
 					</div>
 				</CardContent>
 			</Card>
@@ -42,7 +42,7 @@ export function AnimeCard({ data, animation=true }: AnimeCardProps) {
 			case "currently_airing": return "text-currently-airing";
 			case "finished_airing": return "text-finished-airing";
 			case "not_yet_aired": return "text-not-yet-aired";
-			default: return "text-primary";
+			default: return "text-foreground";
 		}
 	})();
 
@@ -92,7 +92,7 @@ export function AnimeCard({ data, animation=true }: AnimeCardProps) {
 								{yearSeason ?
 									(anime.num_episodes > 0 ? (
 										<span className="flex flex-row">
-											{yearSeason} <GoDotFill className="my-auto mx-0.5 text-text-secondary/40" size={10} /> {anime.num_episodes} episodes
+											{yearSeason} <GoDotFill className="my-auto mx-0.5 text-muted" size={10} /> {anime.num_episodes} episodes
 										</span>
 									) : '') :
 									(anime.num_episodes > 0 ? `${anime.num_episodes} episodes` : '')

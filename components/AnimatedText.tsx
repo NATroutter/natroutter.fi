@@ -40,5 +40,5 @@ export default function AnimatedText({ words, writeSpeed, earseSpeed, pauseTime 
 		return () => clearInterval(timer);
 	}, [index, isDeleting, currentWord, speed, words, earseSpeed, writeSpeed, pauseTime]);
 
-	return (<span className="text-theme">{text}</span>);
+	return (<span className="text-primary">{text}</span>);
 };

@@ -8,7 +8,7 @@ import {Montserrat} from "next/font/google";
 import * as React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import {getFooterData, getNavigatorData} from "@/lib/database";
+import {getFooterData} from "@/lib/database";
 import Script from 'next/script'
 import ServerError from "@/components/errors/ServerError";
 import {ReactNode} from "react";
@@ -78,26 +78,24 @@ export const viewport: Viewport = {
 }
 
 export default async function RootLayout({children}: Readonly<{ children: ReactNode; }>) {
-    const NavData = await getNavigatorData();
     const footerData = await getFooterData();
 
     return (
         <html lang="en">
-        <body className={`${montserrat.variable} ${montserrat.className} bg-background bg-cover text-text font-normal flex flex-col min-h-screen m-0 p-0 overflow-y-auto`}>
+        <body className={`${montserrat.variable} ${montserrat.className} bg-background bg-cover text-foreground font-normal flex flex-col min-h-screen m-0 p-0 overflow-y-auto`}>
 
-            {(NavData && (NavData.length > 0) && footerData) ? (
+            {footerData ? (
                 <>
-                    <Header data={NavData}/>
+                    <Header/>
                     <main className="relative flex flex-col grow min-h-screen pb-30">
-                        {/*mt-[7.5rem]*/}
                         {children}
                     </main>
-	                <Toaster />
-                    <Footer data={footerData}/>
+	                <Footer data={footerData}/>
+					<Toaster />
                 </>
             ) : (
                 <main className="flex flex-col grow justify-center m-auto text-center">
-                    <ServerError/>
+					<ServerError type="content" location="footer" />
 	                <Toaster />
                 </main>
             )}

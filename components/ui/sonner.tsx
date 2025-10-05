@@ -23,7 +23,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
 						[.group[data-type=info]_&]:bg-toast-info-bg! [.group[data-type=info]_&]:border-toast-info-border! [.group[data-type=info]_&]:text-toast-info-text!
 					`,
 					description:`
-						text-text/60!
+						text-muted!
 						[.group[data-type=error]_&]:text-toast-error-text/60!
 						[.group[data-type=success]_&]:text-toast-success-text/60!
 						[.group[data-type=warning]_&]:text-toast-warn-text/60!
@@ -31,7 +31,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
 					`,
 
 					actionButton: `
-						bg-card-inner! text-text!
+						bg-card-inner! text-foreground!
 						[.group[data-type=error]_&]:bg-toast-error-border/60!
 						[.group[data-type=success]_&]:bg-toast-success-border/60!
 						[.group[data-type=warning]_&]:bg-toast-warn-border/60!
@@ -39,7 +39,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
 					`,
 
 					cancelButton: `
-						bg-card-inner! text-text!
+						bg-card-inner! text-foreground!
 						[.group[data-type=error]_&]:bg-toast-error-border/60!
 						[.group[data-type=success]_&]:bg-toast-success-border/60!
 						[.group[data-type=warning]_&]:bg-toast-warn-border/60!

@@ -1,13 +1,13 @@
 'use client'
 
 import Image from "next/image";
-import {Navigator} from "@/components/Navigator";
+import Navigator from "@/components/Navigator";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
-import {NavData} from "@/types/interfaces";
+import {NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger} from "@/components/ui/navigation-menu";
 
-export default function Header({data} : {data: NavData[]}) {
+export default function Header() {
 	const [open, setOpen] = useState(false);
 	const { width } = useWindowDimensions();
 
@@ -44,11 +44,15 @@ export default function Header({data} : {data: NavData[]}) {
 							width={0}
 							height={0}
 						/>
-						<h1 className="m-auto text-theme font-bold text-2xl">NATroutter.fi</h1>
+						<h1 className="m-auto text-secondary font-bold text-2xl">NATroutter.fi</h1>
 					</a>
 				</div>
 			</div>
-			<Navigator data={data} open={open} onStateChangeAction={(s=>setOpen(s))}/>
+
+			<Navigator/>
+
+
+
 			<div className={`${open ? "block md:hidden" : "hidden"} relative h-screen inset-0 bg-black bg-opacity-50 z-20`}></div>
 		</header>
 	)

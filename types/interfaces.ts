@@ -10,16 +10,8 @@ export interface LinkData {
 	url: string;
 }
 
-export interface NavData {
-	icon: string;
-	name: string;
-	url: string;
-	priority: number;
-}
-
 export interface FooterData {
 	contact: string[];
-	quick: string[];
 	social: string[];
 	about_me: string;
 	copyright: string;
@@ -82,6 +74,5 @@ export interface expandLinks {
 }
 export interface expandFooter {
 	contact: LinkData[];
-	quick: NavData[];
 	social: LinkData[];
 }

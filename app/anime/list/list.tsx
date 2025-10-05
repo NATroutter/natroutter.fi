@@ -421,7 +421,6 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 
 										{/*Control (row-2) / Sorting / Direction */}
 										<Button
-											variant="control"
 											size="icon"
 											className="h-10 w-10 rounded-l-none"
 											onClick={() => setSortDirection(prev => prev === "asc" ? "desc" : "asc")}
@@ -462,7 +461,6 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 
 											{/*Control (row-3) / Pagination / Buttons / First Page */}
 											<Button
-												variant="control"
 												className="flex h-10 w-10 p-0 rounded-r-none border-r-0"
 												onClick={() => {
 													isTypingRef.current = false
@@ -475,7 +473,6 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 
 											{/*Control (row-3) / Pagination / Buttons / Previous Page */}
 											<Button
-												variant="control"
 												className="flex h-10 w-10 p-0 rounded-l-none border-l-0"
 												onClick={() => {
 													isTypingRef.current = false
@@ -505,7 +502,6 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 
 											{/*Control (row-3) / Pagination / Buttons / Next Page */}
 											<Button
-												variant="control"
 												className="flex h-10 w-10 p-0 border-r-0 rounded-r-none"
 												onClick={() => {
 													isTypingRef.current = false
@@ -518,7 +514,6 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 
 											{/*Control (row-3) / Pagination / Buttons / Last Page */}
 											<Button
-												variant="control"
 												className="flex h-10 w-10 p-0 border-l-0 rounded-l-none"
 												onClick={() => {
 													isTypingRef.current = false
@@ -534,7 +529,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 							</div>
 
 							{/* Display search results */}
-							<div className="flex-1 text-sm font-semibold my-auto text-primary-muted ">
+							<div className="flex-1 text-sm font-semibold my-auto text-muted ">
 								{processedData.length} total entries
 							</div>
 						</div>

@@ -14,7 +14,7 @@ export default function Home({data} : {data:HomePage}) {
 				<div id="left" className="brace"></div>
 				<div id="right" className="brace"></div>
 			</div>
-			<div className="flex flex-col border-theme p-7 rounded-[20px] border-solid border-l-[3px] border-0 gap-6">
+			<div className="flex flex-col border-primary p-7 rounded-[20px] border-solid border-l-[3px] border-0 gap-6">
 				<div className="">
 					<h2 className="text-3xl font-semibold">Hello it&#39;s Me</h2>
 					<h1 className="text-5xl font-semibold ml-2">{data.username}</h1>
@@ -31,13 +31,13 @@ export default function Home({data} : {data:HomePage}) {
 								  data-umami-event={`[HOME] Link (${item.display_name})`}
 								  data-umami-event-url={item.url}
 								  className="hover:scale-110 transition-transform duration-300 ease-in-out">
-								<DynamicIcon iconName={item.icon} size={40} className="border-2 p-1.5 rounded-full border-theme text-theme"/>
+								<DynamicIcon iconName={item.icon} size={40} className="border-2 p-1.5 rounded-full border-primary text-primary"/>
 							</Link>
 						)}
 					</div>
 					<div>
 						<Link href="/projects">
-							<button data-umami-event={`[HOME] (Explore My Work)`} className="bg-theme px-5 py-3 rounded-full shadow-theme-glow font-semibold hover:scale-105 transition-transform duration-300 ease-in-out">Explore My Work</button>
+							<button data-umami-event={`[HOME] (Explore My Work)`} className="bg-primary px-5 py-3 rounded-full shadow-primary-glow font-semibold hover:scale-105 transition-transform duration-300 ease-in-out">Explore My Work</button>
 						</Link>
 					</div>
 				</div>

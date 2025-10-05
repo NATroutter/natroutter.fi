@@ -58,11 +58,11 @@ export default function Projects({data} : {data : ProjectPage[]}) {
 											height={0}
 										/>
 										<div className="pt-5">
-											<h3 className="text-xl font-bold text-text">Links:</h3>
+											<h3 className="text-xl font-bold">Links:</h3>
 											<Link href={entry.github} target={"_blank"}
 												  data-umami-event={`[PROJECTS] Link (${entry.name} > github)`}
 												  data-umami-event-url={entry.github}
-												  className="w-fit flex text-lg font-semibold flex-row gap-2 ml-2 group text-theme hover:text-theme-hover hover:underline underline-offset-2">
+												  className="w-fit flex text-lg font-semibold flex-row gap-2 ml-2 group text-primary hover:text-secondary hover:underline underline-offset-2">
 												<FaGithub size={20} className="my-auto"/>
 												<p>GitHub</p>
 											</Link>
@@ -70,7 +70,7 @@ export default function Projects({data} : {data : ProjectPage[]}) {
 												<Link key={extra_index} href={extra.url} target={"_blank"}
 													  data-umami-event={`[PROJECTS] Link (${entry.name} > ${extra.display_name})`}
 													  data-umami-event-url={extra.url}
-													  className="w-fit flex flex-row text-lg font-semibold gap-2 ml-2 group text-theme hover:text-theme-hover hover:underline underline-offset-2">
+													  className="w-fit flex flex-row text-lg font-semibold gap-2 ml-2 group text-primary hover:text-secondary hover:underline underline-offset-2">
 													<DynamicIcon size={20} className="my-auto" iconName={extra.icon}/>
 													<p>{extra.display_name}</p>
 												</Link>

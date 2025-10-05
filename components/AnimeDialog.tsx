@@ -42,7 +42,7 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 									/>
 								) : (
 									<div className="w-full rounded-lg h-[415px] bg-card-inner flex">
-										<p className="text-text-secondary font-semibold m-auto text-center">IMAGE NOT FOUND!</p>
+										<p className="text-muted font-semibold m-auto text-center">IMAGE NOT FOUND!</p>
 									</div>
 								)}
 							</div>
@@ -51,16 +51,16 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 							{/*Anime Statistics*/}
 							{(anime.mean > 0 || anime.rank > 0 || anime.popularity > 0) && (
 								<div className="pt-5">
-									<h3 className="text-xl font-bold text-text">Statistics</h3>
+									<h3 className="text-xl font-bold">Statistics</h3>
 
-									{anime.rank>0 && (<p className="text-text">Ranked: <span className="text-text-secondary">#{anime.rank}</span></p>)}
-									{anime.popularity>0 && (<p className="text-text">Popularity: <span className="text-text-secondary">#{anime.popularity}</span></p>)}
-									{anime.mean>0 && (<p className="text-text">Rating: <span className="text-text-secondary">{anime.mean} by {anime.num_scoring_users} users</span></p>)}
+									{anime.rank>0 && (<p>Ranked: <span className="text-muted">#{anime.rank}</span></p>)}
+									{anime.popularity>0 && (<p>Popularity: <span className="text-muted">#{anime.popularity}</span></p>)}
+									{anime.mean>0 && (<p>Rating: <span className="text-muted">{anime.mean} by {anime.num_scoring_users} users</span></p>)}
 
-									{status.score>0 && (<p className="text-text">Score: <span className="text-text-secondary">{status.score}</span></p>)}
-									{status.score>0 && (<p className="text-text">Difference: <span className="text-text-secondary">{Math.abs(anime.mean - status.score).toFixed(2)}</span></p>)}
+									{status.score>0 && (<p>Score: <span className="text-muted">{status.score}</span></p>)}
+									{status.score>0 && (<p>Difference: <span className="text-muted">{Math.abs(anime.mean - status.score).toFixed(2)}</span></p>)}
 
-									{(anime.num_episodes>0) && (<p className="text-text">Progress: <span className="text-text-secondary">{status.num_episodes_watched}/{anime.num_episodes} </span></p>)}
+									{(anime.num_episodes>0) && (<p>Progress: <span className="text-muted">{status.num_episodes_watched}/{anime.num_episodes} </span></p>)}
 
 								</div>
 							)}
@@ -68,27 +68,27 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 							{/*Anime Info*/}
 							{(anime.media_type || anime.num_episodes>0 || anime.status || anime.start_date || anime.end_date || anime.studios.length>0 || anime.source || anime.genres.length>0 || anime.average_episode_duration>0 || anime.rating) && (
 								<div className="pt-5">
-									<h3 className="text-xl font-bold text-text">Anime Info</h3>
+									<h3 className="text-xl font-bold">Anime Info</h3>
 
-									{anime.media_type && (<p className="text-text">Type: <span className="text-text-secondary">{anime.media_type.toUpperCase()}</span></p>)}
-									{anime.num_episodes>0 && (<p className="text-text">Episodes: <span className="text-text-secondary">{anime.num_episodes}</span></p>)}
-									{anime.status && (<p className="text-text">Status: <span className="text-text-secondary">{toCapitalizedCase(anime.status)}</span></p>)}
+									{anime.media_type && (<p>Type: <span className="text-muted">{anime.media_type.toUpperCase()}</span></p>)}
+									{anime.num_episodes>0 && (<p>Episodes: <span className="text-muted">{anime.num_episodes}</span></p>)}
+									{anime.status && (<p>Status: <span className="text-muted">{toCapitalizedCase(anime.status)}</span></p>)}
 
 									{anime.start_date && (
-										<p className="text-text">Started: <span className="text-text-secondary">{formatDate(anime.start_date)}</span></p>
+										<p>Started: <span className="text-muted">{formatDate(anime.start_date)}</span></p>
 									)}
 									{anime.end_date && (
-										<p className="text-text">Ended: <span className="text-text-secondary">{formatDate(anime.end_date)}</span></p>
+										<p>Ended: <span className="text-muted">{formatDate(anime.end_date)}</span></p>
 									)}
 
 									{anime.studios.length>0 && (
-										<p className="text-text"><span>Studios: </span>
+										<p><span>Studios: </span>
 											{anime.studios.map((studio,index)=>(
-												<span key={index} className="text-text">
+												<span key={index}>
 											<Link href={`https://myanimelist.net/anime/producer/${studio.id}/`} target="_blank"
 											      data-umami-event={`[ANIME] Show Studio (${studio.id})`}
 											      data-umami-event-url={`https://myanimelist.net/anime/producer/${studio.id}/`}
-											      className="text-text-secondary hover:underline hover:text-text-secondary-hover">
+											      className="text-muted hover:underline hover:text-muted-hover">
 												{studio.name}
 											</Link>
 													{index != anime.studios.length -1 ? ", " : ""}
@@ -96,15 +96,15 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 											))}
 										</p>
 									)}
-									{anime.source && (<p className="text-text">Source: <span className="text-text-secondary">{toCapitalizedCase(anime.source)}</span></p>)}
+									{anime.source && (<p>Source: <span className="text-muted">{toCapitalizedCase(anime.source)}</span></p>)}
 									{anime.genres.length>0 && (
-										<p className="text-text"><span>Genres: </span>
+										<p><span>Genres: </span>
 											{anime.genres.slice(0,anime.genres.length-1).map((genre,index)=>(
-												<span key={index} className="text-text">
+												<span key={index}>
 											<Link href={`https://myanimelist.net/anime/genre/${genre.id}/`} target="_blank"
 											      data-umami-event={`[ANIME] Show Genre (${genre.id})`}
 											      data-umami-event-url={`https://myanimelist.net/anime/genre/${genre.id}/`}
-											      className="text-text-secondary hover:underline hover:text-text-secondary-hover">
+											      className="text-muted hover:underline hover:text-muted-hover">
 												{genre.name}
 											</Link>
 													{index != anime.genres.length -2 ? ", " : ""}
@@ -112,9 +112,9 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 											))}
 										</p>
 									)}
-									{anime.genres.length>0 && (<p className="text-text">Theme: <span className="text-text-secondary">{anime.genres.slice(-1)[0].name}</span></p>)}
-									{anime.average_episode_duration>0 && (<p className="text-text">Duration: <span className="text-text-secondary">{Math.floor(anime.average_episode_duration / 60)} min. per ep.</span></p>)}
-									{anime.rating && (<p className="text-text">Rating: <span className="text-text-secondary">{formatRating(anime.rating)}</span></p>)}
+									{anime.genres.length>0 && (<p>Theme: <span className="text-muted">{anime.genres.slice(-1)[0].name}</span></p>)}
+									{anime.average_episode_duration>0 && (<p>Duration: <span className="text-muted">{Math.floor(anime.average_episode_duration / 60)} min. per ep.</span></p>)}
+									{anime.rating && (<p>Rating: <span className="text-muted">{formatRating(anime.rating)}</span></p>)}
 								</div>
 							)}
 
@@ -132,11 +132,11 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 						<div className="flex flex-col gap-4 w-fit">
 							<div className="flex flex-col">
 								<h1 className="text-2xl">{titles.en.length > 0 ? titles.en : anime.title}</h1>
-								{anime.alternative_titles.ja && (<h2 className="text-base text-text">{anime.alternative_titles.ja}</h2>)}
+								{anime.alternative_titles.ja && (<h2 className="text-base">{anime.alternative_titles.ja}</h2>)}
 							</div>
 
 							{anime.synopsis && (
-								<div className="text-text-secondary">
+								<div className="text-muted">
 									<p>{anime.synopsis.replace("[Written by MAL Rewrite]", "")}</p>
 								</div>
 							)}
@@ -156,7 +156,7 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 								/>
 							) : (
 								<div className="w-full rounded-lg h-[415px] bg-card-inner flex">
-									<p className="text-text-secondary font-semibold m-auto text-center">IMAGE NOT FOUND!</p>
+									<p className="text-muted font-semibold m-auto text-center">IMAGE NOT FOUND!</p>
 								</div>
 							)}
 						</div>
