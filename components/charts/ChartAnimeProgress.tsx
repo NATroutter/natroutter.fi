@@ -104,7 +104,7 @@ export default function ChartAnimeProgress({
 
 	return (
 		<Card className="flex flex-col mx-auto w-full h-full max-h-[400px] shadow-xl">
-			<CardHeader className="flex flex-col items-stretch border-b bg-card-header border-card-inner-border p-0! sm:flex-row">
+			<CardHeader className="flex flex-col items-stretch p-0! sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
 					<CardTitle>Progress Breakdown</CardTitle>
 					<CardDescription>

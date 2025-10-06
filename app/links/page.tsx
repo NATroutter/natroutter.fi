@@ -1,4 +1,4 @@
-import Links from "@/app/links/links";
+import Links from "@/app/links/Links";
 import {getFileURL, getLinkPage} from "@/lib/database";
 import ContentError from "@/components/errors/ContentError";
 import * as React from "react";

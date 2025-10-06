@@ -1,6 +1,6 @@
-import Anime from "@/app/anime/anime";
+import AnimeStats from "@/app/anime/AnimeStats";
 import ContentError from "@/components/errors/ContentError";
-import {getAnimeData} from "@/lib/anime";
+import {getAnimeData} from "@/lib/mal";
 
 export const metadata = {
 	title: 'Anime',
@@ -16,5 +16,5 @@ export const revalidate = 60;
 export default async function AnimePage() {
 	const animeData = await getAnimeData();
 	if (!animeData) return (<ContentError/>)
-	return (<Anime animeData={animeData}/>);
+	return (<AnimeStats animeData={animeData}/>);
 }

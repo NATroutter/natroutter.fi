@@ -5,27 +5,42 @@ import Navigator from "@/components/Navigator";
 import * as React from "react";
 import NavigatorMobile from "@/components/NavigatorMobile";
 import Link from "next/link";
+import {useEffect, useRef} from "react";
 
 export default function Header() {
+	const headerRef = useRef<HTMLElement>(null);
+
+	useEffect(() => {
+		const updateHeaderHeight = () => {
+			if (headerRef.current) {
+				const height = headerRef.current.offsetHeight;
+				document.documentElement.style.setProperty('--header-height', `${height}px`);
+			}
+		};
+
+		updateHeaderHeight();
+		window.addEventListener('resize', updateHeaderHeight);
+		return () => window.removeEventListener('resize', updateHeaderHeight);
+	}, []);
+
 	return (
-		<header className="w-full select-none fixed z-40">
-			<div>
-				<div className="bg-header shadow-header flex flex-row justify-between px-2 py-0 h-20">
-					<Link className="flex flex-row" href="https://NATroutter.fi">
-						<Image
-							className="p-2 w-[4.1rem]"
-							src="/images/logo.png"
-							alt="Logo"
-							sizes="100vw"
-							width={0}
-							height={0}
-						/>
-						<h1 className="m-auto text-secondary font-bold text-2xl">NATroutter.fi</h1>
-					</Link>
-					<NavigatorMobile/>
-				</div>
-				<Navigator/>
+		<header ref={headerRef} className="w-full select-none fixed z-30">
+
+			<div className="bg-header shadow-header flex flex-row justify-between px-2 py-0 h-20 z-20">
+				<Link className="flex flex-row" href="https://NATroutter.fi">
+					<Image
+						className="p-2 w-[4.1rem]"
+						src="/images/logo.png"
+						alt="Logo"
+						sizes="100vw"
+						width={0}
+						height={0}
+					/>
+					<h1 className="m-auto text-secondary font-bold text-2xl">NATroutter.fi</h1>
+				</Link>
+				<NavigatorMobile/>
 			</div>
+			<Navigator/>
 		</header>
 	)
 }

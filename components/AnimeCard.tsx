@@ -7,7 +7,8 @@ import {toCapitalizedCase} from "@/lib/utils";
 import {Card, CardContent} from "@/components/ui/card";
 import {AnimeDialog} from "@/components/AnimeDialog";
 import {GoDotFill} from "react-icons/go";
-import {getAnimeSeason} from "@/components/charts/ChartAnimeSeasonsBest";
+import {getAnimeSeason, getAnimeStartYear} from "@/components/charts/ChartAnimeSeasonsBest";
+import {Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 interface AnimeCardProps {
 	data?: AnimeEntry
@@ -47,18 +48,20 @@ export function AnimeCard({ data, animation=true }: AnimeCardProps) {
 	})();
 
 	// Get genres (limit to display)
-	const displayGenres = anime.genres?.slice(0, 3) || [];
-	const hasMoreGenres = anime.genres && anime.genres.length > 3;
+	const maxGenres = 2
+	const displayGenres = anime.genres?.slice(0, maxGenres) || [];
+	const hasMoreGenres = anime.genres && anime.genres.length > maxGenres;
 
 	const titles : AlternativeTitles = anime.alternative_titles;
 
 	return (
 		<AnimeDialog data={data}>
-			<Card className={`select-none w-full h-full min-h-[200px] max-w-[400px] overflow-hidden cursor-pointer bg-card-inner shadow-xl border border-card-border ${animation && "hover:scale-103 transition-transform duration-300 ease-in-out"}`}>
+			{/*   w-48 h-24 min-w-48 min-h-24   */}
+			<Card className={`select-none w-full h-full max-h-52 overflow-hidden cursor-pointer bg-card-inner shadow-xl border border-card-inner-border ${animation && "hover:scale-103 transition-transform duration-300 ease-in-out"}`}>
 				<CardContent className="p-2 flex gap-4 w-full h-full">
 					{/* Left side - Anime Poster */}
-					<div className="flex-shrink-0 overflow-hidden rounded-xl">
-						<div className="relative w-full h-full max-w-[140px]">
+					<div className="flex-1 overflow-hidden rounded-xl max-w-1/3 xxs:min-w-32 xxs:max-w-32">
+						<div className="relative h-full w-full">
 							<div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent z-10 pointer-events-none" />
 							<Image
 								className="h-full w-full m-auto pointer-events-none"
@@ -83,7 +86,7 @@ export function AnimeCard({ data, animation=true }: AnimeCardProps) {
 						<div className="space-y-2 flex flex-col justify-between h-full">
 
 							{/*Status*/}
-							<div className="flex flex-col items-start gap-2 text-xs m-0">
+							<div className="flex flex-col items-start space-y-2 text-xs m-0 text-ellipsis flex-nowrap whitespace-nowrap">
 								{anime.status && (
 									<span className={`${statusColor} px-2 py-1 font-medium rounded border bg-card border-card-border`}>
 										{formatStatus(anime.status)}
@@ -91,9 +94,17 @@ export function AnimeCard({ data, animation=true }: AnimeCardProps) {
 								)}
 								{yearSeason ?
 									(anime.num_episodes > 0 ? (
-										<span className="flex flex-row">
-											{yearSeason} <GoDotFill className="my-auto mx-0.5 text-muted" size={10} /> {anime.num_episodes} episodes
-										</span>
+										<div>
+											{/*Year and episode data for propper good devices*/}
+											<span className="hidden xxs:flex flex-row">
+												{yearSeason} <GoDotFill className="my-auto mx-0.5 text-muted" size={10} /> {anime.num_episodes} episodes
+											</span>
+
+											{/*Year and episode data for shit devices that should be thrown in to e-waste...*/}
+											<span className="flex xxs:hidden flex-row">
+												{getAnimeStartYear(data)} <GoDotFill className="my-auto mx-0.5 text-muted" size={10} /> {anime.num_episodes}
+											</span>
+										</div>
 									) : '') :
 									(anime.num_episodes > 0 ? `${anime.num_episodes} episodes` : '')
 								}
@@ -107,7 +118,7 @@ export function AnimeCard({ data, animation=true }: AnimeCardProps) {
 							</div>
 
 							{/*Ratings*/}
-							<div className="flex flex-col m-0">
+							<div className="flex flex-col space-y-2">
 								<div className="flex items-center gap-4">
 									{(anime.num_scoring_users > 0 && anime.mean > 0) && (
 										<div className="flex flex-col items-start">
@@ -136,23 +147,40 @@ export function AnimeCard({ data, animation=true }: AnimeCardProps) {
 									)}
 								</div>
 
-								{/*Tags*/}
-								<div className="flex flex-wrap gap-1.5 mt-2">
+								<div className="flex gap-1.5">
 									{displayGenres.map((genre, index) => (
-										<span
-											key={index}
-											className="bg-card border border-card text-secondary-foreground px-2 py-0.5 rounded text-xs font-medium"
-										>
-										{genre.name}
-									</span>
+										<div key={index} className={`grid grid-cols-[repeat(auto-fit,minmax(0,1fr))] overflow-ellipsis truncate`}>
+											<Tooltip>
+												<TooltipTrigger>
+													<div className="flex">
+														<span className="bg-card border border-card-border text-secondary-foreground px-2 py-0.5 rounded text-xs font-medium truncate">
+															{genre.name}
+														</span>
+													</div>
+												</TooltipTrigger>
+												<TooltipContent >
+													<p>{genre.name}</p>
+												</TooltipContent>
+											</Tooltip>
+										</div>
 									))}
 									{hasMoreGenres && (
-										<span className="bg-card border border-card text-secondary-foreground px-2 py-0.5 rounded text-xs font-medium">
-										+{anime.genres.length - 3}
-									</span>
+										<Tooltip>
+											<TooltipTrigger>
+												<span className="bg-card border border-card-border text-secondary-foreground px-2 py-0.5 rounded text-xs font-medium shrink-0">
+													+{anime.genres.length - maxGenres}
+												</span>
+											</TooltipTrigger>
+											<TooltipContent>
+												<div className="flex flex-col text-center">
+													{anime.genres.slice(maxGenres).map((genre, index) => (
+														<span key={index}>{genre.name}</span>
+													))}
+												</div>
+											</TooltipContent>
+										</Tooltip>
 									)}
 								</div>
-
 							</div>
 						</div>
 					</div>

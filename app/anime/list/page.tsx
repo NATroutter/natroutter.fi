@@ -1,6 +1,6 @@
 import ContentError from "@/components/errors/ContentError";
-import {getAnimeData} from "@/lib/anime";
-import AnimeList from "@/app/anime/list/list";
+import {getAnimeData} from "@/lib/mal";
+import AnimeList from "@/app/anime/list/AnimeList";
 
 export const metadata = {
 	title: 'Anime',

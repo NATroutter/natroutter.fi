@@ -1,6 +1,6 @@
 import ContentError from "@/components/errors/ContentError";
-import {getAnimeData} from "@/lib/anime";
-import AnimeFavourites from "@/app/anime/favourites/list";
+import {getAnimeData} from "@/lib/mal";
+import AnimeFavs from "@/app/anime/favourites/AnimeFavs";
 
 export const metadata = {
 	title: 'Anime / favorite',
@@ -16,5 +16,5 @@ export const revalidate = 60;
 export default async function AnimeFavouritesPage() {
 	const animeData = await getAnimeData();
 	if (!animeData) return (<ContentError/>)
-	return (<AnimeFavourites animeData={animeData}/>);
+	return (<AnimeFavs animeData={animeData}/>);
 }

@@ -83,14 +83,15 @@ const NavigationMenuContent = React.forwardRef<
   <NavigationMenuPrimitive.Content
     ref={ref}
     className={cn(
-      "mt-1.5 overflow-hidden rounded-md border shadow",
+      "overflow-hidden rounded-md rounded-t-none border shadow",
 		"border-popover-border/20 bg-popover/20 backdrop-blur-md text-popover-foreground",
       "data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out",
       "data-[motion=from-end]:slide-in-from-right-50 data-[motion=from-start]:slide-in-from-left-50",
       "data-[motion=to-end]:slide-out-to-right-50 data-[motion=to-start]:slide-out-to-left-50",
-      "data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-top-5 data-[state=open]:duration-200",
-      "data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-top-5 data-[state=closed]:duration-200",
-	  "fixed right-0 md:top-[6.9rem] top-[4.6rem] left-1/2 -translate-x-1/2 w-[600px]",
+      "data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-top-100 data-[state=open]:duration-300",
+      "data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-top-100 data-[state=closed]:duration-500",
+	  "fixed right-0 left-1/2 -translate-x-1/2 w-[600px]",
+	  "top-header",
       className
     )}
     {...props}

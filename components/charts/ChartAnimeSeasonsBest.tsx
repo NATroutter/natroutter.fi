@@ -26,6 +26,13 @@ function getSeasonFromMonth(month: number): Season {
 	return "Fall"                                       // Oct, Nov, Dec
 }
 
+export function getAnimeStartYear(entry: AnimeEntry): number | undefined {
+	const startDate = entry.node.start_date
+	if (!startDate) return undefined
+	const date = new Date(startDate)
+	return date.getFullYear();
+}
+
 export function getAnimeSeason(entry: AnimeEntry): Season | undefined {
 	const startDate = entry.node.start_date
 	if (!startDate) return undefined
@@ -100,7 +107,7 @@ export default function ChartAnimeSeasonsBest({ settings, animeData }: ChartAnim
 
 	return (
 		<Card className="py-0 w-full shadow-xl">
-			<CardHeader className="flex flex-col items-stretch border-b bg-card-header border-card-inner-border p-0! sm:flex-row">
+			<CardHeader className="flex flex-col items-stretch p-0! sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
 					<CardTitle>Top Rated Anime by Season</CardTitle>
 					<CardDescription>
@@ -112,13 +119,13 @@ export default function ChartAnimeSeasonsBest({ settings, animeData }: ChartAnim
 				</div>
 			</CardHeader>
 			<CardContent className="px-2 p-6">
-				<div className="gap-4 w-full grid mx-auto place-items-center grid-cols-1 lg:grid-cols-2 xxl:grid-cols-2 2xl:grid-cols-4 ">
+				<div className="gap-4 w-full grid mx-auto place-items-center grid-cols-1 lg:grid-cols-2 min-[115rem]:grid-cols-4">
 					{topRatedPerSeason.map((item, index) => (
-						<div key={index} className="flex h-full w-full flex-col gap-3">
-							<div className="flex mx-auto w-full max-w-[200px] text-center p-2 rounded-xl bg-card-inner border border-card-inner-border">
+						<div key={index} className="flex h-full w-full flex-col gap-3 px-3 max-w-[28rem]">
+							<div className="flex mx-auto w-full text-center p-2 rounded-xl bg-card-inner border border-card-inner-border">
 								<h1 className="w-full text-xl font-semibold text-center">{item?.season}</h1>
 							</div>
-							<div className="flex px-3 pb-3 flex-1 justify-center">
+							<div className="flex pb-3 flex-1 justify-center">
 								<AnimeCard key={index} data={item?.anime} />
 							</div>
 						</div>

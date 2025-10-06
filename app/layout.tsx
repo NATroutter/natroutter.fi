@@ -13,6 +13,7 @@ import Script from 'next/script'
 import ServerError from "@/components/errors/ServerError";
 import {ReactNode} from "react";
 import {Toaster} from "@/components/ui/sonner";
+import {TooltipProvider} from "@/components/ui/tooltip";
 
 const montserrat = Montserrat({
     variable: "--font-montserrat",
@@ -82,23 +83,27 @@ export default async function RootLayout({children}: Readonly<{ children: ReactN
 
     return (
         <html lang="en">
-        <body className={`${montserrat.variable} ${montserrat.className} bg-background bg-cover text-foreground font-normal flex flex-col min-h-screen m-0 p-0 overflow-y-auto`}>
+        <body className={`${montserrat.variable} ${montserrat.className} bg-background bg-cover text-foreground font-normal flex flex-col h-screen m-0 p-0 overflow-hidden overscroll-y-none`}>
 
-            {footerData ? (
-                <>
-                    <Header/>
-                    <main className="relative flex flex-col grow min-h-screen pb-30 pt-[calc(5rem+2.25rem+4rem)]">
-                        {children}
-                    </main>
-	                <Footer data={footerData}/>
-					<Toaster />
-                </>
-            ) : (
-                <main className="flex flex-col grow justify-center m-auto text-center">
-					<ServerError type="content" location="footer" />
-	                <Toaster />
-                </main>
-            )}
+            <TooltipProvider>
+				{footerData ? (
+					<>
+						<Header/>
+						<main className="relative overflow-y-auto mt-header" style={{height: 'calc(100vh - var(--header-height))'}}>
+							<div className="flex flex-col min-h-full">
+								{children}
+								<Footer data={footerData}/>
+							</div>
+						</main>
+						<Toaster />
+					</>
+				) : (
+					<main className="flex flex-col grow justify-center m-auto text-center">
+						<ServerError type="content" location="footer" />
+						<Toaster />
+					</main>
+				)}
+			</TooltipProvider>
 
         </body>
         <Script

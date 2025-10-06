@@ -49,7 +49,7 @@ export default function ChartSettingsDialog({animeData, onSettingsSave, settings
 	return (
 		<Dialog onOpenChange={(open) => open && setTempSettings(settings)}>
 			<DialogTrigger asChild>
-				{children ? (children) : (<Button variant="outline">Settings</Button>)}
+				{children ? (children) : (<Button variant="default">Settings</Button>)}
 			</DialogTrigger>
 			<DialogContent className="flex flex-col gap-4 p-0 min-w-[20vw] max-h-[90vh] w-full">
 				<DialogHeader className="flex-col gap-0 border-b border-border p-4">
@@ -76,7 +76,7 @@ export default function ChartSettingsDialog({animeData, onSettingsSave, settings
 				</div>
 				<DialogFooter className="flex-row items-center justify-end border-t border-border p-4">
 					<DialogClose asChild>
-						<Button variant="outline" onClick={handleSave}>Save changes</Button>
+						<Button variant="default" onClick={handleSave}>Save changes</Button>
 					</DialogClose>
 				</DialogFooter>
 			</DialogContent>

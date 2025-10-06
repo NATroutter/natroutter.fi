@@ -2,31 +2,33 @@
 @import "tw-animate-css";
 
 @theme {
-	--color-background: #31383f;
-	--color-foreground: #abadae;
+	--color-background: hsl(210, 13%, 22%);
+	--color-foreground: hsl(200, 2%, 68%);
 	--color-muted: color-mix(in srgb, var(--color-foreground) 40%, transparent);
 
-	--color-primary: #bb2e3a;
-	--color-secondary: #a12832;
+	--color-primary: hsl(355, 61%, 46%);
+	--color-secondary: hsl(355, 60%, 39%);
 
-	--color-header: #1e2226;
-	--color-header-border: #0e101a;
+	--color-header: hsl(210, 12%, 13%);
+	--color-header-border: hsl(230, 30%, 8%);
 
-	--color-footer: #1e2226;
-	--color-footer-border: #0e101a;
+	--color-footer: hsl(210, 12%, 13%);
+	--color-footer-border: hsl(230, 30%, 8%);
 
 	--color-border: var(--color-header);
 	--color-input: hsl(0 0% 14.9%);
 	--color-ring: hsl(0 0% 83.1%);
 
-	--color-card: #20252a;
-	--color-card-header: #242930;
-	--color-card-border: #1a1f24;
+	--color-card: hsl(210, 14%, 15%);
+	--color-card-header: hsl(215, 14%, 15%);
+	--color-card-focus: hsl(215, 14%, 12%);
+	--color-card-border: hsl(210, 14%, 10%);
 	--color-card-foreground: var(--color-foreground);
 
-	--color-card-inner: #272d33;
-	--color-card-inner-focus: #323943;
-	--color-card-inner-border: #1f2429;
+	--color-card-inner: hsl(210, 13%, 18%);
+	--color-card-inner-focus: hsl(215, 13%, 23%);
+	--color-card-inner-border: hsl(210, 13%, 13%);
+	/*--color-card-inner-border: rgb(255,0,0);*/
 	--color-card-inner-foreground: var(--color-foreground);
 
 	--color-btn: var(--color-card-inner);
@@ -43,11 +45,11 @@
 	--shadow-header: rgba(15, 20, 25, 0.3) 0px 0px 5px; /*TODO YEET?*/
 	--shadow-primary-glow: hsl(355 81% 46% / 1) 0 0 20px 2px;
 
-	--color-overlay: #0f101a;
+	--color-overlay: hsl(235, 27%, 8%);
 
-	--color-finished-airing: #1262c6;
-	--color-currently-airing: #a0612d;
-	--color-not-yet-aired: #1ea54a;
+	--color-finished-airing: hsl(213, 83%, 42%);
+	--color-currently-airing: hsl(27, 56%, 40%);
+	--color-not-yet-aired: hsl(140, 69%, 38%);
 
 	--color-chart-1: hsl(220 70% 50%);
 	--color-chart-2: hsl(160 60% 45%);
@@ -77,8 +79,17 @@
 	--color-toast-info-text: var(--color-sky-400);
 	--color-toast-info-border: var(--color-sky-400);
 
+	--spacing-header: var(--header-height);
+
+	--breakpoint-xxs: 28rem;
+	--breakpoint-xs: 20rem;
+	/* sm: 40rem */
+	/* md: 48rem */
+	/* lg: 64rem */
 	--breakpoint-2lg: 72rem;
 	--breakpoint-xxl: 92rem;
+	/* 2xl: 96rem */
+	--breakpoint-2xxl: 115rem;
 	--breakpoint-3xl: 125rem;
 	--breakpoint-4xl: 150rem;
 	--breakpoint-5xl: 175rem;
@@ -105,6 +116,7 @@
 	--chart-9: var(--color-chart-9);
 	--chart-10: var(--color-chart-10);
 	--radius: 0.625rem;
+	--header-height: 7.2rem;
 }
 
 *:focus,
@@ -120,13 +132,16 @@
 ::-webkit-scrollbar-track {
 	background: var(--color-card);
 }
+.hide-scrollbar-thumb {
+	overflow: hidden;
+}
 .hide-scrollbar-thumb::-webkit-scrollbar-thumb {
 	display: none;
 }
 ::-webkit-scrollbar-thumb {
-	background: var(--color-card-inner);
+	background: var(--color-card-focus);
 	border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-	background: var(--color-card-inner);
+	background: var(--color-card-focus);
 }

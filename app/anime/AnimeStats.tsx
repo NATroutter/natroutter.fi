@@ -22,8 +22,10 @@ import ChartAnimeUpdatesByDayOfWeek from "@/components/charts/ChartAnimeUpdatesB
 import ChartAnimeUpdatesByMonth from "@/components/charts/ChartAnimeUpdatesByMonth";
 import ChartSettingsDialog, {ChartSettings, defaultSettings} from "@/components/ChartSettingsDialog";
 import {IoSettings} from "react-icons/io5";
+import {Label} from "@/components/ui/label";
+import {Button} from "@/components/ui/button";
 
-export default function Anime({ animeData }: { animeData: AnimeEntry[]}) {
+export default function AnimeStats({ animeData }: { animeData: AnimeEntry[]}) {
 	const [chartSettings, setChartSettings] = useState<ChartSettings>(defaultSettings)
 
 	return (
@@ -32,7 +34,10 @@ export default function Anime({ animeData }: { animeData: AnimeEntry[]}) {
 				<div className="flex flex-col gap-5">
 
 					<ChartSettingsDialog animeData={animeData} settings={chartSettings} onSettingsSave={(value)=>setChartSettings(value)}>
-						<IoSettings size={20} className="text-muted hover:text-foreground duration-300 transition-colors" />
+						<div className="flex gap-1 w-fit text-muted hover:text-foreground duration-300 transition-colors">
+							<IoSettings size={24} />
+							<Label className="my-auto">Settings</Label>
+						</div>
 					</ChartSettingsDialog>
 
 					<ChartAnimeQuickStats settings={chartSettings} animeData={animeData}/>

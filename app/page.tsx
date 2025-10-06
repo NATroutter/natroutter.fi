@@ -1,5 +1,5 @@
 import * as React from "react";
-import Home from "@/app/home";
+import Home from "@/app/Home";
 import {getHomePage} from "@/lib/database";
 import ContentError from "@/components/errors/ContentError";
 

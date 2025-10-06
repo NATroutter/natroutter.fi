@@ -1,5 +1,5 @@
 import {getPrivacyPage} from "@/lib/database";
-import Privacy from "@/app/privacy/privacy";
+import Privacy from "@/app/privacy/Privacy";
 import ContentError from "@/components/errors/ContentError";
 
 export const metadata = {

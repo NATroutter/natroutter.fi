@@ -1,4 +1,4 @@
-import About from "@/app/about/about";
+import About from "@/app/about/About";
 import {getAboutPage, getFileURL} from "@/lib/database";
 import ContentError from "@/components/errors/ContentError";
 

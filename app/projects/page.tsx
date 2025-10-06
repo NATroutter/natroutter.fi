@@ -1,5 +1,5 @@
 import {getFileURL, getProjectsPage} from "@/lib/database";
-import Projects from "@/app/projects/projects";
+import Projects from "@/app/projects/Projects";
 import ContentError from "@/components/errors/ContentError";
 
 export const metadata = {

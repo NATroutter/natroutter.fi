@@ -5,7 +5,7 @@ import {useEffect, useMemo, useRef, useState} from "react"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
 import {Button} from "@/components/ui/button"
 import {AnimeEntry, WATCH_STATUS_LABELS, WatchStatus} from "@/types/animeData"
-import {getCompleted, getDropped, getOnHold, getPlanToWatch, getWatching} from "@/lib/anime"
+import {getCompleted, getDropped, getOnHold, getPlanToWatch, getWatching} from "@/lib/mal"
 import {Input} from "@/components/ui/input"
 import {AnimeCard} from "@/components/AnimeCard"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
@@ -324,7 +324,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 		<div className="flex flex-col justify-center mx-auto w-full p-6">
 			<div className="gap-5 w-full max-w-[90vw] 2xl:w-640 flex flex-col self-center place-items-center">
 				<Card className="w-full h-full">
-					<CardHeader className="flex flex-col items-stretch border-b bg-card-header border-card-inner-border p-0 sm:flex-row">
+					<CardHeader className="flex flex-col items-stretch p-0 sm:flex-row">
 						<div className="flex flex-1 flex-col justify-center gap-1 px-6 pb-3 pt-4">
 							<CardTitle>{titleMap[selectedList]}</CardTitle>
 							<CardDescription>
@@ -359,7 +359,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 								{/*Control (row-2) / Filter Anime */}
 								<div className="flex flex-col flex-auto">
 									<Label className="text-sm font-medium">Search anime by</Label>
-									<div className="flex flex-row">
+									<div className="flex flex-row shadow-sm">
 
 										{/*Control (row-2) / Filter Anime / Filter type */}
 										<div className="flex flex-col">
@@ -367,7 +367,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 												defaultValue={searchTypes[0].type}
 												onValueChange={(value) => {setFieldSearchType(value)}}
 											>
-												<SelectTrigger className="w-48 rounded-r-none">
+												<SelectTrigger className="w-fit max-w-48 rounded-r-none border-r-0 shadow-none">
 													<SelectValue placeholder="Search field" />
 												</SelectTrigger>
 												<SelectContent>
@@ -381,7 +381,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 										{/*Control (row-2) / Filter Anime / Input Field */}
 										<div className="flex flex-col flex-1">
 											<Input
-												className="w-full rounded-l-none"
+												className="w-full rounded-l-none border-l-0 shadow-none"
 												placeholder="Filter..."
 												value={searchValue}
 												useRing={false}
@@ -394,7 +394,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 								{/*Control (row-2) / Sorting */}
 								<div className="flex flex-col w-full md:w-fit">
 									<p className="text-sm font-medium">Sort By</p>
-									<div className="flex w-full md:w-fit">
+									<div className="flex w-full md:w-fit shadow-sm">
 
 										{/*Control (row-2) / Sorting / Type */}
 										<Select
@@ -404,7 +404,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 												setPageIndex(0)
 											}}
 										>
-											<SelectTrigger className="w-full md:w-48 rounded-r-none">
+											<SelectTrigger className="w-full md:w-fit md:max-w-48 rounded-r-none border-r-0 shadow-none">
 												<SelectValue placeholder="Select sort" />
 											</SelectTrigger>
 											<SelectContent>
@@ -418,7 +418,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 										{/*Control (row-2) / Sorting / Direction */}
 										<Button
 											size="icon"
-											className="h-10 w-10 rounded-l-none"
+											className="h-10 w-10 rounded-l-none border-l-0 shadow-none"
 											onClick={() => setSortDirection(prev => prev === "asc" ? "desc" : "asc")}
 										>
 											<span className="sr-only">Toggle sort direction</span>
@@ -531,16 +531,17 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 						</div>
 
 						{/*Divider between controls and data*/}
-						<hr className="border-card-inner-border"/>
+						<hr className="border-card-border"/>
 
 						{/*Anime data displayed*/}
-						<div className="w-full py-6">
+						<div className="w-full p-6">
 							{isInitialLoad ? (
 								<div className="h-24 flex items-center justify-center text-center text-muted-foreground">
 									Loading...
 								</div>
 							) : paginatedData.length > 0 ? (
-								<div className="grid gap-4 place-items-center grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6">
+								//    grid-cols-1 xl:grid-cols-2 xxl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6
+								<div className="grid gap-4 place-items-center grid-cols-1 xl:grid-cols-2 xxl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6">
 									{paginatedData.map((entry, index) => (
 										<AnimeCard key={`${entry.node.id}-${index}`} data={entry} />
 									))}

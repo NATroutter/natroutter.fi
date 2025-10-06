@@ -3,7 +3,7 @@
 // import { Logo } from "@/components/logo";
 import {NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle,} from "@/components/ui/navigation-menu";
 import * as React from "react";
-import {ReactNode} from "react";
+import {ReactNode, useEffect, useRef, useState} from "react";
 import {IconType} from "react-icons";
 import {FaHome, FaLink, FaProjectDiagram, FaUser} from "react-icons/fa";
 import {IoIosListBox, IoMdAnalytics} from "react-icons/io";
@@ -100,18 +100,49 @@ function NavText({entity, children}: {entity:NavigationData, children?: ReactNod
 }
 
 export default function Navigator() {
+	const [open, setOpen] = useState<string>('');
+	const navRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+			if (navRef.current && !navRef.current.contains(event.target as Node) && open !== '') {
+				setOpen('');
+			}
+		};
+
+		const handleScroll = () => {
+			if (open !== '') {
+				setOpen('');
+			}
+		};
+
+		document.addEventListener('mousedown', handleClickOutside);
+		document.addEventListener('touchstart', handleClickOutside);
+		window.addEventListener('scroll', handleScroll, true);
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+			document.removeEventListener('touchstart', handleClickOutside);
+			window.removeEventListener('scroll', handleScroll, true);
+		};
+	}, [open]);
+
 	return (
-		<div className={"flex justify-end md:justify-center bg-background shadow-nav relative z-10 overflow-visible"}>
+		<div className={"flex justify-end md:justify-center bg-background shadow-nav relative"}>
 
 			{/* Desktop Navigation */}
-			<NavigationMenu className="hidden md:flex">
+			<NavigationMenu
+				className="hidden md:flex"
+				value={open}
+				onValueChange={setOpen}
+				ref={navRef}
+			>
 				<NavigationMenuList className="gap-0">
 					{navigatorData.map((item)=>item.dropdown ? (
 						<NavigationMenuItem key={item.data.name} className="relative border-r-2 border-header first:border-l-2">
-							<NavigationMenuTrigger>
+							<NavigationMenuTrigger className="z-20">
 								<NavText entity={item}>{item.data.name}</NavText>
 							</NavigationMenuTrigger>
-							<NavigationMenuContent>
+							<NavigationMenuContent className="-z-10">
 								<ul className="grid p-4 grid-cols-1">
 									{item.dropdown!.map((entry,i)=>
 										<li key={i} className="hover:translate-x-2 transition-transform duration-300 ease-in-out">
@@ -134,7 +165,7 @@ export default function Navigator() {
 							</NavigationMenuContent>
 						</NavigationMenuItem>
 					) : (
-						<NavigationMenuItem key={item.data.name} className="border-r-2 border-header first:border-l-2 ">
+						<NavigationMenuItem key={item.data.name} className="border-r-2 border-header first:border-l-2 z-40">
 							<NavigationMenuLink href={item.data.url} className={navigationMenuTriggerStyle({useHover: true})}>
 								<NavText entity={item}>{item.data.name}</NavText>
 							</NavigationMenuLink>

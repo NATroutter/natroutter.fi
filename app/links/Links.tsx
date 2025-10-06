@@ -21,7 +21,7 @@ export default function Links({ data }: { data: LinkPage[] }) {
 
 				{data.map((entry, index) => (
 					<Card key={index} className="w-full h-full py-0">
-						<CardHeader className="flex flex-col items-stretch border-b bg-card-header border-card-inner-border p-0 sm:flex-row h-24">
+						<CardHeader className="flex flex-col items-stretch p-0 sm:flex-row h-24">
 							<div className="flex flex-1 flex-col gap-0.5 px-6 py-2">
 								<CardTitle className="text-xl">{entry.title}</CardTitle>
 								{entry.description && (

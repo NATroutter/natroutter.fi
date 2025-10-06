@@ -1,5 +1,4 @@
 import {AnimeData, AnimeEntry} from "@/types/animeData";
-import logger from "@/lib/logger";
 
 
 const endpoint: string = "https://api.myanimelist.net/v2/users/NATroutter/animelist";
@@ -11,7 +10,6 @@ export async function getAnimeData(): Promise<AnimeEntry[] | undefined> {
 	let nextURL: string | undefined = endpoint + '?fields=' + fields + '&limit=1000&sort=list_updated_at&nsfw=1';
 
 	while (nextURL) {
-		logger.info("Sending request to : myanimelist.net")
 		const response = await fetch(nextURL, {
 			method: "GET",
 			headers: {
@@ -19,8 +17,7 @@ export async function getAnimeData(): Promise<AnimeEntry[] | undefined> {
 			}
 		})
 		if (!response.ok){
-			logger.error("Failed to fetch anime data from MyAnimeList.net : ("+response.status+") " +  response.statusText)
-			return undefined;
+			throw Error("Failed to fetch anime data from MyAnimeList.net : ("+response.status+") " +  response.statusText);
 		}
 		const json = await response.json();
 		const resp : AnimeData = (json as AnimeData)

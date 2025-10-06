@@ -88,7 +88,7 @@ export default function ChartAnimeCompletedByDayOfWeek({settings, animeData}: Ch
 
 	return (
 		<Card className="py-0 w-full shadow-xl">
-			<CardHeader className="flex flex-col items-stretch border-b bg-card-header border-card-inner-border p-0! sm:flex-row">
+			<CardHeader className="flex flex-col items-stretch p-0! sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
 					<CardTitle>Anime Completed by Day of Week</CardTitle>
 					<CardDescription>

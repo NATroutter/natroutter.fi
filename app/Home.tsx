@@ -12,11 +12,11 @@ export default function Home({data} : {data:HomePage}) {
 
 	return (
 		<div className="flex flex-col m-auto w-[80vw] max-w-240 justify-center p-6">
-			<div id="curly-brace">
+			<div id="curly-brace hidden lg:flex">
 				<div id="left" className="brace"></div>
 				<div id="right" className="brace"></div>
 			</div>
-			<div className="flex flex-col border-primary p-7 rounded-[20px] border-solid border-l-[3px] border-0 gap-6">
+			<div className="flex flex-col border-primary p-6 rounded-[20px] border-solid border-l-[3px] border-0 gap-6">
 				<div className="">
 					<h2 className="text-3xl font-semibold">Hello it&#39;s Me</h2>
 					<h1 className="text-5xl font-semibold ml-2">{data.username}</h1>

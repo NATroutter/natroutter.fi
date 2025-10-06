@@ -1,0 +1,10 @@
+services:
+  natroutter-fi:
+    image: natroutter-fi:latest
+    hostname: natroutter-fi
+    container_name: natroutter-fi
+    restart: always
+    ports:
+      - 3000:3000
+    env_file:
+      - .env.production
