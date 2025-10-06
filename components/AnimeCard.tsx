@@ -60,7 +60,7 @@ export function AnimeCard({ data, animation=true }: AnimeCardProps) {
 			<Card className={`select-none w-full h-full max-h-52 overflow-hidden cursor-pointer bg-card-inner shadow-xl border border-card-inner-border ${animation && "hover:scale-103 transition-transform duration-300 ease-in-out"}`}>
 				<CardContent className="p-2 flex gap-4 w-full h-full">
 					{/* Left side - Anime Poster */}
-					<div className="flex-1 overflow-hidden rounded-xl max-w-1/3 xxs:min-w-32 xxs:max-w-32">
+					<div className="flex-1 overflow-hidden rounded-xl max-w-1/3 xs:min-w-32 xs:max-w-32">
 						<div className="relative h-full w-full">
 							<div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent z-10 pointer-events-none" />
 							<Image
@@ -96,12 +96,12 @@ export function AnimeCard({ data, animation=true }: AnimeCardProps) {
 									(anime.num_episodes > 0 ? (
 										<div>
 											{/*Year and episode data for propper good devices*/}
-											<span className="hidden xxs:flex flex-row">
+											<span className="hidden xs:flex flex-row">
 												{yearSeason} <GoDotFill className="my-auto mx-0.5 text-muted" size={10} /> {anime.num_episodes} episodes
 											</span>
 
 											{/*Year and episode data for shit devices that should be thrown in to e-waste...*/}
-											<span className="flex xxs:hidden flex-row">
+											<span className="flex xs:hidden flex-row">
 												{getAnimeStartYear(data)} <GoDotFill className="my-auto mx-0.5 text-muted" size={10} /> {anime.num_episodes}
 											</span>
 										</div>

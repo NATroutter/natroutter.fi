@@ -5,11 +5,11 @@ import {ReactNode} from "react"
 import Image from "next/image";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import Link from "next/link";
-import {ProjectPage} from "@/types/interfaces";
+import {ProjectData, ProjectPage} from "@/types/interfaces";
 import Markdown from "@/components/Markdown";
 
 interface ProjectDialogProps {
-	data: ProjectPage;
+	data: ProjectData;
 	children?: ReactNode;
 }
 
@@ -64,7 +64,7 @@ export function ProjectDialog({ data, children }: ProjectDialogProps) {
 											<span>{link.name}: </span>
 											<span>
 											<Link href={data.github} target="_blank"
-												  data-umami-event={`[PROJECTS] Link (${data.name} > ${link.display_name})`}
+												  data-umami-event={`[PROJECTS] Link (${data.name} > ${link.name})`}
 												  data-umami-event-url={link.url}
 												  className="text-primary hover:text-secondary font-normal">
 												{link.display_name}
@@ -79,12 +79,12 @@ export function ProjectDialog({ data, children }: ProjectDialogProps) {
 						{/*Right side*/}
 						<div className="flex flex-col gap-4 w-fit">
 							<div className="flex flex-col">
-								<h1 className="text-2xl font-bold">{data.name}</h1>
+								<h1 className="text-2xl font-bold">{data.title}</h1>
 							</div>
 
-							{data.description && (
+							{data.content && (
 								<div>
-									<Markdown content={data.description}/>
+									<Markdown content={data.content}/>
 								</div>
 							)}
 

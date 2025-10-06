@@ -11,12 +11,26 @@ export interface LinkData {
 	url: string;
 }
 
+export interface ProjectData {
+	id: string;
+	image: string;
+	name: string;
+	description: string;
+	title: string;
+	content: string;
+	github: string;
+	links: string[];
+	priority: number
+	expand: ExpandLinks;
+}
+
 export interface FooterData {
 	contact: string[];
+	quick: string[]
 	social: string[];
 	about_me: string;
 	copyright: string;
-	expand: expandFooter;
+	expand: ExpandFooter;
 }
 
 //*************************************
@@ -28,7 +42,7 @@ export interface HomePage {
 	intro: string;
 	what_am_i:string;
 	links: string[];
-	expand: expandLinks;
+	expand: ExpandLinks;
 }
 
 export interface AboutPage {
@@ -46,17 +60,14 @@ export interface LinkPage {
 	description: string;
 	links: string[];
 	priority: number;
-	expand: expandLinks;
+	expand: ExpandLinks;
 }
 export interface ProjectPage {
 	id: string;
-	image: string;
-	name: string;
+	title: string;
 	description: string;
-	github: string;
-	links: string[]
-	priority: number;
-	expand: expandLinks;
+	projects: string[];
+	expand: ExpandProjects;
 }
 
 export interface PrivacyPage {
@@ -71,10 +82,14 @@ export interface PrivacyPage {
 //*************************************
 //*             Expansions            *
 //*************************************
-export interface expandLinks {
+export interface ExpandLinks {
 	links: LinkData[];
 }
-export interface expandFooter {
+export interface ExpandProjects {
+	projects: ProjectData[];
+}
+export interface ExpandFooter {
 	contact: LinkData[];
 	social: LinkData[];
+	quick: LinkData[];
 }

@@ -322,7 +322,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 
 	return (
 		<div className="flex flex-col justify-center mx-auto w-full p-6">
-			<div className="gap-5 w-full max-w-[90vw] 2xl:w-640 flex flex-col self-center place-items-center">
+			<div className="gap-5 md:my-20 w-full max-w-[90vw] 2xl:w-640 flex flex-col self-center place-items-center">
 				<Card className="w-full h-full">
 					<CardHeader className="flex flex-col items-stretch p-0 sm:flex-row">
 						<div className="flex flex-1 flex-col justify-center gap-1 px-6 pb-3 pt-4">

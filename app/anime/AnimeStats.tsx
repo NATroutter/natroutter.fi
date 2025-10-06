@@ -31,14 +31,14 @@ export default function AnimeStats({ animeData }: { animeData: AnimeEntry[]}) {
 	return (
 		<div className="flex flex-col justify-center mx-auto w-full p-6">
 			<div className="w-full max-w-[90vw] 2xl:w-640 flex flex-col self-center place-items-center">
-				<div className="flex flex-col gap-5">
+				<div className="flex flex-col gap-5 md:my-20">
 
-					<ChartSettingsDialog animeData={animeData} settings={chartSettings} onSettingsSave={(value)=>setChartSettings(value)}>
-						<div className="flex gap-1 w-fit text-muted hover:text-foreground duration-300 transition-colors">
-							<IoSettings size={24} />
-							<Label className="my-auto">Settings</Label>
-						</div>
-					</ChartSettingsDialog>
+					{/*<ChartSettingsDialog animeData={animeData} settings={chartSettings} onSettingsSave={(value)=>setChartSettings(value)}>*/}
+					{/*	<div className="flex gap-1 w-fit text-muted hover:text-foreground duration-300 transition-colors">*/}
+					{/*		<IoSettings size={24} />*/}
+					{/*		<Label className="my-auto">Settings</Label>*/}
+					{/*	</div>*/}
+					{/*</ChartSettingsDialog>*/}
 
 					<ChartAnimeQuickStats settings={chartSettings} animeData={animeData}/>
 					<ChartAnimeSeasonsBest settings={chartSettings} animeData={animeData}/>

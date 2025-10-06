@@ -48,12 +48,11 @@ export async function getLinkPage() : Promise<LinkPage[]|undefined> {
 	}
 }
 
-export async function getProjectsPage() : Promise<ProjectPage[] | undefined> {
+export async function getProjectsPage() : Promise<ProjectPage | undefined> {
 	try {
 		const pb = getPocketBase();
-		return await pb.collection("page_projects").getFullList<ProjectPage>({
-			expand: "links",
-			sort: "-priority"
+		return await pb.collection("page_projects").getFirstListItem<ProjectPage|undefined>("",{
+			expand: "projects.links"
 		});
 	} catch (err : unknown) {
 		throwPocketBaseError(err, "Failed to fetch data for ProjectPage");

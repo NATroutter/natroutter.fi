@@ -1,7 +1,7 @@
-import * as React from "react";
-import Home from "@/app/Home";
+
 import {getHomePage} from "@/lib/database";
 import ContentError from "@/components/errors/ContentError";
+import Home from "@/app/Home";
 
 // ISR: Revalidate every 60 seconds
 export const revalidate = 60;

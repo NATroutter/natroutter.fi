@@ -2,46 +2,63 @@
 
 import {HomePage} from "@/types/interfaces";
 import Link from "next/link";
-import * as React from "react";
 import DynamicIcon from "@/lib/dynamicIcon";
 import AnimatedText from "@/components/AnimatedText";
+import Image from "next/image";
+import Markdown from "@/components/Markdown";
+import * as React from "react";
 
 export default function Home({data} : {data:HomePage}) {
-
-	console.log(data)
-
 	return (
-		<div className="flex flex-col m-auto w-[80vw] max-w-240 justify-center p-6">
-			<div id="curly-brace hidden lg:flex">
-				<div id="left" className="brace"></div>
-				<div id="right" className="brace"></div>
-			</div>
-			<div className="flex flex-col border-primary p-6 rounded-[20px] border-solid border-l-[3px] border-0 gap-6">
-				<div className="">
-					<h2 className="text-3xl font-semibold">Hello it&#39;s Me</h2>
-					<h1 className="text-5xl font-semibold ml-2">{data.username}</h1>
-					<h3 className="text-3xl font-semibold ml-2">And i&#39;m a <AnimatedText words={data.what_am_i.split(",")} writeSpeed={150} earseSpeed={100} pauseTime={1500}/>
-					</h3>
-				</div>
-				<div className="flex flex-col ml-2 gap-6">
-					<div>
-						<p>{data.intro}</p>
+
+		<div className="flex flex-col justify-center m-auto w-full p-6 min-h-[calc(100vh-var(--header-height))]">
+			<div className="w-full max-w-[90vw] 2xl:w-640 flex flex-col self-center place-items-center">
+				<div className="flex flex-col gap-5">
+
+					<div className="flex flex-col border-primary rounded-[20px] p-6 border-solid border-l-[3px] border-0 gap-1 max-w-4xl">
+						<div className="">
+
+							<h2 className="text-xl text-center xxs:text-left font-semibold">Hello, it's me.</h2>
+
+							<h1 className="text-3xl md:text-5xl font-semibold ml-2">{data.username}</h1>
+
+							<div className="flex flex-col md:flex-row ml-2 gap-1">
+								<h3 className="text-xl font-semibold">And i&#39;m a</h3>
+								<AnimatedText
+									words={data.what_am_i.split(",")}
+									writeSpeed={150}
+									earseSpeed={100}
+									pauseTime={1500}
+									whenEmpty={"‎"}
+									className="my-auto text-xl font-semibold"
+								/>
+							</div>
+
+						</div>
+						<div className="flex flex-col ml-2 gap-6">
+							<div>
+								<p>{data.intro}</p>
+							</div>
+
+							<div className="flex gap-2">
+								{data.expand.links.map((item, index) =>
+									<Link key={index} href={item.url} target={"_blank"}
+										  data-umami-event={`[HOME] Link (${item.name})`}
+										  data-umami-event-url={item.url}
+										  className="hover:scale-110 transition-transform duration-300 ease-in-out">
+										<DynamicIcon iconName={item.icon} size={40} className="border-2 p-1.5 rounded-full border-primary text-primary"/>
+									</Link>
+								)}
+							</div>
+
+							<div>
+								<Link href="/projects">
+									<button data-umami-event={`[HOME] (Explore My Work)`} className="bg-primary px-5 py-3 rounded-full shadow-primary-glow font-semibold hover:scale-105 transition-transform duration-300 ease-in-out">Explore My Work</button>
+								</Link>
+							</div>
+						</div>
 					</div>
-					<div className="flex gap-2">
-						{data.expand.links.map((item, index) =>
-							<Link key={index} href={item.url} target={"_blank"}
-								  data-umami-event={`[HOME] Link (${item.display_name})`}
-								  data-umami-event-url={item.url}
-								  className="hover:scale-110 transition-transform duration-300 ease-in-out">
-								<DynamicIcon iconName={item.icon} size={40} className="border-2 p-1.5 rounded-full border-primary text-primary"/>
-							</Link>
-						)}
-					</div>
-					<div>
-						<Link href="/projects">
-							<button data-umami-event={`[HOME] (Explore My Work)`} className="bg-primary px-5 py-3 rounded-full shadow-primary-glow font-semibold hover:scale-105 transition-transform duration-300 ease-in-out">Explore My Work</button>
-						</Link>
-					</div>
+
 				</div>
 			</div>
 		</div>

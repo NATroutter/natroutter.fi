@@ -81,8 +81,9 @@
 
 	--spacing-header: var(--header-height);
 
-	--breakpoint-xxs: 28rem;
-	--breakpoint-xs: 20rem;
+	--breakpoint-xxxs: 15rem;
+	--breakpoint-xxs: 20rem;
+	--breakpoint-xs: 28rem;
 	/* sm: 40rem */
 	/* md: 48rem */
 	/* lg: 64rem */

@@ -17,7 +17,7 @@ export default async function ProjectsPage() {
 	const data = await getProjectsPage()
 	if (!data) return (<ContentError/>);
 
-	data.map(entry => {
+	data.expand.projects.map(entry => {
 		entry.image = getFileURL("page_projects", entry.id, entry.image)
 	})
 
