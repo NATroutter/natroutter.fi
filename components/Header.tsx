@@ -3,39 +3,15 @@
 import Image from "next/image";
 import Navigator from "@/components/Navigator";
 import * as React from "react";
-import {useEffect, useState} from "react";
-import useWindowDimensions from "@/hooks/useWindowDimensions";
-import {NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger} from "@/components/ui/navigation-menu";
+import NavigatorMobile from "@/components/NavigatorMobile";
+import Link from "next/link";
 
 export default function Header() {
-	const [open, setOpen] = useState(false);
-	const { width } = useWindowDimensions();
-
-	useEffect(() => {
-		const handleScroll = (e: Event): void => {
-			if (open) {
-				e.preventDefault();
-				e.stopPropagation();
-			}
-		};
-		if (open && width < 768) {
-			// Add event listeners when sidebar is open
-			document.addEventListener('wheel', handleScroll, { passive: false });
-			document.addEventListener('touchmove', handleScroll, { passive: false });
-			document.body.classList.add('hide-scrollbar-thumb');
-		}
-		return () => {
-			document.removeEventListener('wheel', handleScroll);
-			document.removeEventListener('touchmove', handleScroll);
-			document.body.classList.remove('hide-scrollbar-thumb');
-		};
-	}, [open, width]);
-
 	return (
-		<header className="z-10 w-full select-none">
-			<div className="bg-header shadow-header flex flex-row justify-between px-2 py-0 h-20">
-				<div className="flex flex-row">
-					<a className="flex flex-row" href="https://NATroutter.fi">
+		<header className="w-full select-none fixed z-40">
+			<div>
+				<div className="bg-header shadow-header flex flex-row justify-between px-2 py-0 h-20">
+					<Link className="flex flex-row" href="https://NATroutter.fi">
 						<Image
 							className="p-2 w-[4.1rem]"
 							src="/images/logo.png"
@@ -45,15 +21,11 @@ export default function Header() {
 							height={0}
 						/>
 						<h1 className="m-auto text-secondary font-bold text-2xl">NATroutter.fi</h1>
-					</a>
+					</Link>
+					<NavigatorMobile/>
 				</div>
+				<Navigator/>
 			</div>
-
-			<Navigator/>
-
-
-
-			<div className={`${open ? "block md:hidden" : "hidden"} relative h-screen inset-0 bg-black bg-opacity-50 z-20`}></div>
 		</header>
 	)
 }

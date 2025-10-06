@@ -28,7 +28,7 @@ export default function Anime({ animeData }: { animeData: AnimeEntry[]}) {
 
 	return (
 		<div className="flex flex-col justify-center mx-auto w-full p-6">
-			<div className="gap-5 w-full max-w-[90vw] 2xl:w-640 flex flex-col self-center place-items-center">
+			<div className="w-full max-w-[90vw] 2xl:w-640 flex flex-col self-center place-items-center">
 				<div className="flex flex-col gap-5">
 
 					<ChartSettingsDialog animeData={animeData} settings={chartSettings} onSettingsSave={(value)=>setChartSettings(value)}>

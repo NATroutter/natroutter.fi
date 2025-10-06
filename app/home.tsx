@@ -8,8 +8,10 @@ import AnimatedText from "@/components/AnimatedText";
 
 export default function Home({data} : {data:HomePage}) {
 
+	console.log(data)
+
 	return (
-		<div className="flex flex-col m-auto w-[80vw] max-w-240 justify-center">
+		<div className="flex flex-col m-auto w-[80vw] max-w-240 justify-center p-6">
 			<div id="curly-brace">
 				<div id="left" className="brace"></div>
 				<div id="right" className="brace"></div>

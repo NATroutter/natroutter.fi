@@ -5,7 +5,7 @@ import {useEffect, useMemo, useRef, useState} from "react"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
 import {Button} from "@/components/ui/button"
 import {AnimeEntry, WATCH_STATUS_LABELS, WatchStatus} from "@/types/animeData"
-import {getCompleted, getDropped, getOnHold, getPlanToWatch, getWatching} from "@/lib/mal"
+import {getCompleted, getDropped, getOnHold, getPlanToWatch, getWatching} from "@/lib/anime"
 import {Input} from "@/components/ui/input"
 import {AnimeCard} from "@/components/AnimeCard"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
@@ -16,7 +16,7 @@ import {MdFirstPage, MdKeyboardArrowLeft, MdKeyboardArrowRight, MdLastPage} from
 interface SearchTypes {
 	type: string
 	label: string
-	getValue: (entry: AnimeEntry) => any
+	getValue: (entry: AnimeEntry) => string | number
 	isNumeric: boolean
 }
 
@@ -212,15 +212,11 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 				}
 
 				// Handle numeric fields - include all for numeric search (will sort by proximity)
-				if (typeof fieldValue === 'number') {
-					if (isNumericSearch) {
-						return true // Include all, will be sorted by proximity
-					} else {
-						return fieldValue.toString().includes(search)
-					}
+				if (isNumericSearch) {
+					return true // Include all, will be sorted by proximity
+				} else {
+					return fieldValue.toString().includes(search)
 				}
-
-				return false
 			})
 
 			// Step 2.5: Sort by proximity for numeric searches

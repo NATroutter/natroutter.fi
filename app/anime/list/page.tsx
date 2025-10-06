@@ -1,5 +1,5 @@
 import ContentError from "@/components/errors/ContentError";
-import {getAnimeData} from "@/lib/mal";
+import {getAnimeData} from "@/lib/anime";
 import AnimeList from "@/app/anime/list/list";
 
 export const metadata = {
@@ -9,6 +9,9 @@ export const metadata = {
 		description: 'Dive into my anime journey! Check out my watching progress, including "Currently Watching," "Latest Completed," and "Plan to Watch" lists. Explore my anime history and discover what I’m enjoying next!'
 	}
 };
+
+// ISR: Revalidate every 60 seconds
+export const revalidate = 60;
 
 export default async function AnimeListPage() {
 	const animeData = await getAnimeData();

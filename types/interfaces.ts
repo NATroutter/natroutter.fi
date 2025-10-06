@@ -3,6 +3,7 @@
 //*************************************
 export interface LinkData {
 	id: string;
+	name: string;
 	display_name: string;
 	image: string;
 	icon: string;
@@ -42,6 +43,7 @@ export interface AboutPage {
 export interface LinkPage {
 	id: string;
 	title: string;
+	description: string;
 	links: string[];
 	priority: number;
 	expand: expandLinks;

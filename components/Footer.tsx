@@ -1,14 +1,12 @@
 'use client'
 
 import * as React from "react";
+import {ReactNode} from "react";
 import {FooterData} from "@/types/interfaces";
 import Link from "next/link";
 import DynamicIcon from "@/lib/dynamicIcon";
 import Markdown from "@/components/Markdown";
-import {ReactNode} from "react";
-import {FaLink, FaProjectDiagram, FaTv, FaUser} from "react-icons/fa";
-import {IconType} from "react-icons";
-import {navigatorLinks} from "@/components/Navigator";
+import {navigatorData} from "@/components/Navigator";
 
 
 export default function Footer({data}:{data:FooterData}) {
@@ -22,14 +20,14 @@ export default function Footer({data}:{data:FooterData}) {
 							{data.expand.contact.map((item,index)=>(
 								<li key={index} className="flex">
 									<Link
-										className="flex my-auto hover:text-secondary"
+										className="flex my-auto hover:text-secondary group"
 										href={item.url}
 										target="_blank"
 										data-umami-event={`[FOOTER] Link (Contact > ${item.display_name})`}
 										data-umami-event-url={item.url}
 									>
 										<div>
-											<DynamicIcon className="p-1.5 text-foreground" iconName={item.icon} size={30}/>
+											<DynamicIcon className="p-1.5 text-muted group-hover:text-secondary" iconName={item.icon} size={30}/>
 										</div>
 										<p className="my-auto ml-2 font-semibold">{item.display_name}</p>
 									</Link>
@@ -39,19 +37,19 @@ export default function Footer({data}:{data:FooterData}) {
 					</FooterBox>
 					<FooterBox name="Quick Links">
 						<ul className="flex flex-col gap-2">
-							{navigatorLinks.filter(item=>item.quick).map((item,index)=>(
+							{navigatorData.filter(item=>item.quick).map((item, index)=>(
 								<li key={index} className="flex">
 									<Link
-										className="flex my-auto hover:text-secondary"
-										href={item.url}
-										target={(item.url.startsWith("http://") || item.url.startsWith("https://")) ? "_blank" : "_self"}
-										data-umami-event={`[FOOTER] Open (Quick > ${item.name})`}
-										data-umami-event-url={item.url}
+										className="flex my-auto hover:text-secondary group"
+										href={item.data.url}
+										target={(item.data.url.startsWith("http://") || item.data.url.startsWith("https://")) ? "_blank" : "_self"}
+										data-umami-event={`[FOOTER] Open (Quick > ${item.data.name})`}
+										data-umami-event-url={item.data.url}
 									>
 										<div>
-											<item.icon className="p-1.5 text-foreground" size={30}/>
+											<item.data.icon className="p-1.5 text-muted group-hover:text-secondary" size={30}/>
 										</div>
-										<p className="my-auto ml-2 font-semibold">{item.name}</p>
+										<p className="my-auto ml-2 font-semibold">{item.data.name}</p>
 									</Link>
 								</li>
 							))}
@@ -59,28 +57,28 @@ export default function Footer({data}:{data:FooterData}) {
 					</FooterBox>
 					<FooterBox name="About Me">
 						<Markdown content={data.about_me} className="text-muted"/>
-						{/*<ul className="flex flex-row gap-2">*/}
-						{/*	{data.expand.social.map((item,index)=>(*/}
-						{/*		<li key={index} className="flex">*/}
-						{/*			<Link*/}
-						{/*				className="flex my-auto hover:text-secondary"*/}
-						{/*				href={item.url}*/}
-						{/*				target="_blank"*/}
-						{/*				data-umami-event={`[FOOTER] Link (About > ${item.display_name})`}*/}
-						{/*				data-umami-event-url={item.url}*/}
-						{/*			>*/}
-						{/*				<div>*/}
-						{/*					<DynamicIcon className="p-1.5 text-foreground" iconName={item.icon} size={30}/>*/}
-						{/*				</div>*/}
-						{/*			</Link>*/}
-						{/*		</li>*/}
-						{/*	))}*/}
-						{/*</ul>*/}
+						<ul className="flex flex-row gap-2">
+							{data.expand.social.map((item,index)=>(
+								<li key={index} className="flex">
+									<Link
+										className="flex my-auto hover:text-secondary group"
+										href={item.url}
+										target="_blank"
+										data-umami-event={`[FOOTER] Link (About > ${item.display_name})`}
+										data-umami-event-url={item.url}
+									>
+										<div>
+											<DynamicIcon className="p-1.5 text-muted group-hover:text-secondary" iconName={item.icon} size={30}/>
+										</div>
+									</Link>
+								</li>
+							))}
+						</ul>
 					</FooterBox>
 				</div>
 				<div className="flex flex-col justify-center text-center p-5">
 					<Link
-						className="text-sm text-muted hover:text-foreground"
+						className="text-sm text-muted hover:text-foreground w-fit text-center m-auto"
 						href="/privacy"
 						data-umami-event={`[FOOTER] Open (Privacy)`}
 					>Privacy Policy</Link>

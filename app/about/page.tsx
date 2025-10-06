@@ -4,11 +4,14 @@ import ContentError from "@/components/errors/ContentError";
 
 export const metadata = {
 	title: 'About Me',
-	description: 'Discover NATroutter, a 26-year-old programmer from Finland, passionate about backend development and exploring new technologies.',
+	description: 'Discover NATroutter, a programmer from Finland, passionate about backend development and exploring new technologies.',
 	openGraph: {
-		description: 'Discover NATroutter, a 26-year-old programmer from Finland, passionate about backend development and exploring new technologies.'
+		description: 'Discover NATroutter, a programmer from Finland, passionate about backend development and exploring new technologies.'
 	}
 };
+
+// ISR: Revalidate every 60 seconds
+export const revalidate = 60;
 
 export default async function AboutPage() {
 	const data = await getAboutPage();

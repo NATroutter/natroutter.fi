@@ -12,13 +12,12 @@ const NavigationMenu = React.forwardRef<
   <NavigationMenuPrimitive.Root
     ref={ref}
     className={cn(
-      "relative z-10 flex max-w-max flex-1 items-center justify-center",
+      "relative flex max-w-max flex-1 items-center justify-center",
       className
     )}
     {...props}
   >
     {children}
-    <NavigationMenuViewport />
   </NavigationMenuPrimitive.Root>
 ))
 NavigationMenu.displayName = NavigationMenuPrimitive.Root.displayName
@@ -41,23 +40,38 @@ NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName
 const NavigationMenuItem = NavigationMenuPrimitive.Item
 
 const navigationMenuTriggerStyle = cva(
-  "group inline-flex h-9 w-max items-center justify-center bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-header hover:text-foreground focus:bg-header focus:text-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=open]:text-foreground data-[state=open]:bg-header/50 data-[state=open]:hover:bg-header data-[state=open]:focus:bg-header"
+	`group inline-flex h-9 w-max items-center justify-center bg-background px-4 py-2 text-sm font-medium transition-colors hover:text-foreground focus:text-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=open]:text-foreground`,
+	{
+		variants: {
+			useHover: {
+				true: "hover:bg-header focus:bg-header data-[state=open]:bg-header/50 data-[state=open]:hover:bg-header data-[state=open]:focus:bg-header"
+			}
+		},
+		defaultVariants: {
+			useHover: false
+		}
+	}
 )
+
 
 const NavigationMenuTrigger = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Trigger> & {
+    hideChevron?: boolean
+  }
+>(({ className, children, hideChevron, ...props }, ref) => (
   <NavigationMenuPrimitive.Trigger
     ref={ref}
     className={cn(navigationMenuTriggerStyle(), "group", className)}
     {...props}
   >
     {children}{" "}
-    <ChevronDown
-      className="relative top-[1px] ml-1 h-3 w-3 transition duration-300 group-data-[state=open]:rotate-180"
-      aria-hidden="true"
-    />
+    {!hideChevron && (
+      <ChevronDown
+        className="relative top-[1px] ml-1 h-3 w-3 transition duration-300 group-data-[state=open]:rotate-180"
+        aria-hidden="true"
+      />
+    )}
   </NavigationMenuPrimitive.Trigger>
 ))
 NavigationMenuTrigger.displayName = NavigationMenuPrimitive.Trigger.displayName
@@ -69,7 +83,14 @@ const NavigationMenuContent = React.forwardRef<
   <NavigationMenuPrimitive.Content
     ref={ref}
     className={cn(
-      "left-0 top-0 w-full data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 md:absolute md:w-auto ",
+      "mt-1.5 overflow-hidden rounded-md border shadow",
+		"border-popover-border/20 bg-popover/20 backdrop-blur-md text-popover-foreground",
+      "data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out",
+      "data-[motion=from-end]:slide-in-from-right-50 data-[motion=from-start]:slide-in-from-left-50",
+      "data-[motion=to-end]:slide-out-to-right-50 data-[motion=to-start]:slide-out-to-left-50",
+      "data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-top-5 data-[state=open]:duration-200",
+      "data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-top-5 data-[state=closed]:duration-200",
+	  "fixed right-0 md:top-[6.9rem] top-[4.6rem] left-1/2 -translate-x-1/2 w-[600px]",
       className
     )}
     {...props}

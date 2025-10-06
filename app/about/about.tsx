@@ -29,7 +29,7 @@ export default function About({ data }: { data: AboutPage }) {
 	}
 
 	return (
-		<div className="flex flex-col justify-center text-center gap-5 m-auto max-w-[95vw] py-28">
+		<div className="flex flex-col justify-center text-center m-auto max-w-[95vw] p-6 ">
 			<h1 className="font-bold text-5xl underline underline-offset-8">ABOUT ME</h1>
 			<div className="flex flex-col xl:flex-row m-auto justify-center">
 

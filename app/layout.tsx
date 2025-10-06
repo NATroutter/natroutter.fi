@@ -1,5 +1,5 @@
 import type {Metadata, Viewport} from "next";
-// import "@/styles/markdown.css"; //TODO Fix enabling this breaks the tailwind auto complete system
+import "@/styles/markdown.css"; //TODO Fix enabling this breaks the tailwind auto complete system
 import "@/styles/globals.css";
 
 
@@ -87,7 +87,7 @@ export default async function RootLayout({children}: Readonly<{ children: ReactN
             {footerData ? (
                 <>
                     <Header/>
-                    <main className="relative flex flex-col grow min-h-screen pb-30">
+                    <main className="relative flex flex-col grow min-h-screen pb-30 pt-[calc(5rem+2.25rem+4rem)]">
                         {children}
                     </main>
 	                <Footer data={footerData}/>

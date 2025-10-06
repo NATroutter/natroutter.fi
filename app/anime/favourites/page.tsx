@@ -1,14 +1,17 @@
 import ContentError from "@/components/errors/ContentError";
-import {getAnimeData} from "@/lib/mal";
+import {getAnimeData} from "@/lib/anime";
 import AnimeFavourites from "@/app/anime/favourites/list";
 
 export const metadata = {
-	title: 'Anime',
-	description: 'Dive into my anime journey! Check out my watching progress, including "Currently Watching," "Latest Completed," and "Plan to Watch" lists. Explore my anime history and discover what I’m enjoying next!',
+	title: 'Anime / favorite',
+	description: 'My favorite anime series, movies, and characters',
 	openGraph: {
-		description: 'Dive into my anime journey! Check out my watching progress, including "Currently Watching," "Latest Completed," and "Plan to Watch" lists. Explore my anime history and discover what I’m enjoying next!'
+		description: 'My favorite anime series, movies, and characters'
 	}
 };
+
+// ISR: Revalidate every 60 seconds
+export const revalidate = 60;
 
 export default async function AnimeFavouritesPage() {
 	const animeData = await getAnimeData();

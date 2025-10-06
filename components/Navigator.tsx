@@ -1,94 +1,99 @@
+"use client";
+
 // import { Logo } from "@/components/logo";
-import {
-	NavigationMenu,
-	NavigationMenuContent,
-	NavigationMenuItem,
-	NavigationMenuLink,
-	NavigationMenuList,
-	NavigationMenuTrigger,
-	navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
-import { cn } from "@/lib/utils";
-import Link from "next/link";
+import {NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle,} from "@/components/ui/navigation-menu";
 import * as React from "react";
-import {IconType} from "react-icons";
-import {FaHome, FaLink, FaProjectDiagram, FaTv, FaUser} from "react-icons/fa";
-import {FooterData} from "@/types/interfaces";
 import {ReactNode} from "react";
+import {IconType} from "react-icons";
+import {FaHome, FaLink, FaProjectDiagram, FaUser} from "react-icons/fa";
+import {IoIosListBox, IoMdAnalytics} from "react-icons/io";
+import {MdFavorite} from "react-icons/md";
+import {PiVideoFill} from "react-icons/pi";
 
-
-export interface DropdownData {
-	name: string;
-	description: string;
-	url: string;
-	icon: IconType;
-}
 
 export interface LinkData {
 	name: string;
 	url: string;
 	icon: IconType;
+}
+
+export interface DropdownData extends LinkData{
+	description: string;
+}
+
+export interface NavigationData {
+	data: LinkData;
 	quick: boolean;
 	dropdown?: DropdownData[];
 }
 
-export const navigatorLinks : LinkData[] = [
+export const navigatorData : NavigationData[] = [
 	{
-		name: "Home",
-		url: "/",
-		icon: FaHome,
+		data: {
+			name: "Home",
+			url: "/",
+			icon: FaHome,
+		},
 		quick: false
 	},
 	{
-		name: "About",
-		url: "/about",
-		icon: FaUser,
+		data: {
+			name: "About",
+			url: "/about",
+			icon: FaUser,
+		},
 		quick: true
 	},
 	{
-		name: "Links",
-		url: "/links",
-		icon: FaLink,
+		data: {
+			name: "Links",
+			url: "/links",
+			icon: FaLink,
+		},
 		quick: true
 	},
 	{
-		name: "Projects",
-		url: "/projects",
-		icon: FaProjectDiagram,
+		data: {
+			name: "Projects",
+			url: "/projects",
+			icon: FaProjectDiagram,
+		},
 		quick: true
 	},
 	{
-		name: "Anime",
-		url: "/anime",
-		icon: FaTv,
+		data: {
+			name: "Anime",
+			url: "/anime",
+			icon: PiVideoFill,
+		},
 		quick: true,
 		dropdown: [
 			{
-				name: "Anime Statistics",
-				description: "Anime List desc",
+				name: "Statistics",
+				description: "View detailed insights into my anime watching habits and history",
 				url: "/anime",
-				icon: FaTv
+				icon: IoMdAnalytics
 			},
 			{
-				name: "Anime List",
-				description: "Anime List desc",
+				name: "List",
+				description: "Everything I've watched, what I'm watching now, and my watchlist",
 				url: "/anime/list",
-				icon: FaTv
+				icon: IoIosListBox
 			},
 			{
 				name: "Favourites",
-				description: "Favourites desc",
+				description: "My favorite anime series, movies, and characters",
 				url: "/anime/favourites",
-				icon: FaTv
+				icon: MdFavorite
 			}
 		]
 	}
 ]
 
-function NavText({data, children}: {data:LinkData, children?: ReactNode}) {
+function NavText({entity, children}: {entity:NavigationData, children?: ReactNode}) {
 	return (
 		<div className="flex flex-row gap-2 justify-center">
-			<data.icon className="my-auto"/>
+			<entity.data.icon className="my-auto" size={20}/>
 			<span className="font-semibold">{children}</span>
 		</div>
 	);
@@ -96,62 +101,47 @@ function NavText({data, children}: {data:LinkData, children?: ReactNode}) {
 
 export default function Navigator() {
 	return (
-		<div className="flex justify-center bg-background shadow-nav">
-			<NavigationMenu>
-				<NavigationMenuList className="gap-0">
+		<div className={"flex justify-end md:justify-center bg-background shadow-nav relative z-10 overflow-visible"}>
 
-					{navigatorLinks.map((item,index)=>item.dropdown ? (
-						<NavigationMenuItem key={index} className="border-r-2 border-header first:border-l-2">
-							<NavigationMenuTrigger onClick={(e)=>e.preventDefault()}>
-								<NavText data={item}>{item.name}</NavText>
+			{/* Desktop Navigation */}
+			<NavigationMenu className="hidden md:flex">
+				<NavigationMenuList className="gap-0">
+					{navigatorData.map((item)=>item.dropdown ? (
+						<NavigationMenuItem key={item.data.name} className="relative border-r-2 border-header first:border-l-2">
+							<NavigationMenuTrigger>
+								<NavText entity={item}>{item.data.name}</NavText>
 							</NavigationMenuTrigger>
 							<NavigationMenuContent>
-								<ul className="grid gap-3 p-1 md:w-[400px] lg:w-[500px] lg:grid-cols-1">
+								<ul className="grid p-4 grid-cols-1">
 									{item.dropdown!.map((entry,i)=>
-										<ListItem key={i} href={entry.url} title={entry.name}>
-											{entry.description}
-										</ListItem>
+										<li key={i} className="hover:translate-x-2 transition-transform duration-300 ease-in-out">
+											<NavigationMenuLink href={entry.url}>
+												<div className="flex flex-row gap-3 p-3 select-none rounded-md leading-none no-underline outline-hidden transition-colors hover:bg-popover-focus/60 focus:bg-popover-focus/60">
+													<div className="flex">
+														<entry.icon className="flex text-primary" size={24}/>
+													</div>
+													<div className="flex flex-col gap-2 justify-between">
+														<div className="text-base font-medium leading-none">{entry.name}</div>
+														<p className="line-clamp-2 text-xs leading-snug text-muted">
+															{entry.description}
+														</p>
+													</div>
+												</div>
+											</NavigationMenuLink>
+										</li>
 									)}
 								</ul>
 							</NavigationMenuContent>
 						</NavigationMenuItem>
 					) : (
-						<NavigationMenuItem key={index} className="border-r-2 border-header first:border-l-2">
-							<Link href={item.url}>
-								<NavigationMenuLink className={navigationMenuTriggerStyle()}>
-									<NavText data={item}>{item.name}</NavText>
-								</NavigationMenuLink>
-							</Link>
+						<NavigationMenuItem key={item.data.name} className="border-r-2 border-header first:border-l-2 ">
+							<NavigationMenuLink href={item.data.url} className={navigationMenuTriggerStyle({useHover: true})}>
+								<NavText entity={item}>{item.data.name}</NavText>
+							</NavigationMenuLink>
 						</NavigationMenuItem>
 					))}
-
 				</NavigationMenuList>
 			</NavigationMenu>
 		</div>
 	);
 }
-const ListItem = React.forwardRef<
-	React.ElementRef<"a">,
-	React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, ...props }, ref) => {
-	return (
-		<li>
-			<NavigationMenuLink asChild>
-				<a
-					ref={ref}
-					className={cn(
-						"block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-hidden transition-colors hover:bg-secondary hover:text-foreground focus:bg-secondary focus:text-foreground",
-						className
-					)}
-					{...props}
-				>
-					<div className="text-sm font-medium leading-none">{title}</div>
-					<p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-						{children}
-					</p>
-				</a>
-			</NavigationMenuLink>
-		</li>
-	);
-});
-ListItem.displayName = "ListItem";

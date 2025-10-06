@@ -15,20 +15,18 @@
 	--color-footer: #1e2226;
 	--color-footer-border: #0e101a;
 
-	--color-border: #1b1e29;
+	--color-border: var(--color-header);
 	--color-input: hsl(0 0% 14.9%);
 	--color-ring: hsl(0 0% 83.1%);
 
-	/*TODO change colors that has not been changed from the previous theme*/
-
 	--color-card: #20252a;
-	--color-card-header: #13141f;
-	--color-card-border: #1c1e2a;
+	--color-card-header: #242930;
+	--color-card-border: #1a1f24;
 	--color-card-foreground: var(--color-foreground);
 
 	--color-card-inner: #272d33;
-	--color-card-inner-focus: #2a2e3c;
-	--color-card-inner-border: #1c1e2a;
+	--color-card-inner-focus: #323943;
+	--color-card-inner-border: #1f2429;
 	--color-card-inner-foreground: var(--color-foreground);
 
 	--color-btn: var(--color-card-inner);
@@ -107,6 +105,11 @@
 	--chart-9: var(--color-chart-9);
 	--chart-10: var(--color-chart-10);
 	--radius: 0.625rem;
+}
+
+*:focus,
+*:focus-visible {
+	outline: none;
 }
 
 @font-face { font-family: "mal"; src: url("../public/font/mal.ttf");}

@@ -10,6 +10,9 @@ export const metadata = {
 	}
 };
 
+// ISR: Revalidate every 60 seconds
+export const revalidate = 60;
+
 export default async function PrivacyPage() {
 	const data = await getPrivacyPage()
 	if (!data) return (<ContentError/>);

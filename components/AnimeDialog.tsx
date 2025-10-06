@@ -7,6 +7,7 @@ import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Dia
 import {formatDate, toCapitalizedCase} from "@/lib/utils";
 import Link from "next/link";
 import {ReactNode} from "react";
+import {Button} from "@/components/ui/button";
 
 interface AnimeCardProps {
 	data: AnimeEntry;
@@ -53,14 +54,16 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 								<div className="pt-5">
 									<h3 className="text-xl font-bold">Statistics</h3>
 
-									{anime.rank>0 && (<p>Ranked: <span className="text-muted">#{anime.rank}</span></p>)}
-									{anime.popularity>0 && (<p>Popularity: <span className="text-muted">#{anime.popularity}</span></p>)}
-									{anime.mean>0 && (<p>Rating: <span className="text-muted">{anime.mean} by {anime.num_scoring_users} users</span></p>)}
+									<ul className="pl-5 list-disc">
+										{anime.rank>0 && (<li className="font-semibold">Ranked: <span className="text-primary font-normal">#{anime.rank}</span></li>)}
+										{anime.popularity>0 && (<li className="font-semibold">Popularity: <span className="text-primary font-normal">#{anime.popularity}</span></li>)}
+										{anime.mean>0 && (<li className="font-semibold">Rating: <span className="text-primary font-normal">{anime.mean} by {anime.num_scoring_users} users</span></li>)}
 
-									{status.score>0 && (<p>Score: <span className="text-muted">{status.score}</span></p>)}
-									{status.score>0 && (<p>Difference: <span className="text-muted">{Math.abs(anime.mean - status.score).toFixed(2)}</span></p>)}
+										{status.score>0 && (<li className="font-semibold">Score: <span className="text-primary font-normal">{status.score}</span></li>)}
+										{status.score>0 && (<li className="font-semibold">Difference: <span className="text-primary font-normal">{Math.abs(anime.mean - status.score).toFixed(2)}</span></li>)}
 
-									{(anime.num_episodes>0) && (<p>Progress: <span className="text-muted">{status.num_episodes_watched}/{anime.num_episodes} </span></p>)}
+										{(anime.num_episodes>0) && (<li className="font-semibold">Progress: <span className="text-primary font-normal">{status.num_episodes_watched}/{anime.num_episodes} </span></li>)}
+									</ul>
 
 								</div>
 							)}
@@ -70,51 +73,57 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 								<div className="pt-5">
 									<h3 className="text-xl font-bold">Anime Info</h3>
 
-									{anime.media_type && (<p>Type: <span className="text-muted">{anime.media_type.toUpperCase()}</span></p>)}
-									{anime.num_episodes>0 && (<p>Episodes: <span className="text-muted">{anime.num_episodes}</span></p>)}
-									{anime.status && (<p>Status: <span className="text-muted">{toCapitalizedCase(anime.status)}</span></p>)}
+									<ul className="pl-5 list-disc">
+										{anime.media_type && (<li className="font-semibold">Type: <span className="text-primary font-normal">{anime.media_type.toUpperCase()}</span></li>)}
+										{anime.num_episodes>0 && (<li className="font-semibold">Episodes: <span className="text-primary font-normal">{anime.num_episodes}</span></li>)}
+										{anime.status && (<li className="font-semibold">Status: <span className="text-primary font-normal">{toCapitalizedCase(anime.status)}</span></li>)}
 
-									{anime.start_date && (
-										<p>Started: <span className="text-muted">{formatDate(anime.start_date)}</span></p>
-									)}
-									{anime.end_date && (
-										<p>Ended: <span className="text-muted">{formatDate(anime.end_date)}</span></p>
-									)}
+										{anime.start_date && (
+											<li className="font-semibold">Started: <span className="text-primary font-normal">{formatDate(anime.start_date)}</span></li>
+										)}
+										{anime.end_date && (
+											<li className="font-semibold">Ended: <span className="text-primary font-normal">{formatDate(anime.end_date)}</span></li>
+										)}
 
-									{anime.studios.length>0 && (
-										<p><span>Studios: </span>
-											{anime.studios.map((studio,index)=>(
-												<span key={index}>
-											<Link href={`https://myanimelist.net/anime/producer/${studio.id}/`} target="_blank"
-											      data-umami-event={`[ANIME] Show Studio (${studio.id})`}
-											      data-umami-event-url={`https://myanimelist.net/anime/producer/${studio.id}/`}
-											      className="text-muted hover:underline hover:text-muted-hover">
-												{studio.name}
-											</Link>
-													{index != anime.studios.length -1 ? ", " : ""}
-										</span>
-											))}
-										</p>
-									)}
-									{anime.source && (<p>Source: <span className="text-muted">{toCapitalizedCase(anime.source)}</span></p>)}
-									{anime.genres.length>0 && (
-										<p><span>Genres: </span>
-											{anime.genres.slice(0,anime.genres.length-1).map((genre,index)=>(
-												<span key={index}>
-											<Link href={`https://myanimelist.net/anime/genre/${genre.id}/`} target="_blank"
-											      data-umami-event={`[ANIME] Show Genre (${genre.id})`}
-											      data-umami-event-url={`https://myanimelist.net/anime/genre/${genre.id}/`}
-											      className="text-muted hover:underline hover:text-muted-hover">
-												{genre.name}
-											</Link>
-													{index != anime.genres.length -2 ? ", " : ""}
-										</span>
-											))}
-										</p>
-									)}
-									{anime.genres.length>0 && (<p>Theme: <span className="text-muted">{anime.genres.slice(-1)[0].name}</span></p>)}
-									{anime.average_episode_duration>0 && (<p>Duration: <span className="text-muted">{Math.floor(anime.average_episode_duration / 60)} min. per ep.</span></p>)}
-									{anime.rating && (<p>Rating: <span className="text-muted">{formatRating(anime.rating)}</span></p>)}
+										{anime.studios.length>0 && (
+											<li className="font-semibold">
+												<span>Studios: </span>
+												{anime.studios.map((studio,index)=>(
+													<span key={index}>
+														<Link href={`https://myanimelist.net/anime/producer/${studio.id}/`} target="_blank"
+															  data-umami-event={`[ANIME] Show Studio (${studio.id})`}
+															  data-umami-event-url={`https://myanimelist.net/anime/producer/${studio.id}/`}
+															  className="text-primary hover:text-secondary font-normal">
+															{studio.name}
+														</Link>
+														{index != anime.studios.length -1 ? ", " : ""}
+													</span>
+												))}
+											</li>
+										)}
+
+										{anime.source && (<li className="font-semibold">Source: <span className="text-primary font-normal">{toCapitalizedCase(anime.source)}</span></li>)}
+
+										{anime.genres.length>0 && (
+											<li className="font-semibold">
+												<span>Genres: </span>
+												{anime.genres.map((genre,index)=>(
+													<span key={index}>
+													<Link href={`https://myanimelist.net/anime/genre/${genre.id}/`} target="_blank"
+														  data-umami-event={`[ANIME] Show Genre (${genre.id})`}
+														  data-umami-event-url={`https://myanimelist.net/anime/genre/${genre.id}/`}
+														  className="text-primary hover:text-secondary font-normal">
+														{genre.name}
+													</Link>
+														{index != anime.genres.length -1 ? ", " : ""}
+												</span>
+												))}
+											</li>
+										)}
+
+										{anime.average_episode_duration>0 && (<li className="font-semibold">Duration: <span className="text-primary font-normal">{Math.floor(anime.average_episode_duration / 60)} min. per ep.</span></li>)}
+										{anime.rating && (<li className="font-semibold">Rating: <span className="text-primary font-normal">{formatRating(anime.rating)}</span></li>)}
+									</ul>
 								</div>
 							)}
 
@@ -124,19 +133,19 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 								  data-umami-event={`[ANIME] Show Anime (${anime.id})`}
 								  data-umami-event-url={`https://myanimelist.net/anime/${anime.id}`}
 								  className="flex w-full mt-10 m-auto">
-								<button className="bg-[#3557a5] hover:bg-[#253c73] active:bg-[#253c73] rounded-lg text-white transition-colors ease-in-out duration-300 px-4 py-2 m-auto w-full font-mal">MyAnimeList.net</button>
+								<Button variant={"mal"}>MyAnimeList.net</Button>
 							</Link>
 						</div>
 
 						{/*Right side*/}
 						<div className="flex flex-col gap-4 w-fit">
 							<div className="flex flex-col">
-								<h1 className="text-2xl">{titles.en.length > 0 ? titles.en : anime.title}</h1>
-								{anime.alternative_titles.ja && (<h2 className="text-base">{anime.alternative_titles.ja}</h2>)}
+								<h1 className="text-2xl font-bold">{titles.en.length > 0 ? titles.en : anime.title}</h1>
+								{anime.alternative_titles.ja && (<h2 className="text-base font-semibold">{anime.alternative_titles.ja}</h2>)}
 							</div>
 
 							{anime.synopsis && (
-								<div className="text-muted">
+								<div>
 									<p>{anime.synopsis.replace("[Written by MAL Rewrite]", "")}</p>
 								</div>
 							)}
