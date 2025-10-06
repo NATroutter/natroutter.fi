@@ -1,74 +1,77 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import {Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts"
-
+import type * as React from "react";
+import { useMemo } from "react";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import type { ChartSettings } from "@/components/ChartSettingsDialog";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
-	ChartConfig,
+	type ChartConfig,
 	ChartContainer,
 	ChartTooltip,
 	ChartTooltipContent,
-} from "@/components/ui/chart"
-import { AnimeEntry } from "@/types/animeData"
-import {useMemo} from "react";
-import {ChartSettings} from "@/components/ChartSettingsDialog";
+} from "@/components/ui/chart";
+import type { AnimeEntry } from "@/types/animeData";
 
 const chartConfig: ChartConfig = {
 	count: {
 		label: "Watched",
 		color: "var(--chart-2)",
 	},
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 interface ChartStudioWatchCountProps {
-	settings: ChartSettings
-	animeData: AnimeEntry[]
+	settings: ChartSettings;
+	animeData: AnimeEntry[];
 }
 
 export default function ChartAnimeStudio({
 	settings,
-	animeData
+	animeData,
 }: ChartStudioWatchCountProps) {
-
 	const chartData = useMemo(() => {
-		const isAllYears = settings.viewingYear === "all"
-		const year = Number(settings.viewingYear)
-		const counts: Record<string, number> = {}
+		const isAllYears = settings.viewingYear === "all";
+		const year = Number(settings.viewingYear);
+		const counts: Record<string, number> = {};
 
 		for (const entry of animeData) {
-			const studios = entry.node?.studios
-			if (!studios || studios.length === 0) continue
+			const studios = entry.node?.studios;
+			if (!studios || studios.length === 0) continue;
 
 			if (!isAllYears) {
-				const entryYear = new Date(entry.list_status?.updated_at).getFullYear()
-				if (entryYear !== year) continue
+				const entryYear = new Date(entry.list_status?.updated_at).getFullYear();
+				if (entryYear !== year) continue;
 			}
 
 			for (const studio of studios) {
-				counts[studio.name] = (counts[studio.name] || 0) + 1
+				counts[studio.name] = (counts[studio.name] || 0) + 1;
 			}
 		}
 
-		const totalCount = Object.values(counts).reduce((sum, count) => sum + count, 0)
+		const totalCount = Object.values(counts).reduce(
+			(sum, count) => sum + count,
+			0,
+		);
 
 		return Object.entries(counts)
 			.map(([studio, count]) => ({
 				studio,
 				count,
-				percentage: totalCount > 0 ? parseFloat(((count / totalCount) * 100).toFixed(1)) : 0,
+				percentage:
+					totalCount > 0
+						? parseFloat(((count / totalCount) * 100).toFixed(1))
+						: 0,
 				fill: chartConfig.count.color,
 			}))
 			.sort((a, b) => b.count - a.count)
-			.slice(0,20)
-	}, [animeData, settings])
-
+			.slice(0, 20);
+	}, [animeData, settings]);
 
 	return (
 		<Card className="py-0 w-full shadow-xl">
@@ -78,8 +81,7 @@ export default function ChartAnimeStudio({
 					<CardDescription>
 						{settings.viewingYear === "all"
 							? "Studios watched across all years."
-							: `Studios watched in ${settings.viewingYear}.`
-						}
+							: `Studios watched in ${settings.viewingYear}.`}
 					</CardDescription>
 				</div>
 			</CardHeader>
@@ -94,7 +96,6 @@ export default function ChartAnimeStudio({
 						data={chartData}
 						layout="vertical"
 						margin={{ left: 12, right: 12 }}
-
 					>
 						<CartesianGrid horizontal={false} />
 						<YAxis
@@ -106,7 +107,7 @@ export default function ChartAnimeStudio({
 							width={120}
 							interval={0}
 						/>
-						<XAxis type="number" hide/>
+						<XAxis type="number" hide />
 						<ChartTooltip
 							content={
 								<ChartTooltipContent
@@ -116,7 +117,11 @@ export default function ChartAnimeStudio({
 										<>
 											<div
 												className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
-												style={{"--color-bg": chartConfig.count.color,} as React.CSSProperties}
+												style={
+													{
+														"--color-bg": chartConfig.count.color,
+													} as React.CSSProperties
+												}
 											/>
 											{item.payload.studio}
 											<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
@@ -126,7 +131,9 @@ export default function ChartAnimeStudio({
 												Percentage
 												<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
 													{item.payload.percentage}
-													<span className="text-muted-foreground font-normal">%</span>
+													<span className="text-muted-foreground font-normal">
+														%
+													</span>
 												</div>
 											</div>
 										</>
@@ -134,12 +141,14 @@ export default function ChartAnimeStudio({
 								/>
 							}
 						/>
-						<Bar dataKey="count" fill={chartConfig.count.color} radius={4}>
-
-						</Bar>
+						<Bar
+							dataKey="count"
+							fill={chartConfig.count.color}
+							radius={4}
+						></Bar>
 					</BarChart>
 				</ChartContainer>
 			</CardContent>
 		</Card>
-	)
+	);
 }

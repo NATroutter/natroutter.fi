@@ -1,62 +1,78 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import {useMemo} from "react"
-import {Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts"
-
-import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
-import {ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
-import {AnimeEntry, formatSource} from "@/types/animeData"
-import {ChartSettings} from "@/components/ChartSettingsDialog";
+import type * as React from "react";
+import { useMemo } from "react";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import type { ChartSettings } from "@/components/ChartSettingsDialog";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import {
+	type ChartConfig,
+	ChartContainer,
+	ChartTooltip,
+	ChartTooltipContent,
+} from "@/components/ui/chart";
+import { type AnimeEntry, formatSource } from "@/types/animeData";
 
 const chartConfig: ChartConfig = {
 	count: {
 		label: "Watched",
 		color: "var(--chart-8)",
 	},
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 interface ChartAnimeSourceProps {
-	settings: ChartSettings
-	animeData: AnimeEntry[]
+	settings: ChartSettings;
+	animeData: AnimeEntry[];
 }
 
 export default function ChartAnimeSource({
 	settings,
-	animeData
+	animeData,
 }: ChartAnimeSourceProps) {
 	const chartData = useMemo(() => {
-		const isAllYears = settings.viewingYear === "all"
-		const year = Number(settings.viewingYear)
-		const counts: Record<string, number> = {}
+		const isAllYears = settings.viewingYear === "all";
+		const year = Number(settings.viewingYear);
+		const counts: Record<string, number> = {};
 
 		for (const entry of animeData) {
-			const source = entry.node?.source
-			if (!source) continue
+			const source = entry.node?.source;
+			if (!source) continue;
 
 			if (!isAllYears) {
-				const updatedAt = entry.list_status?.updated_at
-				if (!updatedAt) continue
+				const updatedAt = entry.list_status?.updated_at;
+				if (!updatedAt) continue;
 
-				const entryYear = new Date(updatedAt).getFullYear()
-				if (entryYear !== year) continue
+				const entryYear = new Date(updatedAt).getFullYear();
+				if (entryYear !== year) continue;
 			}
 
-			const formattedSource = formatSource(source)
-			counts[formattedSource] = (counts[formattedSource] || 0) + 1
+			const formattedSource = formatSource(source);
+			counts[formattedSource] = (counts[formattedSource] || 0) + 1;
 		}
 
-		const totalCount = Object.values(counts).reduce((sum, count) => sum + count, 0)
+		const totalCount = Object.values(counts).reduce(
+			(sum, count) => sum + count,
+			0,
+		);
 
 		return Object.entries(counts)
 			.map(([source, count]) => ({
 				source,
 				count,
-				percentage: totalCount > 0 ? parseFloat(((count / totalCount) * 100).toFixed(1)) : 0,
+				percentage:
+					totalCount > 0
+						? parseFloat(((count / totalCount) * 100).toFixed(1))
+						: 0,
 				fill: chartConfig.count.color,
 			}))
-			.sort((a, b) => b.count - a.count)
-	}, [animeData, settings])
+			.sort((a, b) => b.count - a.count);
+	}, [animeData, settings]);
 
 	return (
 		<Card className="py-0 w-full shadow-xl">
@@ -66,8 +82,7 @@ export default function ChartAnimeSource({
 					<CardDescription>
 						{settings.viewingYear === "all"
 							? "Distribution of anime by source material across all years."
-							: `Distribution of anime by source material in ${settings.viewingYear}.`
-						}
+							: `Distribution of anime by source material in ${settings.viewingYear}.`}
 					</CardDescription>
 				</div>
 			</CardHeader>
@@ -102,7 +117,11 @@ export default function ChartAnimeSource({
 										<>
 											<div
 												className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
-												style={{"--color-bg": chartConfig.count.color,} as React.CSSProperties}
+												style={
+													{
+														"--color-bg": chartConfig.count.color,
+													} as React.CSSProperties
+												}
 											/>
 											{item.payload.source}
 											<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
@@ -112,7 +131,9 @@ export default function ChartAnimeSource({
 												Percentage
 												<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
 													{item.payload.percentage}
-													<span className="text-muted-foreground font-normal">%</span>
+													<span className="text-muted-foreground font-normal">
+														%
+													</span>
 												</div>
 											</div>
 										</>
@@ -120,12 +141,14 @@ export default function ChartAnimeSource({
 								/>
 							}
 						/>
-						<Bar dataKey="count" fill={chartConfig.count.color} radius={4}>
-
-						</Bar>
+						<Bar
+							dataKey="count"
+							fill={chartConfig.count.color}
+							radius={4}
+						></Bar>
 					</BarChart>
 				</ChartContainer>
 			</CardContent>
 		</Card>
-	)
+	);
 }

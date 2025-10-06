@@ -16,7 +16,7 @@ export interface AnimeInfo {
 	rank: number;
 	rating: AnimeRating;
 	status: AnimeStatus;
-	nsfw: 'white' | 'gray' | 'black';
+	nsfw: "white" | "gray" | "black";
 	average_episode_duration: number;
 	popularity: number;
 	num_episodes: number;
@@ -33,19 +33,49 @@ export interface AnimeInfo {
 }
 
 export interface Genre {
-	id: number,
-	name: string
+	id: number;
+	name: string;
 }
 export interface Studio {
-	id: number,
-	name: string
+	id: number;
+	name: string;
 }
-export type MediaType = 'tv' | 'ova' | 'movie' | 'special' | 'tv_special' | 'ona' | 'music' | 'unknown';
-export type WatchStatus = 'plan_to_watch' | 'watching' | 'completed' | 'on_hold' | 'dropped';
-export type AnimeSource = 'original' | 'manga' | '4_koma_manga' | 'web_manga' | 'digital_manga' | 'novel' | 'light_novel' | 'visual_novel' | 'game' | 'card_game' | 'book' | 'picture_book' | 'radio' | 'music' | 'other';
-export type AnimeStatus = 'finished_airing' | 'currently_airing' | 'not_yet_aired';
-export type AnimeRating = 'g' | 'pg' | 'pg_13' | 'r' | 'r+' | 'rx';
-
+export type MediaType =
+	| "tv"
+	| "ova"
+	| "movie"
+	| "special"
+	| "tv_special"
+	| "ona"
+	| "music"
+	| "unknown";
+export type WatchStatus =
+	| "plan_to_watch"
+	| "watching"
+	| "completed"
+	| "on_hold"
+	| "dropped";
+export type AnimeSource =
+	| "original"
+	| "manga"
+	| "4_koma_manga"
+	| "web_manga"
+	| "digital_manga"
+	| "novel"
+	| "light_novel"
+	| "visual_novel"
+	| "game"
+	| "card_game"
+	| "book"
+	| "picture_book"
+	| "radio"
+	| "music"
+	| "other";
+export type AnimeStatus =
+	| "finished_airing"
+	| "currently_airing"
+	| "not_yet_aired";
+export type AnimeRating = "g" | "pg" | "pg_13" | "r" | "r+" | "rx";
 
 export interface ListStatus {
 	status: WatchStatus;
@@ -62,7 +92,7 @@ export interface AnimeEntry {
 }
 
 export interface AnimePaging {
-	next: string
+	next: string;
 }
 
 export interface AnimeData {
@@ -71,11 +101,11 @@ export interface AnimeData {
 }
 
 export const WATCH_STATUS_LABELS: Record<WatchStatus, string> = {
-	plan_to_watch: 'Plan To Watch',
-	watching: 'Watching',
-	completed: 'Completed',
-	on_hold: 'On Hold',
-	dropped: 'Dropped',
+	plan_to_watch: "Plan To Watch",
+	watching: "Watching",
+	completed: "Completed",
+	on_hold: "On Hold",
+	dropped: "Dropped",
 };
 
 export function formatWatchStatus(status: WatchStatus): string {
@@ -83,44 +113,74 @@ export function formatWatchStatus(status: WatchStatus): string {
 }
 
 export function formatMediaType(status: MediaType): string {
-	return status.toString().split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+	return status
+		.toString()
+		.split("_")
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+		.join(" ");
 }
 
 export function formatSource(source: AnimeSource): string {
-	return source.toString().split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+	return source
+		.toString()
+		.split("_")
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+		.join(" ");
 }
 export function formatStatus(source: AnimeStatus): string {
-	return source.toString().split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+	return source
+		.toString()
+		.split("_")
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+		.join(" ");
 }
 
-export function formatScore(rating: number) : string {
+export function formatScore(rating: number): string {
 	switch (rating) {
-		case 10: return "Masterpiece";
-		case 9: return "Great";
-		case 8: return "Very Good";
-		case 7: return "Good";
-		case 6: return "Fine";
-		case 5: return "Average";
-		case 4: return "Bad";
-		case 3: return "Very Bad";
-		case 2: return "Horrible";
-		case 1: return "Appalling";
-		case 0: return "Unknown";
-		default: return rating.toString();
+		case 10:
+			return "Masterpiece";
+		case 9:
+			return "Great";
+		case 8:
+			return "Very Good";
+		case 7:
+			return "Good";
+		case 6:
+			return "Fine";
+		case 5:
+			return "Average";
+		case 4:
+			return "Bad";
+		case 3:
+			return "Very Bad";
+		case 2:
+			return "Horrible";
+		case 1:
+			return "Appalling";
+		case 0:
+			return "Unknown";
+		default:
+			return rating.toString();
 	}
 }
 
-export function formatRating(rating: AnimeRating) : string {
+export function formatRating(rating: AnimeRating): string {
 	switch (rating) {
-		case "g": return "All Ages";
-		case "pg": return "Children";
-		case "pg_13": return "Teens 13 and Older";
-		case "r": return "17+ (violence & profanity)";
-		case "r+": return "Profanity & Mild Nudity";
-		case "rx": return "Hentai";
+		case "g":
+			return "All Ages";
+		case "pg":
+			return "Children";
+		case "pg_13":
+			return "Teens 13 and Older";
+		case "r":
+			return "17+ (violence & profanity)";
+		case "r+":
+			return "Profanity & Mild Nudity";
+		case "rx":
+			return "Hentai";
 	}
 }
 
-export function formatRatingPG(rating: AnimeRating) : string {
-	return rating.toString().replace('_', "").toUpperCase();
+export function formatRatingPG(rating: AnimeRating): string {
+	return rating.toString().replace("_", "").toUpperCase();
 }

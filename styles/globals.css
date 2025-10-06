@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 @import "tw-animate-css";
 
 @theme {
@@ -63,19 +63,35 @@
 	--color-chart-10: hsl(10 80% 58%);
 
 	/*TODO Make it simpler?*/
-	--color-toast-error-bg: color-mix(in oklab, oklch(0.70 0.19 22.23) 10%, var(--color-background));
-	--color-toast-error-text: oklch(0.70 0.19 22.23);
-	--color-toast-error-border: oklch(0.70 0.19 22.23);
+	--color-toast-error-bg: color-mix(
+		in oklab,
+		oklch(0.7 0.19 22.23) 10%,
+		var(--color-background)
+	);
+	--color-toast-error-text: oklch(0.7 0.19 22.23);
+	--color-toast-error-border: oklch(0.7 0.19 22.23);
 
-	--color-toast-warn-bg: color-mix(in oklab, var(--color-amber-600) 10%, var(--color-background));
+	--color-toast-warn-bg: color-mix(
+		in oklab,
+		var(--color-amber-600) 10%,
+		var(--color-background)
+	);
 	--color-toast-warn-text: var(--color-amber-400);
 	--color-toast-warn-border: var(--color-amber-400);
 
-	--color-toast-success-bg: color-mix(in oklab, var(--color-green-600) 10%, var(--color-background));
+	--color-toast-success-bg: color-mix(
+		in oklab,
+		var(--color-green-600) 10%,
+		var(--color-background)
+	);
 	--color-toast-success-text: var(--color-green-400);
 	--color-toast-success-border: var(--color-green-400);
 
-	--color-toast-info-bg: color-mix(in oklab, var(--color-sky-600) 10%, var(--color-background));
+	--color-toast-info-bg: color-mix(
+		in oklab,
+		var(--color-sky-600) 10%,
+		var(--color-background)
+	);
 	--color-toast-info-text: var(--color-sky-400);
 	--color-toast-info-border: var(--color-sky-400);
 
@@ -102,7 +118,6 @@
 	--radius-lg: var(--radius);
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-sm: calc(var(--radius) - 4px);
-
 }
 
 :root {
@@ -125,7 +140,10 @@
 	outline: none;
 }
 
-@font-face { font-family: "mal"; src: url("../public/font/mal.ttf");}
+@font-face {
+	font-family: "mal";
+	src: url("../public/font/mal.ttf");
+}
 
 ::-webkit-scrollbar {
 	width: 10px;

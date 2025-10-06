@@ -1,13 +1,25 @@
-"use client"
+"use client";
 
-import {Pie, PieChart} from "recharts"
-
-import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
-import {ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
-import * as React from "react"
-import {useMemo} from "react"
-import {AnimeEntry, formatScore} from "@/types/animeData"
-import {ChartSettings} from "@/components/ChartSettingsDialog";
+import type * as React from "react";
+import { useMemo } from "react";
+import { Pie, PieChart } from "recharts";
+import type { ChartSettings } from "@/components/ChartSettingsDialog";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import {
+	type ChartConfig,
+	ChartContainer,
+	ChartLegend,
+	ChartLegendContent,
+	ChartTooltip,
+	ChartTooltipContent,
+} from "@/components/ui/chart";
+import { type AnimeEntry, formatScore } from "@/types/animeData";
 
 const chartConfig: ChartConfig = {
 	score_10: {
@@ -50,45 +62,51 @@ const chartConfig: ChartConfig = {
 		label: formatScore(1),
 		color: "var(--chart-10)",
 	},
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 interface ChartAnimeScoresProps {
-	settings: ChartSettings
-	animeData: AnimeEntry[]
+	settings: ChartSettings;
+	animeData: AnimeEntry[];
 }
 
 export default function ChartAnimeScores({
 	settings,
-	animeData
+	animeData,
 }: ChartAnimeScoresProps) {
 	const chartData = useMemo(() => {
-		const isAllYears = settings.viewingYear === "all"
-		const year = Number(settings.viewingYear)
-		const counts: Record<number, number> = {}
+		const isAllYears = settings.viewingYear === "all";
+		const year = Number(settings.viewingYear);
+		const counts: Record<number, number> = {};
 
 		for (const entry of animeData) {
-			const score = entry.list_status?.score
-			if (!score || score < 1 || score > 10) continue
+			const score = entry.list_status?.score;
+			if (!score || score < 1 || score > 10) continue;
 
 			if (!isAllYears) {
-				const entryYear = new Date(entry.list_status.updated_at).getFullYear()
-				if (entryYear !== year) continue
+				const entryYear = new Date(entry.list_status.updated_at).getFullYear();
+				if (entryYear !== year) continue;
 			}
 
-			counts[score] = (counts[score] || 0) + 1
+			counts[score] = (counts[score] || 0) + 1;
 		}
 
-		const totalCount = Object.values(counts).reduce((sum, count) => sum + count, 0)
+		const totalCount = Object.values(counts).reduce(
+			(sum, count) => sum + count,
+			0,
+		);
 		return Object.entries(counts)
 			.map(([score, count]) => ({
 				score: `score_${score}`,
 				scoreValue: Number(score),
 				count,
-				percentage: totalCount > 0 ? parseFloat(((count / totalCount) * 100).toFixed(1)) : 0,
+				percentage:
+					totalCount > 0
+						? parseFloat(((count / totalCount) * 100).toFixed(1))
+						: 0,
 				fill: chartConfig[`score_${score}` as keyof typeof chartConfig].color,
 			}))
-			.sort((a, b) => b.scoreValue - a.scoreValue) // Sort by score descending
-	}, [animeData, settings])
+			.sort((a, b) => b.scoreValue - a.scoreValue); // Sort by score descending
+	}, [animeData, settings]);
 
 	return (
 		<Card className="flex flex-col mx-auto w-full h-full max-h-[400px] shadow-xl">
@@ -98,8 +116,7 @@ export default function ChartAnimeScores({
 					<CardDescription>
 						{settings.viewingYear === "all"
 							? "Distribution of anime by score across all years."
-							: `Distribution of anime by score in ${settings.viewingYear}.`
-						}
+							: `Distribution of anime by score in ${settings.viewingYear}.`}
 					</CardDescription>
 				</div>
 			</CardHeader>
@@ -134,7 +151,9 @@ export default function ChartAnimeScores({
 												Percentage
 												<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
 													{item.payload.percentage}
-													<span className="text-muted-foreground font-normal">%</span>
+													<span className="text-muted-foreground font-normal">
+														%
+													</span>
 												</div>
 											</div>
 										</>
@@ -160,5 +179,5 @@ export default function ChartAnimeScores({
 				</ChartContainer>
 			</CardContent>
 		</Card>
-	)
+	);
 }

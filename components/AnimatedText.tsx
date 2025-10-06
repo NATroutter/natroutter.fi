@@ -1,16 +1,23 @@
-import React, {JSX, useEffect, useState} from "react";
-import {cn} from "@/lib/utils";
+import React, { type JSX, useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 export interface AnimatedTextProps {
-	words: string[],
-	writeSpeed:number,
-	earseSpeed:number,
-	pauseTime:number,
-	className?:string,
-	whenEmpty?:string;
+	words: string[];
+	writeSpeed: number;
+	earseSpeed: number;
+	pauseTime: number;
+	className?: string;
+	whenEmpty?: string;
 }
 
-export default function AnimatedText({ words, writeSpeed, earseSpeed, pauseTime, className, whenEmpty } : AnimatedTextProps) : JSX.Element {
+export default function AnimatedText({
+	words,
+	writeSpeed,
+	earseSpeed,
+	pauseTime,
+	className,
+	whenEmpty,
+}: AnimatedTextProps): JSX.Element {
 	const [currentWord, setCurrentWord] = useState<number>(0);
 	const [text, setText] = useState<string>("");
 	const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -48,11 +55,20 @@ export default function AnimatedText({ words, writeSpeed, earseSpeed, pauseTime,
 
 		const timer = setInterval(handleTextAnimation, speed);
 		return () => clearInterval(timer);
-	}, [index, isDeleting, currentWord, speed, words, earseSpeed, writeSpeed, pauseTime]);
+	}, [
+		index,
+		isDeleting,
+		currentWord,
+		speed,
+		words,
+		earseSpeed,
+		writeSpeed,
+		pauseTime,
+	]);
 
 	return (
 		<span className={cn("text-primary", className)}>
-			{text.length > 0 ? text : ((whenEmpty) && whenEmpty)}
+			{text.length > 0 ? text : whenEmpty && whenEmpty}
 		</span>
 	);
-};
+}

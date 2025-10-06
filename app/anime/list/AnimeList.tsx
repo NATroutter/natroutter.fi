@@ -1,135 +1,169 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import {useEffect, useMemo, useRef, useState} from "react"
-import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
-import {Button} from "@/components/ui/button"
-import {AnimeEntry, WATCH_STATUS_LABELS, WatchStatus} from "@/types/animeData"
-import {getCompleted, getDropped, getOnHold, getPlanToWatch, getWatching} from "@/lib/mal"
-import {Input} from "@/components/ui/input"
-import {AnimeCard} from "@/components/AnimeCard"
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {FaArrowDown, FaArrowUp} from "react-icons/fa";
-import {Label} from "@/components/ui/label";
-import {MdFirstPage, MdKeyboardArrowLeft, MdKeyboardArrowRight, MdLastPage} from "react-icons/md";
+import * as React from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { FaArrowDown, FaArrowUp } from "react-icons/fa";
+import {
+	MdFirstPage,
+	MdKeyboardArrowLeft,
+	MdKeyboardArrowRight,
+	MdLastPage,
+} from "react-icons/md";
+import { AnimeCard } from "@/components/AnimeCard";
+import { Button } from "@/components/ui/button";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import {
+	getCompleted,
+	getDropped,
+	getOnHold,
+	getPlanToWatch,
+	getWatching,
+} from "@/lib/mal";
+import {
+	type AnimeEntry,
+	WATCH_STATUS_LABELS,
+	type WatchStatus,
+} from "@/types/animeData";
 
 interface SearchTypes {
-	type: string
-	label: string
-	getValue: (entry: AnimeEntry) => string | number
-	isNumeric: boolean
+	type: string;
+	label: string;
+	getValue: (entry: AnimeEntry) => string | number;
+	isNumeric: boolean;
 }
 
 const searchTypes: SearchTypes[] = [
 	{
 		type: "title",
 		label: "Title",
-		getValue: (entry) => entry.node.alternative_titles.en.length > 0 ? entry.node.alternative_titles.en : entry.node.title,
-		isNumeric: false
+		getValue: (entry) =>
+			entry.node.alternative_titles.en.length > 0
+				? entry.node.alternative_titles.en
+				: entry.node.title,
+		isNumeric: false,
 	},
 	{
 		type: "score",
 		label: "My Score",
 		getValue: (entry) => entry.list_status.score,
-		isNumeric: true
+		isNumeric: true,
 	},
 	{
 		type: "mean",
 		label: "MAL Rating",
 		getValue: (entry) => entry.node.mean,
-		isNumeric: true
+		isNumeric: true,
 	},
 	{
 		type: "difference",
 		label: "Score Difference",
 		getValue: (entry) => Math.abs(entry.node.mean - entry.list_status.score),
-		isNumeric: true
+		isNumeric: true,
 	},
 	{
 		type: "type",
 		label: "Type",
 		getValue: (entry) => entry.node.media_type,
-		isNumeric: false
+		isNumeric: false,
 	},
 	{
 		type: "progress",
 		label: "Progress",
-		getValue: (entry) => entry.node.num_episodes > 0 ? (entry.list_status.num_episodes_watched / entry.node.num_episodes) * 100 : entry.list_status.num_episodes_watched,
-		isNumeric: true
+		getValue: (entry) =>
+			entry.node.num_episodes > 0
+				? (entry.list_status.num_episodes_watched / entry.node.num_episodes) *
+					100
+				: entry.list_status.num_episodes_watched,
+		isNumeric: true,
 	},
 	{
 		type: "source",
 		label: "Source",
 		getValue: (entry) => entry.node.source,
-		isNumeric: false
+		isNumeric: false,
 	},
 	{
 		type: "popularity",
 		label: "Popularity",
 		getValue: (entry) => entry.node.popularity,
-		isNumeric: true
+		isNumeric: true,
 	},
 	{
 		type: "start_date",
 		label: "Start Date",
 		getValue: (entry) => entry.node.start_date,
-		isNumeric: false
+		isNumeric: false,
 	},
 	{
 		type: "end_date",
 		label: "End Date",
 		getValue: (entry) => entry.node.end_date,
-		isNumeric: false
+		isNumeric: false,
 	},
 	{
 		type: "rank",
 		label: "Rank",
 		getValue: (entry) => entry.node.rank,
-		isNumeric: true
+		isNumeric: true,
 	},
 	{
 		type: "rating",
 		label: "Age Rating",
 		getValue: (entry) => entry.node.rating,
-		isNumeric: false
+		isNumeric: false,
 	},
 	{
 		type: "average_episode_duration",
 		label: "Episode Duration",
 		getValue: (entry) => entry.node.average_episode_duration,
-		isNumeric: true
+		isNumeric: true,
 	},
 	{
 		type: "num_episodes",
 		label: "Episodes",
 		getValue: (entry) => entry.node.num_episodes,
-		isNumeric: true
+		isNumeric: true,
 	},
 	{
 		type: "num_scoring_users",
 		label: "Scoring Users",
 		getValue: (entry) => entry.node.num_scoring_users,
-		isNumeric: true
+		isNumeric: true,
 	},
-]
+];
 
-export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
-
+export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 	// const copy1 = structuredClone(animeData);
 	// const animeDataArray = [...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1];
 	// animeData = animeDataArray;
 
-	const [selectedList, setSelectedList] = useState<WatchStatus | "all">("all")
-	const [searchValue, setSearchValue] = useState("")
-	const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
-	const [sortColumn, setSortColumn] = useState<string>(searchTypes[0].type)
-	const [pageIndex, setPageIndex] = useState(0)
-	const [pageSize, setPageSize] = useState(10)
-	const [isInitialLoad, setIsInitialLoad] = useState(true)
-	const [pageInputValue, setPageInputValue] = useState("1")
-	const isTypingRef = useRef(false)
-	const [fieldSearchType, setFieldSearchType] = useState<string>(searchTypes[0].type)
-
+	const [selectedList, setSelectedList] = useState<WatchStatus | "all">("all");
+	const [searchValue, setSearchValue] = useState("");
+	const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+	const [sortColumn, setSortColumn] = useState<string>(searchTypes[0].type);
+	const [pageIndex, setPageIndex] = useState(0);
+	const [pageSize, setPageSize] = useState(10);
+	const [isInitialLoad, setIsInitialLoad] = useState(true);
+	const [pageInputValue, setPageInputValue] = useState("1");
+	const isTypingRef = useRef(false);
+	const [fieldSearchType, setFieldSearchType] = useState<string>(
+		searchTypes[0].type,
+	);
 
 	const titleMap: Record<WatchStatus | "all", string> = {
 		all: "Anime List",
@@ -138,7 +172,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 		completed: "Completed Anime",
 		on_hold: "On Hold",
 		dropped: "Dropped Anime",
-	}
+	};
 
 	const descriptionMap: Record<WatchStatus | "all", string> = {
 		all: "All anime from my list across all statuses.",
@@ -147,178 +181,193 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 		completed: "Anime I've finished watching.",
 		on_hold: "Anime I've temporarily paused.",
 		dropped: "Anime I've decided not to continue watching.",
-	}
+	};
 
 	// Defer initial processing to prevent page freeze
 	useEffect(() => {
 		// Use setTimeout to defer processing until after initial render
 		const timer = setTimeout(() => {
-			setIsInitialLoad(false)
-		}, 0)
-		return () => clearTimeout(timer)
-	}, [])
+			setIsInitialLoad(false);
+		}, 0);
+		return () => clearTimeout(timer);
+	}, []);
 
 	// Manual filtering, sorting, and pagination
 	const processedData = useMemo(() => {
 		// On initial load, return empty array to prevent freeze
 		if (isInitialLoad) {
-			return []
+			return [];
 		}
 		// Step 1: Filter by list type (lazy evaluation - only filter when needed)
-		let data: AnimeEntry[]
+		let data: AnimeEntry[];
 		if (selectedList === "all") {
-			data = animeData
+			data = animeData;
 		} else {
 			// Only filter for the selected list type, not all types
-			switch(selectedList) {
+			switch (selectedList) {
 				case "plan_to_watch":
-					data = getPlanToWatch(animeData)
-					break
+					data = getPlanToWatch(animeData);
+					break;
 				case "watching":
-					data = getWatching(animeData)
-					break
+					data = getWatching(animeData);
+					break;
 				case "completed":
-					data = getCompleted(animeData)
-					break
+					data = getCompleted(animeData);
+					break;
 				case "on_hold":
-					data = getOnHold(animeData)
-					break
+					data = getOnHold(animeData);
+					break;
 				case "dropped":
-					data = getDropped(animeData)
-					break
+					data = getDropped(animeData);
+					break;
 				default:
-					data = animeData
+					data = animeData;
 			}
 		}
 
 		// Step 2: Filter by search
 		if (searchValue.trim()) {
-			const search = searchValue.toLowerCase()
-			const searchNum = Number(searchValue)
-			const isNumericSearch = !isNaN(searchNum) && searchValue.trim() !== ''
+			const search = searchValue.toLowerCase();
+			const searchNum = Number(searchValue);
+			const isNumericSearch = !isNaN(searchNum) && searchValue.trim() !== "";
 
 			// Get the search type config
-			const searchTypeConfig = searchTypes.find(st => st.type === fieldSearchType) || searchTypes[0]
-			const getFieldValue = searchTypeConfig.getValue
+			const searchTypeConfig =
+				searchTypes.find((st) => st.type === fieldSearchType) || searchTypes[0];
+			const getFieldValue = searchTypeConfig.getValue;
 
-			data = data.filter(entry => {
-				const fieldValue = getFieldValue(entry)
+			data = data.filter((entry) => {
+				const fieldValue = getFieldValue(entry);
 
-				if (fieldValue == null) return false
+				if (fieldValue == null) return false;
 
 				// Handle string fields
-				if (typeof fieldValue === 'string') {
-					return fieldValue.toLowerCase().includes(search)
+				if (typeof fieldValue === "string") {
+					return fieldValue.toLowerCase().includes(search);
 				}
 
 				// Handle numeric fields - include all for numeric search (will sort by proximity)
 				if (isNumericSearch) {
-					return true // Include all, will be sorted by proximity
+					return true; // Include all, will be sorted by proximity
 				} else {
-					return fieldValue.toString().includes(search)
+					return fieldValue.toString().includes(search);
 				}
-			})
+			});
 
 			// Step 2.5: Sort by proximity for numeric searches
 			if (isNumericSearch && searchTypeConfig.isNumeric) {
 				data = [...data].sort((a, b) => {
-					const aVal = getFieldValue(a)
-					const bVal = getFieldValue(b)
+					const aVal = getFieldValue(a);
+					const bVal = getFieldValue(b);
 
-					if (aVal == null) return 1
-					if (bVal == null) return -1
+					if (aVal == null) return 1;
+					if (bVal == null) return -1;
 
-					const aDist = Math.abs(Number(aVal) - searchNum)
-					const bDist = Math.abs(Number(bVal) - searchNum)
+					const aDist = Math.abs(Number(aVal) - searchNum);
+					const bDist = Math.abs(Number(bVal) - searchNum);
 
-					return aDist - bDist
-				})
+					return aDist - bDist;
+				});
 			}
 		}
 
 		// Step 3: Sort (skip if we already sorted by proximity in search AND searching the same field we're sorting by)
-		const searchTypeConfigForSkip = searchTypes.find(st => st.type === fieldSearchType) || searchTypes[0]
-		const skipRegularSort = (searchValue.trim() && !isNaN(Number(searchValue)) && searchTypeConfigForSkip.isNumeric && fieldSearchType === sortColumn) || sortColumn === "none"
+		const searchTypeConfigForSkip =
+			searchTypes.find((st) => st.type === fieldSearchType) || searchTypes[0];
+		const skipRegularSort =
+			(searchValue.trim() &&
+				!isNaN(Number(searchValue)) &&
+				searchTypeConfigForSkip.isNumeric &&
+				fieldSearchType === sortColumn) ||
+			sortColumn === "none";
 
 		if (!skipRegularSort) {
-			const sortTypeConfig = searchTypes.find(st => st.type === sortColumn) || searchTypes[0]
+			const sortTypeConfig =
+				searchTypes.find((st) => st.type === sortColumn) || searchTypes[0];
 
 			data = [...data].sort((a, b) => {
-				const aVal = sortTypeConfig.getValue(a)
-				const bVal = sortTypeConfig.getValue(b)
+				const aVal = sortTypeConfig.getValue(a);
+				const bVal = sortTypeConfig.getValue(b);
 
 				// Handle null/undefined values - push them to the end
-				if (aVal == null && bVal == null) return 0
-				if (aVal == null) return 1
-				if (bVal == null) return -1
+				if (aVal == null && bVal == null) return 0;
+				if (aVal == null) return 1;
+				if (bVal == null) return -1;
 
 				// String comparison
-				if (typeof aVal === 'string' && typeof bVal === 'string') {
+				if (typeof aVal === "string" && typeof bVal === "string") {
 					return sortDirection === "asc"
 						? aVal.localeCompare(bVal)
-						: bVal.localeCompare(aVal)
+						: bVal.localeCompare(aVal);
 				}
 
 				// Numeric comparison - ensure we're working with numbers
-				const numA = Number(aVal)
-				const numB = Number(bVal)
+				const numA = Number(aVal);
+				const numB = Number(bVal);
 
 				// Handle NaN values
-				if (isNaN(numA) && isNaN(numB)) return 0
-				if (isNaN(numA)) return 1
-				if (isNaN(numB)) return -1
+				if (isNaN(numA) && isNaN(numB)) return 0;
+				if (isNaN(numA)) return 1;
+				if (isNaN(numB)) return -1;
 
-				return sortDirection === "asc" ? numA - numB : numB - numA
-			})
+				return sortDirection === "asc" ? numA - numB : numB - numA;
+			});
 		}
 
-		return data
-	}, [animeData, selectedList, searchValue, sortColumn, sortDirection, isInitialLoad, fieldSearchType])
+		return data;
+	}, [
+		animeData,
+		selectedList,
+		searchValue,
+		sortColumn,
+		sortDirection,
+		isInitialLoad,
+		fieldSearchType,
+	]);
 
 	// Paginated data
 	const paginatedData = useMemo(() => {
-		const start = pageIndex * pageSize
-		return processedData.slice(start, start + pageSize)
-	}, [processedData, pageIndex, pageSize])
+		const start = pageIndex * pageSize;
+		return processedData.slice(start, start + pageSize);
+	}, [processedData, pageIndex, pageSize]);
 
-	const totalPages = Math.ceil(processedData.length / pageSize)
-
+	const totalPages = Math.ceil(processedData.length / pageSize);
 
 	// Reset to first page when filters change
 	useEffect(() => {
-		setPageIndex(0)
-		setPageInputValue("1")
-	}, [searchValue, selectedList, fieldSearchType])
+		setPageIndex(0);
+		setPageInputValue("1");
+	}, [searchValue, selectedList, fieldSearchType]);
 
 	// Debounce page input changes
 	useEffect(() => {
-		if (!isTypingRef.current) return // Skip if not from user input
+		if (!isTypingRef.current) return; // Skip if not from user input
 
 		const timer = setTimeout(() => {
-			const pageNum = Number(pageInputValue)
+			const pageNum = Number(pageInputValue);
 			if (!isNaN(pageNum) && pageNum > 0 && pageNum <= totalPages) {
-				const newIndex = pageNum - 1
+				const newIndex = pageNum - 1;
 				if (newIndex !== pageIndex) {
-					setPageIndex(newIndex)
+					setPageIndex(newIndex);
 				}
 			} else {
-				setPageIndex(0)
-				setPageInputValue("1")
+				setPageIndex(0);
+				setPageInputValue("1");
 			}
-			isTypingRef.current = false
-		}, 500)
-		return () => clearTimeout(timer)
-	}, [pageInputValue, totalPages, pageIndex])
+			isTypingRef.current = false;
+		}, 500);
+		return () => clearTimeout(timer);
+	}, [pageInputValue, totalPages, pageIndex]);
 
 	// Update input value when page changes externally (e.g., via buttons)
 	useEffect(() => {
 		if (!isTypingRef.current) {
-			const expectedValue = (pageIndex + 1).toString()
+			const expectedValue = (pageIndex + 1).toString();
 			if (pageInputValue !== expectedValue) {
-				setPageInputValue(expectedValue)
+				setPageInputValue(expectedValue);
 			}
 		}
-	}, [pageIndex, pageInputValue])
+	}, [pageIndex, pageInputValue]);
 
 	return (
 		<div className="flex flex-col justify-center mx-auto w-full p-6">
@@ -327,52 +376,57 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 					<CardHeader className="flex flex-col items-stretch p-0 sm:flex-row">
 						<div className="flex flex-1 flex-col justify-center gap-1 px-6 pb-3 pt-4">
 							<CardTitle>{titleMap[selectedList]}</CardTitle>
-							<CardDescription>
-								{descriptionMap[selectedList]}
-							</CardDescription>
+							<CardDescription>{descriptionMap[selectedList]}</CardDescription>
 						</div>
 					</CardHeader>
 					<CardContent className="flex flex-col p-0">
-
 						{/*Control*/}
 						<div className="flex flex-col p-6 gap-2">
-
 							{/*Control (row-1) / Anime list type*/}
 							<div className="flex flex-col w-full">
 								<p className="text-sm font-medium">List Type</p>
-								<Select defaultValue="all" onValueChange={(e) =>setSelectedList(e as WatchStatus)}>
+								<Select
+									defaultValue="all"
+									onValueChange={(e) => setSelectedList(e as WatchStatus)}
+								>
 									<SelectTrigger className="w-full">
 										<SelectValue placeholder="Select a list" />
 									</SelectTrigger>
 									<SelectContent>
 										<SelectItem value="all">All</SelectItem>
-										{Object.entries(WATCH_STATUS_LABELS).map(([value, label], index) => (
-											<SelectItem key={index} value={value}>{label}</SelectItem>
-										))}
+										{Object.entries(WATCH_STATUS_LABELS).map(
+											([value, label], index) => (
+												<SelectItem key={index} value={value}>
+													{label}
+												</SelectItem>
+											),
+										)}
 									</SelectContent>
 								</Select>
 							</div>
 
 							{/*Control (row-2)*/}
 							<div className="flex flex-row gap-1 flex-wrap">
-
 								{/*Control (row-2) / Filter Anime */}
 								<div className="flex flex-col flex-auto">
 									<Label className="text-sm font-medium">Search anime by</Label>
 									<div className="flex flex-row shadow-sm">
-
 										{/*Control (row-2) / Filter Anime / Filter type */}
 										<div className="flex flex-col">
 											<Select
 												defaultValue={searchTypes[0].type}
-												onValueChange={(value) => {setFieldSearchType(value)}}
+												onValueChange={(value) => {
+													setFieldSearchType(value);
+												}}
 											>
 												<SelectTrigger className="w-fit max-w-48 rounded-r-none border-r-0 shadow-none">
 													<SelectValue placeholder="Search field" />
 												</SelectTrigger>
 												<SelectContent>
-													{searchTypes.map((e,index) => (
-														<SelectItem key={index} value={e.type}>{e.label}</SelectItem>
+													{searchTypes.map((e, index) => (
+														<SelectItem key={index} value={e.type}>
+															{e.label}
+														</SelectItem>
 													))}
 												</SelectContent>
 											</Select>
@@ -385,7 +439,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 												placeholder="Filter..."
 												value={searchValue}
 												useRing={false}
-												onChange={(event) =>setSearchValue(event.target.value)}
+												onChange={(event) => setSearchValue(event.target.value)}
 											/>
 										</div>
 									</div>
@@ -395,13 +449,12 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 								<div className="flex flex-col w-full md:w-fit">
 									<p className="text-sm font-medium">Sort By</p>
 									<div className="flex w-full md:w-fit shadow-sm">
-
 										{/*Control (row-2) / Sorting / Type */}
 										<Select
 											defaultValue={searchTypes[0].type}
 											onValueChange={(value) => {
-												setSortColumn(value)
-												setPageIndex(0)
+												setSortColumn(value);
+												setPageIndex(0);
 											}}
 										>
 											<SelectTrigger className="w-full md:w-fit md:max-w-48 rounded-r-none border-r-0 shadow-none">
@@ -409,8 +462,10 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 											</SelectTrigger>
 											<SelectContent>
 												<SelectItem value="none">None</SelectItem>
-												{searchTypes.map((e,index) => (
-													<SelectItem key={index} value={e.type}>{e.label}</SelectItem>
+												{searchTypes.map((e, index) => (
+													<SelectItem key={index} value={e.type}>
+														{e.label}
+													</SelectItem>
 												))}
 											</SelectContent>
 										</Select>
@@ -419,10 +474,18 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 										<Button
 											size="icon"
 											className="h-10 w-10 rounded-l-none border-l-0 shadow-none"
-											onClick={() => setSortDirection(prev => prev === "asc" ? "desc" : "asc")}
+											onClick={() =>
+												setSortDirection((prev) =>
+													prev === "asc" ? "desc" : "asc",
+												)
+											}
 										>
 											<span className="sr-only">Toggle sort direction</span>
-											{sortDirection === "asc" ? <FaArrowUp className="w-3! h-3!" /> : <FaArrowDown className="w-3! h-3!" />}
+											{sortDirection === "asc" ? (
+												<FaArrowUp className="w-3! h-3!" />
+											) : (
+												<FaArrowDown className="w-3! h-3!" />
+											)}
 										</Button>
 									</div>
 								</div>
@@ -430,37 +493,48 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 
 							{/*Control (row-3) / Pagination */}
 							<div className="flex flex-col sm:flex-row gap-2 justify-between">
-
 								{/*Control (row-3) / Pagination / Card Amount Selector */}
 								<div className="flex gap-0 sm:gap-2 flex-col sm:flex-row">
-									<Label className="text-sm font-medium my-auto flex sm:hidden">Per page</Label>
-									<Select defaultValue={pageSize.toString()} onValueChange={(value) => {
-										setPageSize(Number(value))
-										setPageIndex(0)
-									}}>
+									<Label className="text-sm font-medium my-auto flex sm:hidden">
+										Per page
+									</Label>
+									<Select
+										defaultValue={pageSize.toString()}
+										onValueChange={(value) => {
+											setPageSize(Number(value));
+											setPageIndex(0);
+										}}
+									>
 										<SelectTrigger className="w-full sm:w-[110px]">
 											<SelectValue placeholder="Select a amount" />
 										</SelectTrigger>
 										<SelectContent className="min-w-[3rem]">
-											{[10, 20, 30, 50, 100].map((e,index) => (
-												<SelectItem checkMark={false} key={index} value={e.toString()}>{e.toString()}</SelectItem>
+											{[10, 20, 30, 50, 100].map((e, index) => (
+												<SelectItem
+													checkMark={false}
+													key={index}
+													value={e.toString()}
+												>
+													{e.toString()}
+												</SelectItem>
 											))}
 										</SelectContent>
 									</Select>
-									<Label className="text-sm font-medium my-auto hidden sm:flex">Per page</Label>
+									<Label className="text-sm font-medium my-auto hidden sm:flex">
+										Per page
+									</Label>
 								</div>
 
 								{/*Control (row-3) / Pagination / Buttons */}
 								<div className="flex justify-center gap-1 pt-3 sm:pt-0">
 									<div className="flex flex-row items-center gap-2">
 										<div className="flex">
-
 											{/*Control (row-3) / Pagination / Buttons / First Page */}
 											<Button
 												className="flex h-10 w-10 p-0 rounded-r-none border-r-0"
 												onClick={() => {
-													isTypingRef.current = false
-													setPageIndex(0)
+													isTypingRef.current = false;
+													setPageIndex(0);
 												}}
 												disabled={pageIndex === 0}
 											>
@@ -471,8 +545,8 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 											<Button
 												className="flex h-10 w-10 p-0 rounded-l-none border-l-0"
 												onClick={() => {
-													isTypingRef.current = false
-													setPageIndex(prev => prev - 1)
+													isTypingRef.current = false;
+													setPageIndex((prev) => prev - 1);
 												}}
 												disabled={pageIndex === 0}
 											>
@@ -486,22 +560,21 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 												className="text-right w-14 pr-1 my-auto bg-transparent focus:bg-card-inner-focus"
 												value={pageInputValue}
 												useRing={false}
-												onChange={e => {
-													isTypingRef.current = true
-													setPageInputValue(e.target.value)
+												onChange={(e) => {
+													isTypingRef.current = true;
+													setPageInputValue(e.target.value);
 												}}
 											/>
 											<span className="my-auto">of {totalPages}</span>
 										</div>
 
 										<div className="flex">
-
 											{/*Control (row-3) / Pagination / Buttons / Next Page */}
 											<Button
 												className="flex h-10 w-10 p-0 border-r-0 rounded-r-none"
 												onClick={() => {
-													isTypingRef.current = false
-													setPageIndex(prev => prev + 1)
+													isTypingRef.current = false;
+													setPageIndex((prev) => prev + 1);
 												}}
 												disabled={pageIndex >= totalPages - 1}
 											>
@@ -512,8 +585,8 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 											<Button
 												className="flex h-10 w-10 p-0 border-l-0 rounded-l-none"
 												onClick={() => {
-													isTypingRef.current = false
-													setPageIndex(totalPages - 1)
+													isTypingRef.current = false;
+													setPageIndex(totalPages - 1);
 												}}
 												disabled={pageIndex >= totalPages - 1}
 											>
@@ -531,7 +604,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 						</div>
 
 						{/*Divider between controls and data*/}
-						<hr className="border-card-border"/>
+						<hr className="border-card-border" />
 
 						{/*Anime data displayed*/}
 						<div className="w-full p-6">
@@ -552,10 +625,9 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[]}) {
 								</div>
 							)}
 						</div>
-
 					</CardContent>
 				</Card>
 			</div>
 		</div>
-	)
+	);
 }

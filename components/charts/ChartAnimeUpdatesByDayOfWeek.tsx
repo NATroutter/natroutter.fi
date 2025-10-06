@@ -1,29 +1,28 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
-
+import type * as React from "react";
+import { useMemo } from "react";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import type { ChartSettings } from "@/components/ChartSettingsDialog";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
-	ChartConfig,
+	type ChartConfig,
 	ChartContainer,
 	ChartTooltip,
 	ChartTooltipContent,
-} from "@/components/ui/chart"
-import { AnimeEntry } from "@/types/animeData"
-import {useMemo} from "react";
-import {ChartSettings} from "@/components/ChartSettingsDialog";
+} from "@/components/ui/chart";
+import type { AnimeEntry } from "@/types/animeData";
 
 type Day = {
-	short: string
-	full: string
-}
+	short: string;
+	full: string;
+};
 
 const Labels: Day[] = [
 	{ short: "Mon", full: "Monday" },
@@ -32,7 +31,7 @@ const Labels: Day[] = [
 	{ short: "Thu", full: "Thursday" },
 	{ short: "Fri", full: "Friday" },
 	{ short: "Sat", full: "Saturday" },
-	{ short: "Sun", full: "Sunday" }
+	{ short: "Sun", full: "Sunday" },
 ];
 
 const chartConfig: ChartConfig = {
@@ -40,50 +39,52 @@ const chartConfig: ChartConfig = {
 		label: "Completed",
 		color: "var(--chart-5)",
 	},
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 interface ChartAnimeUpdatesByDayOfWeekProps {
-	settings: ChartSettings
-	animeData: AnimeEntry[]
+	settings: ChartSettings;
+	animeData: AnimeEntry[];
 }
 
-
-export default function ChartAnimeUpdatesByDayOfWeek({settings, animeData}: ChartAnimeUpdatesByDayOfWeekProps) {
+export default function ChartAnimeUpdatesByDayOfWeek({
+	settings,
+	animeData,
+}: ChartAnimeUpdatesByDayOfWeekProps) {
 	const chartData = useMemo(() => {
-		const isAllYears = settings.viewingYear === "all"
-		const year = Number(settings.viewingYear)
+		const isAllYears = settings.viewingYear === "all";
+		const year = Number(settings.viewingYear);
 
-		const dayArr = Array(7).fill(0)
-
+		const dayArr = Array(7).fill(0);
 
 		animeData.forEach((entry) => {
+			const updatedAt = entry.list_status?.updated_at;
+			if (!updatedAt) return;
 
-			const updatedAt = entry.list_status?.updated_at
-			if (!updatedAt) return
-
-			const date = new Date(updatedAt)
+			const date = new Date(updatedAt);
 
 			if (!isAllYears) {
-				const startYear = date.getFullYear()
-				if (startYear !== year) return
+				const startYear = date.getFullYear();
+				if (startYear !== year) return;
 			}
 
-			const dayIndex = date.getDay()
-			const adjustedIndex = dayIndex === 0 ? 6 : dayIndex - 1
-			dayArr[adjustedIndex]++
-		})
+			const dayIndex = date.getDay();
+			const adjustedIndex = dayIndex === 0 ? 6 : dayIndex - 1;
+			dayArr[adjustedIndex]++;
+		});
 
-		const totalCount = dayArr.reduce((sum, count) => sum + count, 0)
+		const totalCount = dayArr.reduce((sum, count) => sum + count, 0);
 
-		return dayArr
-			.map((count, index) => ({
-				day: Labels[index].short,
-				fullDay: Labels[index].full,
-				count,
-				percentage: totalCount > 0 ? parseFloat(((count / totalCount) * 100).toFixed(1)) : 0,
-				fill: chartConfig.count.color,
-			}))
-	}, [animeData, settings])
+		return dayArr.map((count, index) => ({
+			day: Labels[index].short,
+			fullDay: Labels[index].full,
+			count,
+			percentage:
+				totalCount > 0
+					? parseFloat(((count / totalCount) * 100).toFixed(1))
+					: 0,
+			fill: chartConfig.count.color,
+		}));
+	}, [animeData, settings]);
 
 	return (
 		<Card className="py-0 w-full shadow-xl">
@@ -93,8 +94,7 @@ export default function ChartAnimeUpdatesByDayOfWeek({settings, animeData}: Char
 					<CardDescription>
 						{settings.viewingYear === "all"
 							? "Amount of Anime list updates I made each day of week across all years."
-							: `Amount of Anime list updates I made each day of week in ${settings.viewingYear}.`
-						}
+							: `Amount of Anime list updates I made each day of week in ${settings.viewingYear}.`}
 					</CardDescription>
 				</div>
 			</CardHeader>
@@ -126,7 +126,7 @@ export default function ChartAnimeUpdatesByDayOfWeek({settings, animeData}: Char
 										<>
 											<div
 												className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
-												style={{"--color-bg": `blue`,} as React.CSSProperties}
+												style={{ "--color-bg": `blue` } as React.CSSProperties}
 											/>
 											{item.payload.fullDay}
 											<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
@@ -137,7 +137,9 @@ export default function ChartAnimeUpdatesByDayOfWeek({settings, animeData}: Char
 												Percentage
 												<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
 													{item.payload.percentage}
-													<span className="text-muted-foreground font-normal">%</span>
+													<span className="text-muted-foreground font-normal">
+														%
+													</span>
 												</div>
 											</div>
 										</>
@@ -150,5 +152,5 @@ export default function ChartAnimeUpdatesByDayOfWeek({settings, animeData}: Char
 				</ChartContainer>
 			</CardContent>
 		</Card>
-	)
+	);
 }

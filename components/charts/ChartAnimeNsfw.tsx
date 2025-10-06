@@ -1,13 +1,25 @@
-"use client"
+"use client";
 
-import {Pie, PieChart} from "recharts"
-
-import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
-import {ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
-import * as React from "react"
-import {useMemo} from "react"
-import {AnimeEntry} from "@/types/animeData"
-import {ChartSettings} from "@/components/ChartSettingsDialog";
+import type * as React from "react";
+import { useMemo } from "react";
+import { Pie, PieChart } from "recharts";
+import type { ChartSettings } from "@/components/ChartSettingsDialog";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import {
+	type ChartConfig,
+	ChartContainer,
+	ChartLegend,
+	ChartLegendContent,
+	ChartTooltip,
+	ChartTooltipContent,
+} from "@/components/ui/chart";
+import type { AnimeEntry } from "@/types/animeData";
 
 const chartConfig: ChartConfig = {
 	white: {
@@ -22,44 +34,50 @@ const chartConfig: ChartConfig = {
 		label: "Not Safe for Work",
 		color: "var(--chart-3)",
 	},
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 interface ChartNSFWProps {
-	settings: ChartSettings
-	animeData: AnimeEntry[]
+	settings: ChartSettings;
+	animeData: AnimeEntry[];
 }
 
 export default function ChartAnimeNsfw({
 	settings,
-	animeData
+	animeData,
 }: ChartNSFWProps) {
 	const chartData = useMemo(() => {
-		const isAllYears = settings.viewingYear === "all"
-		const year = Number(settings.viewingYear)
-		const counts: Record<string, number> = {}
+		const isAllYears = settings.viewingYear === "all";
+		const year = Number(settings.viewingYear);
+		const counts: Record<string, number> = {};
 
 		for (const entry of animeData) {
-			const nsfw = entry.node.nsfw
-			if (!nsfw || !['white', 'gray', 'black'].includes(nsfw)) continue
+			const nsfw = entry.node.nsfw;
+			if (!nsfw || !["white", "gray", "black"].includes(nsfw)) continue;
 
 			if (!isAllYears) {
-				const entryYear = new Date(entry.list_status?.updated_at).getFullYear()
-				if (entryYear !== year) continue
+				const entryYear = new Date(entry.list_status?.updated_at).getFullYear();
+				if (entryYear !== year) continue;
 			}
 
-			counts[nsfw] = (counts[nsfw] || 0) + 1
+			counts[nsfw] = (counts[nsfw] || 0) + 1;
 		}
 
-		const totalCount = Object.values(counts).reduce((sum, count) => sum + count, 0)
+		const totalCount = Object.values(counts).reduce(
+			(sum, count) => sum + count,
+			0,
+		);
 		return Object.entries(counts)
 			.map(([nsfw, count]) => ({
 				nsfw,
 				count,
-				percentage: totalCount > 0 ? parseFloat(((count / totalCount) * 100).toFixed(1)) : 0,
+				percentage:
+					totalCount > 0
+						? parseFloat(((count / totalCount) * 100).toFixed(1))
+						: 0,
 				fill: chartConfig[nsfw as keyof typeof chartConfig].color,
 			}))
-			.sort((a, b) => b.count - a.count) // Sort by count descending
-	}, [animeData, settings])
+			.sort((a, b) => b.count - a.count); // Sort by count descending
+	}, [animeData, settings]);
 
 	return (
 		<Card className="flex flex-col mx-auto w-full h-full max-h-[400px] shadow-xl">
@@ -69,8 +87,7 @@ export default function ChartAnimeNsfw({
 					<CardDescription>
 						{settings.viewingYear === "all"
 							? "Distribution of anime by NSFW tag across all years."
-							: `Distribution of anime by NSFW tag in ${settings.viewingYear}.`
-						}
+							: `Distribution of anime by NSFW tag in ${settings.viewingYear}.`}
 					</CardDescription>
 				</div>
 			</CardHeader>
@@ -105,7 +122,9 @@ export default function ChartAnimeNsfw({
 												Percentage
 												<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
 													{item.payload.percentage}
-													<span className="text-muted-foreground font-normal">%</span>
+													<span className="text-muted-foreground font-normal">
+														%
+													</span>
 												</div>
 											</div>
 										</>
@@ -121,8 +140,7 @@ export default function ChartAnimeNsfw({
 							outerRadius={90}
 							strokeWidth={1}
 							label
-						>
-						</Pie>
+						></Pie>
 						<ChartLegend
 							content={<ChartLegendContent nameKey="nsfw" />}
 							className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center text-nowrap"
@@ -131,5 +149,5 @@ export default function ChartAnimeNsfw({
 				</ChartContainer>
 			</CardContent>
 		</Card>
-	)
+	);
 }

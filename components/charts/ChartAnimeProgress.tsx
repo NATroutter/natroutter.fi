@@ -1,13 +1,25 @@
-"use client"
+"use client";
 
-import {Pie, PieChart} from "recharts"
-
-import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
-import {ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
-import * as React from "react"
-import {useMemo} from "react"
-import {AnimeEntry} from "@/types/animeData"
-import {ChartSettings} from "@/components/ChartSettingsDialog";
+import type * as React from "react";
+import { useMemo } from "react";
+import { Pie, PieChart } from "recharts";
+import type { ChartSettings } from "@/components/ChartSettingsDialog";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import {
+	type ChartConfig,
+	ChartContainer,
+	ChartLegend,
+	ChartLegendContent,
+	ChartTooltip,
+	ChartTooltipContent,
+} from "@/components/ui/chart";
+import type { AnimeEntry } from "@/types/animeData";
 
 const chartConfig: ChartConfig = {
 	notStarted: {
@@ -34,20 +46,20 @@ const chartConfig: ChartConfig = {
 		label: "(100%)",
 		color: "var(--chart-6)",
 	},
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 interface ChartProgressBreakdownProps {
-	settings: ChartSettings
-	animeData: AnimeEntry[]
+	settings: ChartSettings;
+	animeData: AnimeEntry[];
 }
 
 export default function ChartAnimeProgress({
 	settings,
-	animeData
+	animeData,
 }: ChartProgressBreakdownProps) {
 	const chartData = useMemo(() => {
-		const isAllYears = settings.viewingYear === "all"
-		const year = Number(settings.viewingYear)
+		const isAllYears = settings.viewingYear === "all";
+		const year = Number(settings.viewingYear);
 		const counts: Record<string, number> = {
 			notStarted: 0,
 			justStarted: 0,
@@ -55,52 +67,58 @@ export default function ChartAnimeProgress({
 			mostlyDone: 0,
 			almostComplete: 0,
 			completed: 0,
-		}
+		};
 
 		for (const entry of animeData) {
-			const episodesWatched = entry.list_status.num_episodes_watched || 0
-			const totalEpisodes = entry.node.num_episodes || 0
+			const episodesWatched = entry.list_status.num_episodes_watched || 0;
+			const totalEpisodes = entry.node.num_episodes || 0;
 
 			// Skip entries with unknown total episodes
-			if (totalEpisodes === 0) continue
+			if (totalEpisodes === 0) continue;
 
 			if (!isAllYears) {
 				const startYear = entry.node.start_date
 					? new Date(entry.node.start_date).getFullYear()
-					: null
-				if (startYear !== year) continue
+					: null;
+				if (startYear !== year) continue;
 			}
 
 			// Calculate progress percentage
-			const progressPercent = (episodesWatched / totalEpisodes) * 100
+			const progressPercent = (episodesWatched / totalEpisodes) * 100;
 
 			if (progressPercent === 0) {
-				counts.notStarted++
+				counts.notStarted++;
 			} else if (progressPercent < 25) {
-				counts.justStarted++
+				counts.justStarted++;
 			} else if (progressPercent < 50) {
-				counts.halfWay++
+				counts.halfWay++;
 			} else if (progressPercent < 75) {
-				counts.mostlyDone++
+				counts.mostlyDone++;
 			} else if (progressPercent < 100) {
-				counts.almostComplete++
+				counts.almostComplete++;
 			} else {
-				counts.completed++
+				counts.completed++;
 			}
 		}
 
-		const totalCount = Object.values(counts).reduce((sum, count) => sum + count, 0)
+		const totalCount = Object.values(counts).reduce(
+			(sum, count) => sum + count,
+			0,
+		);
 
 		return Object.entries(counts)
 			.map(([progress, count]) => ({
 				progress,
 				count,
-				percentage: totalCount > 0 ? parseFloat(((count / totalCount) * 100).toFixed(1)) : 0,
+				percentage:
+					totalCount > 0
+						? parseFloat(((count / totalCount) * 100).toFixed(1))
+						: 0,
 				fill: chartConfig[progress as keyof typeof chartConfig].color,
 			}))
-			.filter(item => item.count > 0) // Only show categories with data
-			.sort((a, b) => b.count - a.count) // Sort by count descending
-	}, [animeData, settings])
+			.filter((item) => item.count > 0) // Only show categories with data
+			.sort((a, b) => b.count - a.count); // Sort by count descending
+	}, [animeData, settings]);
 
 	return (
 		<Card className="flex flex-col mx-auto w-full h-full max-h-[400px] shadow-xl">
@@ -110,8 +128,7 @@ export default function ChartAnimeProgress({
 					<CardDescription>
 						{settings.viewingYear === "all"
 							? "Distribution of anime by watch progress across all years."
-							: `Distribution of anime by watch progress for ${settings.viewingYear}.`
-						}
+							: `Distribution of anime by watch progress for ${settings.viewingYear}.`}
 					</CardDescription>
 				</div>
 			</CardHeader>
@@ -146,7 +163,9 @@ export default function ChartAnimeProgress({
 												Percentage
 												<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
 													{item.payload.percentage}
-													<span className="text-muted-foreground font-normal">%</span>
+													<span className="text-muted-foreground font-normal">
+														%
+													</span>
 												</div>
 											</div>
 										</>
@@ -162,8 +181,7 @@ export default function ChartAnimeProgress({
 							outerRadius={90}
 							strokeWidth={1}
 							label
-						>
-						</Pie>
+						></Pie>
 						<ChartLegend
 							content={<ChartLegendContent nameKey="progress" />}
 							className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center text-nowrap"
@@ -172,5 +190,5 @@ export default function ChartAnimeProgress({
 				</ChartContainer>
 			</CardContent>
 		</Card>
-	)
+	);
 }

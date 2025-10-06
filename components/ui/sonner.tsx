@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import {Toaster as Sonner} from "sonner"
+import { Toaster as Sonner } from "sonner";
 
-type ToasterProps = React.ComponentProps<typeof Sonner>
+type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 const Toaster = ({ ...props }: ToasterProps) => {
 	return (
@@ -13,7 +13,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
 			position={"top-center"}
 			toastOptions={{
 				classNames: {
-					toast: 'bg-card! border-card-border! group',
+					toast: "bg-card! border-card-border! group",
 
 					closeButton: `
 						bg-card! border-card-border!
@@ -22,7 +22,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
 						[.group[data-type=warning]_&]:bg-toast-warn-bg! [.group[data-type=warning]_&]:border-toast-warn-border! [.group[data-type=warning]_&]:text-toast-warn-text!
 						[.group[data-type=info]_&]:bg-toast-info-bg! [.group[data-type=info]_&]:border-toast-info-border! [.group[data-type=info]_&]:text-toast-info-text!
 					`,
-					description:`
+					description: `
 						text-muted!
 						[.group[data-type=error]_&]:text-toast-error-text/60!
 						[.group[data-type=success]_&]:text-toast-success-text/60!
@@ -46,15 +46,18 @@ const Toaster = ({ ...props }: ToasterProps) => {
 						[.group[data-type=info]_&]:bg-toast-info-border/60!
 					`,
 
-					error: 'bg-toast-error-bg! border-toast-error-border! text-toast-error-text!',
-					success: 'bg-toast-success-bg! border-toast-success-border! text-toast-success-text!',
-					warning: 'bg-toast-warn-bg! border-toast-warn-border! text-toast-warn-text!',
-					info: 'bg-toast-info-bg! border-toast-info-border! text-toast-info-text!',
+					error:
+						"bg-toast-error-bg! border-toast-error-border! text-toast-error-text!",
+					success:
+						"bg-toast-success-bg! border-toast-success-border! text-toast-success-text!",
+					warning:
+						"bg-toast-warn-bg! border-toast-warn-border! text-toast-warn-text!",
+					info: "bg-toast-info-bg! border-toast-info-border! text-toast-info-text!",
 				},
 			}}
 			{...props}
 		/>
-	)
-}
+	);
+};
 
-export { Toaster }
+export { Toaster };

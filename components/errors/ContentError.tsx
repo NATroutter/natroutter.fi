@@ -5,5 +5,5 @@ export default function ContentError() {
 			<p>There was an error loading page content</p>
 			<p>Check logs the for more information</p>
 		</div>
-	)
+	);
 }

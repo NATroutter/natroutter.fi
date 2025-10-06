@@ -1,15 +1,28 @@
-"use client"
+"use client";
 
-import {Pie, PieChart} from "recharts"
+import type * as React from "react";
+import { useMemo } from "react";
+import { Pie, PieChart } from "recharts";
+import type { ChartSettings } from "@/components/ChartSettingsDialog";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import {
+	type ChartConfig,
+	ChartContainer,
+	ChartLegend,
+	ChartLegendContent,
+	ChartTooltip,
+	ChartTooltipContent,
+} from "@/components/ui/chart";
+import type { AnimeEntry } from "@/types/animeData";
 
-import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
-import {ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
-import * as React from "react";
-import {useMemo} from "react";
-import {AnimeEntry} from "@/types/animeData";
-import {ChartSettings} from "@/components/ChartSettingsDialog";
-
-export const description = "A pie chart showing anime watch status distribution"
+export const description =
+	"A pie chart showing anime watch status distribution";
 
 const chartConfig = {
 	plan_to_watch: {
@@ -32,52 +45,62 @@ const chartConfig = {
 		label: "Dropped",
 		color: "var(--chart-5)",
 	},
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
-export default function ChartAnimeStatus({ settings, animeData }: { settings: ChartSettings, animeData: AnimeEntry[] }) {
+export default function ChartAnimeStatus({
+	settings,
+	animeData,
+}: {
+	settings: ChartSettings;
+	animeData: AnimeEntry[];
+}) {
 	const chartData = useMemo(() => {
-		const isAllYears = settings.viewingYear === "all"
-		const year = Number(settings.viewingYear)
-		const counts: Record<string, number> = {}
+		const isAllYears = settings.viewingYear === "all";
+		const year = Number(settings.viewingYear);
+		const counts: Record<string, number> = {};
 
 		for (const entry of animeData) {
-			const rating = entry.list_status.status
-			if (!rating) continue
+			const rating = entry.list_status.status;
+			if (!rating) continue;
 
 			if (!isAllYears) {
-				const updatedAt = entry.list_status?.updated_at
-				if (!updatedAt) continue
+				const updatedAt = entry.list_status?.updated_at;
+				if (!updatedAt) continue;
 
-				const entryYear = new Date(updatedAt).getFullYear()
-				if (entryYear !== year) continue
+				const entryYear = new Date(updatedAt).getFullYear();
+				if (entryYear !== year) continue;
 			}
 
-			counts[rating] = (counts[rating] || 0) + 1
+			counts[rating] = (counts[rating] || 0) + 1;
 		}
 
-		const totalCount = Object.values(counts).reduce((sum, count) => sum + count, 0)
+		const totalCount = Object.values(counts).reduce(
+			(sum, count) => sum + count,
+			0,
+		);
 		return Object.entries(counts)
 			.map(([status, count]) => ({
 				status,
 				count,
-				percentage: totalCount > 0 ? parseFloat(((count / totalCount) * 100).toFixed(1)) : 0,
+				percentage:
+					totalCount > 0
+						? parseFloat(((count / totalCount) * 100).toFixed(1))
+						: 0,
 				fill: chartConfig[status as keyof typeof chartConfig].color,
 			}))
-			.sort((a, b) => b.count - a.count)
-	}, [animeData, settings])
-
+			.sort((a, b) => b.count - a.count);
+	}, [animeData, settings]);
 
 	return (
 		<Card className="flex flex-col mx-auto w-full h-full max-h-[400px] shadow-xl">
-		{/*// <Card className="flex flex-col">*/}
+			{/*// <Card className="flex flex-col">*/}
 			<CardHeader className="flex flex-col items-stretch p-0! sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
 					<CardTitle>Anime Watch Status Distribution</CardTitle>
 					<CardDescription>
 						{settings.viewingYear === "all"
 							? "Distribution of anime by watch status across all years."
-							: `Distribution of anime by watch status in ${settings.viewingYear}.`
-						}
+							: `Distribution of anime by watch status in ${settings.viewingYear}.`}
 					</CardDescription>
 				</div>
 			</CardHeader>
@@ -112,7 +135,9 @@ export default function ChartAnimeStatus({ settings, animeData }: { settings: Ch
 												Percentage
 												<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
 													{item.payload.percentage}
-													<span className="text-muted-foreground font-normal">%</span>
+													<span className="text-muted-foreground font-normal">
+														%
+													</span>
 												</div>
 											</div>
 										</>
@@ -128,8 +153,7 @@ export default function ChartAnimeStatus({ settings, animeData }: { settings: Ch
 							outerRadius={90}
 							strokeWidth={1}
 							label
-						>
-						</Pie>
+						></Pie>
 						<ChartLegend
 							content={<ChartLegendContent nameKey="status" />}
 							className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center text-nowrap"
@@ -138,5 +162,5 @@ export default function ChartAnimeStatus({ settings, animeData }: { settings: Ch
 				</ChartContainer>
 			</CardContent>
 		</Card>
-	)
+	);
 }

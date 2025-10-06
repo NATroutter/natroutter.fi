@@ -1,13 +1,25 @@
-"use client"
+"use client";
 
-import {Pie, PieChart} from "recharts"
-
-import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
-import {ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
-import * as React from "react"
-import {useMemo} from "react"
-import {AnimeEntry} from "@/types/animeData"
-import {ChartSettings} from "@/components/ChartSettingsDialog";
+import type * as React from "react";
+import { useMemo } from "react";
+import { Pie, PieChart } from "recharts";
+import type { ChartSettings } from "@/components/ChartSettingsDialog";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import {
+	type ChartConfig,
+	ChartContainer,
+	ChartLegend,
+	ChartLegendContent,
+	ChartTooltip,
+	ChartTooltipContent,
+} from "@/components/ui/chart";
+import type { AnimeEntry } from "@/types/animeData";
 
 const chartConfig: ChartConfig = {
 	winter: {
@@ -26,64 +38,69 @@ const chartConfig: ChartConfig = {
 		label: "Fall",
 		color: "var(--chart-4)",
 	},
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 interface ChartSeasonDistributionProps {
-	settings: ChartSettings
-	animeData: AnimeEntry[]
+	settings: ChartSettings;
+	animeData: AnimeEntry[];
 }
 
 export default function ChartAnimeSeason({
 	settings,
-	animeData
+	animeData,
 }: ChartSeasonDistributionProps) {
 	const chartData = useMemo(() => {
-		const isAllYears = settings.viewingYear === "all"
-		const year = Number(settings.viewingYear)
+		const isAllYears = settings.viewingYear === "all";
+		const year = Number(settings.viewingYear);
 		const counts: Record<string, number> = {
 			winter: 0,
 			spring: 0,
 			summer: 0,
 			fall: 0,
-		}
+		};
 
 		for (const entry of animeData) {
-			const startDate = entry.node.start_date
-			if (!startDate) continue
+			const startDate = entry.node.start_date;
+			if (!startDate) continue;
 
-			const date = new Date(startDate)
-			const month = date.getMonth() + 1 // JavaScript months are 0-indexed
+			const date = new Date(startDate);
+			const month = date.getMonth() + 1; // JavaScript months are 0-indexed
 
 			if (!isAllYears) {
-				const startYear = date.getFullYear()
-				if (startYear !== year) continue
+				const startYear = date.getFullYear();
+				if (startYear !== year) continue;
 			}
 
 			// Determine season based on month
 			if (month >= 1 && month <= 3) {
-				counts.winter++
+				counts.winter++;
 			} else if (month >= 4 && month <= 6) {
-				counts.spring++
+				counts.spring++;
 			} else if (month >= 7 && month <= 9) {
-				counts.summer++
+				counts.summer++;
 			} else if (month >= 10 && month <= 12) {
-				counts.fall++
+				counts.fall++;
 			}
 		}
 
-		const totalCount = Object.values(counts).reduce((sum, count) => sum + count, 0)
+		const totalCount = Object.values(counts).reduce(
+			(sum, count) => sum + count,
+			0,
+		);
 
 		return Object.entries(counts)
 			.map(([season, count]) => ({
 				season,
 				count,
-				percentage: totalCount > 0 ? parseFloat(((count / totalCount) * 100).toFixed(1)) : 0,
+				percentage:
+					totalCount > 0
+						? parseFloat(((count / totalCount) * 100).toFixed(1))
+						: 0,
 				fill: chartConfig[season as keyof typeof chartConfig].color,
 			}))
-			.filter(item => item.count > 0) // Only show seasons with data
-			.sort((a, b) => b.count - a.count) // Sort by count descending
-	}, [animeData, settings])
-
+			.filter((item) => item.count > 0) // Only show seasons with data
+			.sort((a, b) => b.count - a.count); // Sort by count descending
+	}, [animeData, settings]);
 
 	return (
 		<Card className="flex flex-col mx-auto w-full h-full max-h-[400px] shadow-xl">
@@ -93,8 +110,7 @@ export default function ChartAnimeSeason({
 					<CardDescription>
 						{settings.viewingYear === "all"
 							? "Distribution of anime by premiere season across all years."
-							: `Distribution of anime by premiere season for ${settings.viewingYear}.`
-						}
+							: `Distribution of anime by premiere season for ${settings.viewingYear}.`}
 					</CardDescription>
 				</div>
 			</CardHeader>
@@ -129,7 +145,9 @@ export default function ChartAnimeSeason({
 												Percentage
 												<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
 													{item.payload.percentage}
-													<span className="text-muted-foreground font-normal">%</span>
+													<span className="text-muted-foreground font-normal">
+														%
+													</span>
 												</div>
 											</div>
 										</>
@@ -145,8 +163,7 @@ export default function ChartAnimeSeason({
 							outerRadius={90}
 							strokeWidth={1}
 							label
-						>
-						</Pie>
+						></Pie>
 						<ChartLegend
 							content={<ChartLegendContent nameKey="season" />}
 							className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center text-nowrap"
@@ -155,5 +172,5 @@ export default function ChartAnimeSeason({
 				</ChartContainer>
 			</CardContent>
 		</Card>
-	)
+	);
 }

@@ -20,13 +20,13 @@ export interface ProjectData {
 	content: string;
 	github: string;
 	links: string[];
-	priority: number
+	priority: number;
 	expand: ExpandLinks;
 }
 
 export interface FooterData {
 	contact: string[];
-	quick: string[]
+	quick: string[];
 	social: string[];
 	about_me: string;
 	copyright: string;
@@ -40,7 +40,7 @@ export interface HomePage {
 	id: string;
 	username: string;
 	intro: string;
-	what_am_i:string;
+	what_am_i: string;
 	links: string[];
 	expand: ExpandLinks;
 }
@@ -75,9 +75,8 @@ export interface PrivacyPage {
 	title: string;
 	privacy: string;
 	updated: Date;
-	effective: Date
+	effective: Date;
 }
-
 
 //*************************************
 //*             Expansions            *

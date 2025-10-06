@@ -1,32 +1,45 @@
-"use client"
+"use client";
 
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import * as React from "react";
-import {useMemo} from "react";
-import {AnimeEntry, AnimeSource, formatSource} from "@/types/animeData";
-import {ChartSettings} from "@/components/ChartSettingsDialog";
+import { useMemo } from "react";
+import type { ChartSettings } from "@/components/ChartSettingsDialog";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import {
+	type AnimeEntry,
+	type AnimeSource,
+	formatSource,
+} from "@/types/animeData";
 
 interface ChartAnimeScoresProps {
-	settings: ChartSettings
-	animeData: AnimeEntry[]
+	settings: ChartSettings;
+	animeData: AnimeEntry[];
 }
 
 type StatsData = {
-	label: string
-	value: number | string
-}
+	label: string;
+	value: number | string;
+};
 
-
-export default function ChartAnimeQuickStats({ settings, animeData }: ChartAnimeScoresProps) {
-
+export default function ChartAnimeQuickStats({
+	settings,
+	animeData,
+}: ChartAnimeScoresProps) {
 	// Filter data based on selected year
 	const filteredData = useMemo(() => {
 		if (settings.viewingYear === "all") {
 			return animeData;
 		}
 
-		return animeData.filter(entry => {
-			const startYear = entry.node.start_date ? new Date(entry.node.start_date).getFullYear().toString() : null;
+		return animeData.filter((entry) => {
+			const startYear = entry.node.start_date
+				? new Date(entry.node.start_date).getFullYear().toString()
+				: null;
 			return startYear === settings.viewingYear;
 		});
 	}, [animeData, settings]);
@@ -43,50 +56,94 @@ export default function ChartAnimeQuickStats({ settings, animeData }: ChartAnime
 	const totalMinutesWatched = filteredData.reduce((total, entry) => {
 		const episodesWatched = entry.list_status.num_episodes_watched || 0;
 		const avgDuration = entry.node.average_episode_duration || 24 * 60; // default 24 minutes in seconds
-		return total + (episodesWatched * (avgDuration / 60)); // convert seconds to minutes
+		return total + episodesWatched * (avgDuration / 60); // convert seconds to minutes
 	}, 0);
-	const totalDaysSpent = parseFloat((totalMinutesWatched / (60 * 24)).toFixed(1));
-
+	const totalDaysSpent = parseFloat(
+		(totalMinutesWatched / (60 * 24)).toFixed(1),
+	);
 
 	// Find favorite source (most common source material)
-	const sourceCounts = filteredData.reduce((acc, entry) => {
-		const source = entry.node.source || "unknown";
-		acc[source] = (acc[source] || 0) + 1;
-		return acc;
-	}, {} as Record<string, number>);
+	const sourceCounts = filteredData.reduce(
+		(acc, entry) => {
+			const source = entry.node.source || "unknown";
+			acc[source] = (acc[source] || 0) + 1;
+			return acc;
+		},
+		{} as Record<string, number>,
+	);
 
-	const favoriteSource = Object.entries(sourceCounts).reduce((max, [source, count]) => {
-		return count > (sourceCounts[max] || 0) ? source : max;
-	}, Object.keys(sourceCounts)[0] || "N/A");
+	const favoriteSource = Object.entries(sourceCounts).reduce(
+		(max, [source, count]) => {
+			return count > (sourceCounts[max] || 0) ? source : max;
+		},
+		Object.keys(sourceCounts)[0] || "N/A",
+	);
 
 	// Calculate average score given
-	const scoredAnime = filteredData.filter(entry => entry.list_status.score > 0);
-	const averageScoreGiven = scoredAnime.length > 0
-		? parseFloat((scoredAnime.reduce((sum, entry) => sum + entry.list_status.score, 0) / scoredAnime.length).toFixed(2))
-		: 0;
+	const scoredAnime = filteredData.filter(
+		(entry) => entry.list_status.score > 0,
+	);
+	const averageScoreGiven =
+		scoredAnime.length > 0
+			? parseFloat(
+					(
+						scoredAnime.reduce(
+							(sum, entry) => sum + entry.list_status.score,
+							0,
+						) / scoredAnime.length
+					).toFixed(2),
+				)
+			: 0;
 
 	// Calculate completion rate
-	const completedAnime = filteredData.filter(entry => entry.list_status.status === 'completed').length;
-	const completionRate = totalAnimeWatched > 0
-		? parseFloat(((completedAnime / totalAnimeWatched) * 100).toFixed(1))
-		: 0;
+	const completedAnime = filteredData.filter(
+		(entry) => entry.list_status.status === "completed",
+	).length;
+	const completionRate =
+		totalAnimeWatched > 0
+			? parseFloat(((completedAnime / totalAnimeWatched) * 100).toFixed(1))
+			: 0;
 
 	// Calculate sequel chaser (anime with titles containing sequel indicators)
-	const sequelKeywords = ['2nd', '3rd', '4th', '5th', 'II', 'III', 'IV', 'Season 2', 'Season 3', 'Season 4', 'Part 2', 'Part 3', '2', ': Second', ': Third', 'Zoku', 'Kai', 'Shippuden', 'Next', 'Continue'];
-	const sequelAnime = filteredData.filter(entry => {
+	const sequelKeywords = [
+		"2nd",
+		"3rd",
+		"4th",
+		"5th",
+		"II",
+		"III",
+		"IV",
+		"Season 2",
+		"Season 3",
+		"Season 4",
+		"Part 2",
+		"Part 3",
+		"2",
+		": Second",
+		": Third",
+		"Zoku",
+		"Kai",
+		"Shippuden",
+		"Next",
+		"Continue",
+	];
+	const sequelAnime = filteredData.filter((entry) => {
 		const title = entry.node.title.toLowerCase();
-		const enTitle = entry.node.alternative_titles?.en?.toLowerCase() || '';
-		return sequelKeywords.some(keyword =>
-			title.includes(keyword.toLowerCase()) || enTitle.includes(keyword.toLowerCase())
+		const enTitle = entry.node.alternative_titles?.en?.toLowerCase() || "";
+		return sequelKeywords.some(
+			(keyword) =>
+				title.includes(keyword.toLowerCase()) ||
+				enTitle.includes(keyword.toLowerCase()),
 		);
 	}).length;
-	const sequelChaserRate = totalAnimeWatched > 0
-		? parseFloat(((sequelAnime / totalAnimeWatched) * 100).toFixed(1))
-		: 0;
+	const sequelChaserRate =
+		totalAnimeWatched > 0
+			? parseFloat(((sequelAnime / totalAnimeWatched) * 100).toFixed(1))
+			: 0;
 
 	// Calculate OVA Explorer
-	const ovaCount = filteredData.filter(entry =>
-		entry.node.media_type === 'ova'
+	const ovaCount = filteredData.filter(
+		(entry) => entry.node.media_type === "ova",
 	).length;
 
 	const data: StatsData[] = [
@@ -94,11 +151,14 @@ export default function ChartAnimeQuickStats({ settings, animeData }: ChartAnime
 		{ label: "Episodes Watched", value: totalEpisodesWatched },
 		{ label: "Days Spent", value: totalDaysSpent },
 		{ label: "OVA Explorer", value: ovaCount },
-		{ label: "Favorite Source", value: formatSource(favoriteSource as AnimeSource) },
+		{
+			label: "Favorite Source",
+			value: formatSource(favoriteSource as AnimeSource),
+		},
 		{ label: "Average Score", value: averageScoreGiven },
 		{ label: "Completion Rate", value: `${completionRate}%` },
 		{ label: "Sequel Chaser", value: `${sequelChaserRate}%` },
-	]
+	];
 
 	return (
 		<Card className="py-0 w-full shadow-xl">
@@ -108,23 +168,23 @@ export default function ChartAnimeQuickStats({ settings, animeData }: ChartAnime
 					<CardDescription>
 						{settings.viewingYear === "all"
 							? "Overview of your anime watching statistics across all years."
-							: `Overview of your anime watching statistics for ${settings.viewingYear}.`
-						}
+							: `Overview of your anime watching statistics for ${settings.viewingYear}.`}
 					</CardDescription>
 				</div>
 			</CardHeader>
 			<CardContent className="px-2 p-6">
 				<div className="gap-4 w-full place-items-center grid mx-auto grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 3xl:px-72">
-
-					{data.map((entry,index)=> (
-						<div key={index} className="flex flex-col text-center bg-card-inner p-2 gap-1 rounded-2xl w-full max-w-[280px] hover:scale-103 transition-transform duration-300 ease-in-out shadow-xl">
+					{data.map((entry, index) => (
+						<div
+							key={index}
+							className="flex flex-col text-center bg-card-inner p-2 gap-1 rounded-2xl w-full max-w-[280px] hover:scale-103 transition-transform duration-300 ease-in-out shadow-xl"
+						>
 							<h1 className="font-bold text-xl text-nowrap">{entry.label}</h1>
 							<span className="font-mono">{entry.value}</span>
 						</div>
 					))}
-
 				</div>
 			</CardContent>
 		</Card>
-	)
+	);
 }

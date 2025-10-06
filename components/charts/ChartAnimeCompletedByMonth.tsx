@@ -1,29 +1,28 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
-
+import type * as React from "react";
+import { useMemo } from "react";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import type { ChartSettings } from "@/components/ChartSettingsDialog";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
-	ChartConfig,
+	type ChartConfig,
 	ChartContainer,
 	ChartTooltip,
 	ChartTooltipContent,
-} from "@/components/ui/chart"
-import { AnimeEntry } from "@/types/animeData"
-import {useMemo} from "react";
-import {ChartSettings} from "@/components/ChartSettingsDialog";
+} from "@/components/ui/chart";
+import type { AnimeEntry } from "@/types/animeData";
 
 type Month = {
-	short: string
-	full: string
-}
+	short: string;
+	full: string;
+};
 
 const Labels: Month[] = [
 	{ short: "Jan", full: "January" },
@@ -37,7 +36,7 @@ const Labels: Month[] = [
 	{ short: "Sep", full: "September" },
 	{ short: "Oct", full: "October" },
 	{ short: "Nov", full: "November" },
-	{ short: "Dec", full: "December" }
+	{ short: "Dec", full: "December" },
 ];
 
 const chartConfig: ChartConfig = {
@@ -45,48 +44,52 @@ const chartConfig: ChartConfig = {
 		label: "Completed",
 		color: "var(--chart-6)",
 	},
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 interface ChartAnimeCompletedByMonthProps {
-	settings: ChartSettings
-	animeData: AnimeEntry[]
+	settings: ChartSettings;
+	animeData: AnimeEntry[];
 }
 
-
-export default function ChartAnimeCompletedByMonth({settings, animeData}: ChartAnimeCompletedByMonthProps) {
+export default function ChartAnimeCompletedByMonth({
+	settings,
+	animeData,
+}: ChartAnimeCompletedByMonthProps) {
 	const chartData = useMemo(() => {
-		const isAllYears = settings.viewingYear === "all"
-		const year = Number(settings.viewingYear)
+		const isAllYears = settings.viewingYear === "all";
+		const year = Number(settings.viewingYear);
 
-		const monthArr = Array(12).fill(0)
+		const monthArr = Array(12).fill(0);
 
 		animeData.forEach((entry) => {
-			if (entry.list_status?.status !== "completed") return
+			if (entry.list_status?.status !== "completed") return;
 
-			const updatedAt = entry.list_status?.updated_at
-			if (!updatedAt) return
+			const updatedAt = entry.list_status?.updated_at;
+			if (!updatedAt) return;
 
-			const date = new Date(updatedAt)
+			const date = new Date(updatedAt);
 
 			if (!isAllYears) {
-				const startYear = date.getFullYear()
-				if (startYear !== year) return
+				const startYear = date.getFullYear();
+				if (startYear !== year) return;
 			}
 
-			monthArr[date.getMonth()]++
-		})
+			monthArr[date.getMonth()]++;
+		});
 
-		const totalCount = monthArr.reduce((sum, count) => sum + count, 0)
+		const totalCount = monthArr.reduce((sum, count) => sum + count, 0);
 
-		return monthArr
-			.map((count, index) => ({
-				month: Labels[index].short,
-				fullMonth: Labels[index].full,
-				count,
-				percentage: totalCount > 0 ? parseFloat(((count / totalCount) * 100).toFixed(1)) : 0,
-				fill: chartConfig.count.color,
-			}))
-	}, [animeData, settings])
+		return monthArr.map((count, index) => ({
+			month: Labels[index].short,
+			fullMonth: Labels[index].full,
+			count,
+			percentage:
+				totalCount > 0
+					? parseFloat(((count / totalCount) * 100).toFixed(1))
+					: 0,
+			fill: chartConfig.count.color,
+		}));
+	}, [animeData, settings]);
 
 	return (
 		<Card className="py-0 w-full shadow-xl">
@@ -96,8 +99,7 @@ export default function ChartAnimeCompletedByMonth({settings, animeData}: ChartA
 					<CardDescription>
 						{settings.viewingYear === "all"
 							? "Amount of Anime I completed each month across all years."
-							: `Amount of Anime I completed each month in ${settings.viewingYear}.`
-						}
+							: `Amount of Anime I completed each month in ${settings.viewingYear}.`}
 					</CardDescription>
 				</div>
 			</CardHeader>
@@ -129,7 +131,11 @@ export default function ChartAnimeCompletedByMonth({settings, animeData}: ChartA
 										<>
 											<div
 												className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
-												style={{"--color-bg": chartConfig.count.color} as React.CSSProperties}
+												style={
+													{
+														"--color-bg": chartConfig.count.color,
+													} as React.CSSProperties
+												}
 											/>
 											{item.payload.fullMonth}
 											<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
@@ -140,7 +146,9 @@ export default function ChartAnimeCompletedByMonth({settings, animeData}: ChartA
 												Percentage
 												<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
 													{item.payload.percentage}
-													<span className="text-muted-foreground font-normal">%</span>
+													<span className="text-muted-foreground font-normal">
+														%
+													</span>
 												</div>
 											</div>
 										</>
@@ -153,5 +161,5 @@ export default function ChartAnimeCompletedByMonth({settings, animeData}: ChartA
 				</ChartContainer>
 			</CardContent>
 		</Card>
-	)
+	);
 }
