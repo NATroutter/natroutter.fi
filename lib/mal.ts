@@ -1,15 +1,13 @@
 import type { AnimeData, AnimeEntry } from "@/types/animeData";
 
-const endpoint: string =
-	"https://api.myanimelist.net/v2/users/NATroutter/animelist";
+const endpoint: string = "https://api.myanimelist.net/v2/users/NATroutter/animelist";
 const fields: string =
 	"list_status,rank,rating,status,nsfw,average_episode_duration,popularity,num_episodes,num_scoring_users,media_type,start_date,end_date,mean,source,main_picture,genres,alternative_titles,synopsis,studios";
 
 export async function getAnimeData(): Promise<AnimeEntry[] | undefined> {
 	const data: AnimeEntry[] = [];
 
-	let nextURL: string | undefined =
-		endpoint + "?fields=" + fields + "&limit=1000&sort=list_updated_at&nsfw=1";
+	let nextURL: string | undefined = `${endpoint}?fields=${fields}&limit=1000&sort=list_updated_at&nsfw=1`;
 
 	while (nextURL) {
 		const response = await fetch(nextURL, {
@@ -19,12 +17,7 @@ export async function getAnimeData(): Promise<AnimeEntry[] | undefined> {
 			},
 		});
 		if (!response.ok) {
-			throw Error(
-				"Failed to fetch anime data from MyAnimeList.net : (" +
-					response.status +
-					") " +
-					response.statusText,
-			);
+			throw Error(`Failed to fetch anime data from MyAnimeList.net : (${response.status}) ${response.statusText}`);
 		}
 		const json = await response.json();
 		const resp: AnimeData = json as AnimeData;

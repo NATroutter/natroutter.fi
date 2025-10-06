@@ -14,7 +14,7 @@ export default function Footer({ data }: { data: FooterData }) {
 					<FooterBox name="Contact Me">
 						<ul className="flex flex-col gap-2">
 							{data.expand.contact.map((item) => (
-								<li key={item.name} className="flex">
+								<li key={item.id} className="flex">
 									<Link
 										className="flex my-auto hover:text-secondary group"
 										href={item.url}
@@ -38,7 +38,7 @@ export default function Footer({ data }: { data: FooterData }) {
 					<FooterBox name="Quick Links">
 						<ul className="flex flex-col gap-2">
 							{data.expand.quick.map((item) => (
-								<li key={item.name} className="flex">
+								<li key={item.id} className="flex">
 									<Link
 										className="flex my-auto hover:text-secondary group"
 										href={item.url}
@@ -63,7 +63,7 @@ export default function Footer({ data }: { data: FooterData }) {
 						<Markdown content={data.about_me} className="text-muted" />
 						<ul className="flex flex-row gap-2">
 							{data.expand.social.map((item) => (
-								<li key={item.name} className="flex">
+								<li key={item.id} className="flex">
 									<Link
 										className="flex my-auto hover:text-secondary group"
 										href={item.url}

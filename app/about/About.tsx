@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import * as React from "react";
 import Markdown from "@/components/Markdown";
 import type { AboutPage } from "@/types/interfaces";
 
@@ -14,8 +13,7 @@ export default function About({ data }: { data: AboutPage }) {
 
 		const isBeforeBirthday =
 			currentDate.getMonth() < birthDate.getMonth() ||
-			(currentDate.getMonth() === birthDate.getMonth() &&
-				currentDate.getDate() < birthDate.getDate());
+			(currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() < birthDate.getDate());
 
 		if (isBeforeBirthday) {
 			age--;
@@ -45,9 +43,7 @@ export default function About({ data }: { data: AboutPage }) {
 
 					<div className="flex flex-col lg:flex-row">
 						<div className="text-left w-full max-w-lg p-5 border-primary rounded-[20px] border-solid border-l-[3px] border-0">
-							<h2 className="font-semibold text-3xl 2xl:text-5xl mb-4">
-								{data.about_title}
-							</h2>
+							<h2 className="font-semibold text-3xl 2xl:text-5xl mb-4">{data.about_title}</h2>
 							<Markdown content={replaceTags(data.about)} />
 						</div>
 
@@ -63,9 +59,7 @@ export default function About({ data }: { data: AboutPage }) {
 						</div>
 
 						<div className="text-left w-full max-w-lg mt-5 lg:mt-0 p-5 border-primary rounded-[20px] border-solid border-r-[3px] border-0">
-							<h2 className="font-semibold text-3xl 2xl:text-5xl mb-4">
-								{data.skills_title}
-							</h2>
+							<h2 className="font-semibold text-3xl 2xl:text-5xl mb-4">{data.skills_title}</h2>
 							<Markdown content={data.skills} />
 						</div>
 					</div>

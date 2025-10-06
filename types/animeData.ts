@@ -40,21 +40,8 @@ export interface Studio {
 	id: number;
 	name: string;
 }
-export type MediaType =
-	| "tv"
-	| "ova"
-	| "movie"
-	| "special"
-	| "tv_special"
-	| "ona"
-	| "music"
-	| "unknown";
-export type WatchStatus =
-	| "plan_to_watch"
-	| "watching"
-	| "completed"
-	| "on_hold"
-	| "dropped";
+export type MediaType = "tv" | "ova" | "movie" | "special" | "tv_special" | "ona" | "music" | "unknown";
+export type WatchStatus = "plan_to_watch" | "watching" | "completed" | "on_hold" | "dropped";
 export type AnimeSource =
 	| "original"
 	| "manga"
@@ -71,10 +58,7 @@ export type AnimeSource =
 	| "radio"
 	| "music"
 	| "other";
-export type AnimeStatus =
-	| "finished_airing"
-	| "currently_airing"
-	| "not_yet_aired";
+export type AnimeStatus = "finished_airing" | "currently_airing" | "not_yet_aired";
 export type AnimeRating = "g" | "pg" | "pg_13" | "r" | "r+" | "rx";
 
 export interface ListStatus {

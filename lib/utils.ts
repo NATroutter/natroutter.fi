@@ -9,9 +9,7 @@ export function getHostname(rawURI: string | undefined): string {
 	const uri = new URL(rawURI as string);
 	return uri.hostname as string;
 }
-export function getProtocol(
-	rawURI: string | undefined,
-): "http" | "https" | undefined {
+export function getProtocol(rawURI: string | undefined): "http" | "https" | undefined {
 	const uri = new URL(rawURI as string);
 	return uri.protocol.slice(0, -1) as "http" | "https" | undefined;
 }

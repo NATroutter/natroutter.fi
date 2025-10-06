@@ -548,8 +548,8 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 							) : paginatedData.length > 0 ? (
 								//    grid-cols-1 xl:grid-cols-2 xxl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6
 								<div className="grid gap-4 place-items-center grid-cols-1 xl:grid-cols-2 xxl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6">
-									{paginatedData.map((entry, index) => (
-										<AnimeCard key={`${entry.node.id}-${index}`} data={entry} />
+									{paginatedData.map((entry) => (
+										<AnimeCard key={entry.node.id} data={entry} />
 									))}
 								</div>
 							) : (
