@@ -1,20 +1,9 @@
 "use client";
 
-import * as React from "react";
 import { useMemo } from "react";
 import type { ChartSettings } from "@/components/ChartSettingsDialog";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
-import {
-	type AnimeEntry,
-	type AnimeSource,
-	formatSource,
-} from "@/types/animeData";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { type AnimeEntry, type AnimeSource, formatSource } from "@/types/animeData";
 
 interface ChartAnimeScoresProps {
 	settings: ChartSettings;
@@ -26,10 +15,7 @@ type StatsData = {
 	value: number | string;
 };
 
-export default function ChartAnimeQuickStats({
-	settings,
-	animeData,
-}: ChartAnimeScoresProps) {
+export default function ChartAnimeQuickStats({ settings, animeData }: ChartAnimeScoresProps) {
 	// Filter data based on selected year
 	const filteredData = useMemo(() => {
 		if (settings.viewingYear === "all") {
@@ -37,12 +23,10 @@ export default function ChartAnimeQuickStats({
 		}
 
 		return animeData.filter((entry) => {
-			const startYear = entry.node.start_date
-				? new Date(entry.node.start_date).getFullYear().toString()
-				: null;
+			const startYear = entry.node.start_date ? new Date(entry.node.start_date).getFullYear().toString() : null;
 			return startYear === settings.viewingYear;
 		});
-	}, [animeData, settings]);
+	}, [animeData, settings.viewingYear]);
 
 	// Calculate total anime watched
 	const totalAnimeWatched = filteredData.length;
@@ -58,9 +42,7 @@ export default function ChartAnimeQuickStats({
 		const avgDuration = entry.node.average_episode_duration || 24 * 60; // default 24 minutes in seconds
 		return total + episodesWatched * (avgDuration / 60); // convert seconds to minutes
 	}, 0);
-	const totalDaysSpent = parseFloat(
-		(totalMinutesWatched / (60 * 24)).toFixed(1),
-	);
+	const totalDaysSpent = parseFloat((totalMinutesWatched / (60 * 24)).toFixed(1));
 
 	// Find favorite source (most common source material)
 	const sourceCounts = filteredData.reduce(
@@ -72,37 +54,23 @@ export default function ChartAnimeQuickStats({
 		{} as Record<string, number>,
 	);
 
-	const favoriteSource = Object.entries(sourceCounts).reduce(
-		(max, [source, count]) => {
-			return count > (sourceCounts[max] || 0) ? source : max;
-		},
-		Object.keys(sourceCounts)[0] || "N/A",
-	);
+	const favoriteSource = Object.entries(sourceCounts).reduce((max, [source, count]) => {
+		return count > (sourceCounts[max] || 0) ? source : max;
+	}, Object.keys(sourceCounts)[0] || "N/A");
 
 	// Calculate average score given
-	const scoredAnime = filteredData.filter(
-		(entry) => entry.list_status.score > 0,
-	);
+	const scoredAnime = filteredData.filter((entry) => entry.list_status.score > 0);
 	const averageScoreGiven =
 		scoredAnime.length > 0
 			? parseFloat(
-					(
-						scoredAnime.reduce(
-							(sum, entry) => sum + entry.list_status.score,
-							0,
-						) / scoredAnime.length
-					).toFixed(2),
+					(scoredAnime.reduce((sum, entry) => sum + entry.list_status.score, 0) / scoredAnime.length).toFixed(2),
 				)
 			: 0;
 
 	// Calculate completion rate
-	const completedAnime = filteredData.filter(
-		(entry) => entry.list_status.status === "completed",
-	).length;
+	const completedAnime = filteredData.filter((entry) => entry.list_status.status === "completed").length;
 	const completionRate =
-		totalAnimeWatched > 0
-			? parseFloat(((completedAnime / totalAnimeWatched) * 100).toFixed(1))
-			: 0;
+		totalAnimeWatched > 0 ? parseFloat(((completedAnime / totalAnimeWatched) * 100).toFixed(1)) : 0;
 
 	// Calculate sequel chaser (anime with titles containing sequel indicators)
 	const sequelKeywords = [
@@ -131,20 +99,13 @@ export default function ChartAnimeQuickStats({
 		const title = entry.node.title.toLowerCase();
 		const enTitle = entry.node.alternative_titles?.en?.toLowerCase() || "";
 		return sequelKeywords.some(
-			(keyword) =>
-				title.includes(keyword.toLowerCase()) ||
-				enTitle.includes(keyword.toLowerCase()),
+			(keyword) => title.includes(keyword.toLowerCase()) || enTitle.includes(keyword.toLowerCase()),
 		);
 	}).length;
-	const sequelChaserRate =
-		totalAnimeWatched > 0
-			? parseFloat(((sequelAnime / totalAnimeWatched) * 100).toFixed(1))
-			: 0;
+	const sequelChaserRate = totalAnimeWatched > 0 ? parseFloat(((sequelAnime / totalAnimeWatched) * 100).toFixed(1)) : 0;
 
 	// Calculate OVA Explorer
-	const ovaCount = filteredData.filter(
-		(entry) => entry.node.media_type === "ova",
-	).length;
+	const ovaCount = filteredData.filter((entry) => entry.node.media_type === "ova").length;
 
 	const data: StatsData[] = [
 		{ label: "Animes Watched", value: totalAnimeWatched },
@@ -174,9 +135,9 @@ export default function ChartAnimeQuickStats({
 			</CardHeader>
 			<CardContent className="px-2 p-6">
 				<div className="gap-4 w-full place-items-center grid mx-auto grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 3xl:px-72">
-					{data.map((entry, index) => (
+					{data.map((entry) => (
 						<div
-							key={index}
+							key={entry.value}
 							className="flex flex-col text-center bg-card-inner p-2 gap-1 rounded-2xl w-full max-w-[280px] hover:scale-103 transition-transform duration-300 ease-in-out shadow-xl"
 						>
 							<h1 className="font-bold text-xl text-nowrap">{entry.label}</h1>

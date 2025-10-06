@@ -1,8 +1,9 @@
+import type { Metadata } from "next";
 import Projects from "@/app/projects/Projects";
-import ContentError from "@/components/errors/ContentError";
-import { getFileURL, getProjectsPage } from "@/lib/database";
+import ServerError from "@/components/ServerError";
+import { getProjectsPage } from "@/lib/database";
 
-export const metadata = {
+export const metadata: Metadata = {
 	title: "Projects",
 	description:
 		"Explore my top projects! Discover a showcase of my best work with detailed info, links, and insights into the creative and technical processes behind each project.",
@@ -17,11 +18,7 @@ export const revalidate = 60;
 
 export default async function ProjectsPage() {
 	const data = await getProjectsPage();
-	if (!data) return <ContentError />;
-
-	data.expand.projects.map((entry) => {
-		entry.image = getFileURL("page_projects", entry.id, entry.image);
-	});
+	if (!data) return <ServerError type="content" />;
 
 	return <Projects data={data} />;
 }

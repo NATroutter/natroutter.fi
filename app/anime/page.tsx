@@ -1,22 +1,21 @@
+import type { Metadata } from "next";
 import AnimeStats from "@/app/anime/AnimeStats";
-import ContentError from "@/components/errors/ContentError";
+import ServerError from "@/components/ServerError";
 import { getAnimeData } from "@/lib/mal";
 
-export const metadata = {
-	title: "Anime",
-	description:
-		"View detailed insights into my anime watching habits and history",
+export const metadata: Metadata = {
+	title: "Anime Statistics",
+	description: "View detailed insights into my anime watching habits and history",
 	openGraph: {
-		description:
-			"View detailed insights into my anime watching habits and history",
+		description: "View detailed insights into my anime watching habits and history",
 	},
 };
 
-// ISR: Revalidate every 60 seconds
-export const revalidate = 60;
+// ISR: Revalidate
+export const revalidate = 120;
 
 export default async function AnimePage() {
-	const animeData = await getAnimeData();
-	if (!animeData) return <ContentError />;
-	return <AnimeStats animeData={animeData} />;
+	const data = await getAnimeData();
+	if (!data) return <ServerError type="content" />;
+	return <AnimeStats animeData={data} />;
 }

@@ -1,15 +1,9 @@
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: noo lazy to fix */
 "use client";
 
-import * as React from "react";
 import { AnimeCard } from "@/components/AnimeCard";
 import type { ChartSettings } from "@/components/ChartSettingsDialog";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { AnimeEntry } from "@/types/animeData";
 
 interface ChartAnimeScoresProps {
@@ -46,10 +40,7 @@ export function getAnimeSeason(entry: AnimeEntry): Season | undefined {
 	return getSeasonFromMonth(date.getMonth());
 }
 
-export default function ChartAnimeSeasonsBest({
-	settings,
-	animeData,
-}: ChartAnimeScoresProps) {
+export default function ChartAnimeSeasonsBest({ settings, animeData }: ChartAnimeScoresProps) {
 	const isAllYears = settings.viewingYear === "all";
 	const year = Number(settings.viewingYear);
 
@@ -76,7 +67,7 @@ export default function ChartAnimeSeasonsBest({
 		if (!seasonMap.has(key)) {
 			seasonMap.set(key, []);
 		}
-		seasonMap.get(key)!.push(entry);
+		seasonMap.get(key)?.push(entry);
 	}
 
 	// Get the highest rated anime for each season
@@ -98,17 +89,14 @@ export default function ChartAnimeSeasonsBest({
 
 		// Sort by score descending, then by title alphabetically as tiebreaker
 		const sorted = entries.sort((a, b) => {
-			const scoreDiff =
-				(b.list_status?.score || 0) - (a.list_status?.score || 0);
+			const scoreDiff = (b.list_status?.score || 0) - (a.list_status?.score || 0);
 			if (scoreDiff !== 0) return scoreDiff;
 			return a.node.title.localeCompare(b.node.title);
 		});
 
 		// Get the year from the top anime for display
 		const topAnime = sorted[0];
-		const topAnimeYear = new Date(
-			topAnime.list_status.updated_at,
-		).getFullYear();
+		const topAnimeYear = new Date(topAnime.list_status.updated_at).getFullYear();
 
 		topRatedPerSeason.push({
 			season,
@@ -132,14 +120,9 @@ export default function ChartAnimeSeasonsBest({
 			<CardContent className="px-2 p-6">
 				<div className="gap-4 w-full grid mx-auto place-items-center grid-cols-1 lg:grid-cols-2 min-[115rem]:grid-cols-4">
 					{topRatedPerSeason.map((item, index) => (
-						<div
-							key={index}
-							className="flex h-full w-full flex-col gap-3 px-3 max-w-[28rem]"
-						>
+						<div key={index} className="flex h-full w-full flex-col gap-3 px-3 max-w-[28rem]">
 							<div className="flex mx-auto w-full text-center p-2 rounded-xl bg-card-inner border border-card-inner-border">
-								<h1 className="w-full text-xl font-semibold text-center">
-									{item?.season}
-								</h1>
+								<h1 className="w-full text-xl font-semibold text-center">{item?.season}</h1>
 							</div>
 							<div className="flex pb-3 flex-1 justify-center">
 								<AnimeCard key={index} data={item?.anime} />

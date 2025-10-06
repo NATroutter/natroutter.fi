@@ -2,9 +2,7 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import * as React from "react";
 import Markdown from "@/components/Markdown";
-import { navigatorData } from "@/components/Navigator";
 import DynamicIcon from "@/lib/dynamicIcon";
 import type { FooterData } from "@/types/interfaces";
 
@@ -31,9 +29,7 @@ export default function Footer({ data }: { data: FooterData }) {
 												size={30}
 											/>
 										</div>
-										<p className="my-auto ml-2 font-semibold">
-											{item.display_name}
-										</p>
+										<p className="my-auto ml-2 font-semibold">{item.display_name}</p>
 									</Link>
 								</li>
 							))}
@@ -46,12 +42,7 @@ export default function Footer({ data }: { data: FooterData }) {
 									<Link
 										className="flex my-auto hover:text-secondary group"
 										href={item.url}
-										target={
-											item.url.startsWith("http://") ||
-											item.url.startsWith("https://")
-												? "_blank"
-												: "_self"
-										}
+										target={item.url.startsWith("http://") || item.url.startsWith("https://") ? "_blank" : "_self"}
 										data-umami-event={`[FOOTER] Open (Quick > ${item.name})`}
 										data-umami-event-url={item.url}
 									>
@@ -101,12 +92,7 @@ export default function Footer({ data }: { data: FooterData }) {
 					>
 						Privacy Policy
 					</Link>
-					<p className="text-sm text-muted">
-						{data.copyright.replace(
-							"{year}",
-							new Date().getFullYear().toString(),
-						)}
-					</p>
+					<p className="text-sm text-muted">{data.copyright.replace("{year}", new Date().getFullYear().toString())}</p>
 				</div>
 			</div>
 		</footer>

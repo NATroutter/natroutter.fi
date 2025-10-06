@@ -1,20 +1,21 @@
-import AnimeFavs from "@/app/anime/favourites/AnimeFavs";
-import ContentError from "@/components/errors/ContentError";
+import type { Metadata } from "next";
+import AnimeFaves from "@/app/anime/favourites/AnimeFavs";
+import ServerError from "@/components/ServerError";
 import { getAnimeData } from "@/lib/mal";
 
-export const metadata = {
-	title: "Anime / favorite",
+export const metadata: Metadata = {
+	title: "Anime Favorite",
 	description: "My favorite anime series, movies, and characters",
 	openGraph: {
 		description: "My favorite anime series, movies, and characters",
 	},
 };
 
-// ISR: Revalidate every 60 seconds
-export const revalidate = 60;
+// ISR: Revalidate
+export const revalidate = 120;
 
 export default async function AnimeFavouritesPage() {
-	const animeData = await getAnimeData();
-	if (!animeData) return <ContentError />;
-	return <AnimeFavs animeData={animeData} />;
+	const data = await getAnimeData();
+	if (!data) return <ServerError type="content" />;
+	return <AnimeFaves animeData={data} />;
 }

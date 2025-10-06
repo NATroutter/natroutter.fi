@@ -1,5 +1,6 @@
 "use client";
 
+import type React from "react";
 import { Toaster as Sonner } from "sonner";
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
@@ -46,12 +47,9 @@ const Toaster = ({ ...props }: ToasterProps) => {
 						[.group[data-type=info]_&]:bg-toast-info-border/60!
 					`,
 
-					error:
-						"bg-toast-error-bg! border-toast-error-border! text-toast-error-text!",
-					success:
-						"bg-toast-success-bg! border-toast-success-border! text-toast-success-text!",
-					warning:
-						"bg-toast-warn-bg! border-toast-warn-border! text-toast-warn-text!",
+					error: "bg-toast-error-bg! border-toast-error-border! text-toast-error-text!",
+					success: "bg-toast-success-bg! border-toast-success-border! text-toast-success-text!",
+					warning: "bg-toast-warn-bg! border-toast-warn-border! text-toast-warn-text!",
 					info: "bg-toast-info-bg! border-toast-info-border! text-toast-info-text!",
 				},
 			}}

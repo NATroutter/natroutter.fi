@@ -1,15 +1,8 @@
 "use client";
 
-import * as React from "react";
 import { useEffect, useRef, useState } from "react";
-import { GiHamburgerMenu } from "react-icons/gi";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-import {
-	type DropdownData,
-	type NavigationData,
-	navigatorData,
-} from "@/components/Navigator";
-// import { Logo } from "@/components/logo";
+import { type DropdownData, type NavigationData, navigatorData } from "@/components/Navigator";
 import {
 	NavigationMenu,
 	NavigationMenuContent,
@@ -19,24 +12,17 @@ import {
 	NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
 
 export default function NavigatorMobile({ className }: { className?: string }) {
-	const [navData, setNavData] = useState<NavigationData[] | DropdownData[]>(
-		navigatorData,
-	);
-	const [navHistory, setNavHistory] = useState<
-		(NavigationData[] | DropdownData[])[]
-	>([]);
+	const [navData, setNavData] = useState<NavigationData[] | DropdownData[]>(navigatorData);
+	const [navHistory, setNavHistory] = useState<(NavigationData[] | DropdownData[])[]>([]);
 	const [open, setOpen] = useState<string>("");
 	const navRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-			if (
-				navRef.current &&
-				!navRef.current.contains(event.target as Node) &&
-				open !== ""
-			) {
+			if (navRef.current && !navRef.current.contains(event.target as Node) && open !== "") {
 				setOpen("");
 				setNavData(navigatorData);
 				setNavHistory([]);
@@ -77,25 +63,12 @@ export default function NavigatorMobile({ className }: { className?: string }) {
 	};
 
 	return (
-		<div
-			className={cn(
-				"flex justify-end md:justify-center relative overflow-visible",
-				className,
-			)}
-		>
+		<div className={cn("flex justify-end md:justify-center relative overflow-visible", className)}>
 			{/* Mobile Navigation */}
-			<NavigationMenu
-				className="flex md:hidden"
-				value={open}
-				onValueChange={setOpen}
-				ref={navRef}
-			>
+			<NavigationMenu className="flex md:hidden" value={open} onValueChange={setOpen} ref={navRef}>
 				<NavigationMenuList className="gap-0">
 					<NavigationMenuItem className="relative">
-						<NavigationMenuTrigger
-							hideChevron={true}
-							className="bg-transparent p-0 pr-5"
-						>
+						<NavigationMenuTrigger hideChevron={true} className="bg-transparent p-0 pr-5">
 							<div className="w-5 h-full relative">
 								<div className="block w-5 absolute left-1/2 top-1/2   transform  -translate-x-1/2 -translate-y-1/2">
 									<span
@@ -112,18 +85,18 @@ export default function NavigatorMobile({ className }: { className?: string }) {
 						</NavigationMenuTrigger>
 						<NavigationMenuContent className="w-screen -z-10">
 							{navHistory.length > 0 && (
-								<button
+								<Button
 									onClick={handleMobileNavBack}
 									className="flex items-center gap-1 p-4 pb-0 hover:bg-transparent text-foreground hover:text-muted transition-colors"
 								>
 									<MdOutlineKeyboardArrowLeft className="" size={20} />
 									<span className="font-semibold">Back</span>
-								</button>
+								</Button>
 							)}
 							<ul className="grid p-4 grid-cols-1">
-								{navData.map((entry, i) => (
+								{navData.map((entry) => (
 									<li
-										key={i}
+										key={"name" in entry ? entry.name : entry.data.name}
 										className="hover:translate-x-2 transition-transform duration-300 ease-in-out select-none drag"
 									>
 										<NavigationMenuLink
@@ -140,10 +113,7 @@ export default function NavigatorMobile({ className }: { className?: string }) {
 												{"icon" in entry ? (
 													<entry.icon className="flex text-primary" size={24} />
 												) : (
-													<entry.data.icon
-														className="flex text-primary"
-														size={24}
-													/>
+													<entry.data.icon className="flex text-primary" size={24} />
 												)}
 											</div>
 											<div className="flex flex-col gap-2 justify-between">
@@ -151,9 +121,7 @@ export default function NavigatorMobile({ className }: { className?: string }) {
 													{"name" in entry ? entry.name : entry.data.name}
 												</div>
 												{"description" in entry && (
-													<p className="line-clamp-2 text-xs leading-snug text-muted">
-														{entry.description}
-													</p>
+													<p className="line-clamp-2 text-xs leading-snug text-muted">{entry.description}</p>
 												)}
 											</div>
 										</NavigationMenuLink>

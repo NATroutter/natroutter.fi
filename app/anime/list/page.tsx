@@ -1,9 +1,10 @@
+import type { Metadata } from "next";
 import AnimeList from "@/app/anime/list/AnimeList";
-import ContentError from "@/components/errors/ContentError";
+import ServerError from "@/components/ServerError";
 import { getAnimeData } from "@/lib/mal";
 
-export const metadata = {
-	title: "Anime",
+export const metadata: Metadata = {
+	title: "Anime List",
 	description:
 		'Dive into my anime journey! Check out my watching progress, including "Currently Watching," "Latest Completed," and "Plan to Watch" lists. Explore my anime history and discover what I’m enjoying next!',
 	openGraph: {
@@ -12,11 +13,11 @@ export const metadata = {
 	},
 };
 
-// ISR: Revalidate every 60 seconds
-export const revalidate = 60;
+// ISR: Revalidate
+export const revalidate = 120;
 
 export default async function AnimeListPage() {
-	const animeData = await getAnimeData();
-	if (!animeData) return <ContentError />;
-	return <AnimeList animeData={animeData} />;
+	const data = await getAnimeData();
+	if (!data) return <ServerError type="content" />;
+	return <AnimeList animeData={data} />;
 }

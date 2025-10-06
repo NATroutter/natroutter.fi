@@ -1,7 +1,7 @@
 "use client";
 
 import MarkdownIt from "markdown-it";
-import * as React from "react";
+import { cn } from "@/lib/utils";
 
 export interface MarkdownProps {
 	content: string;
@@ -15,9 +15,6 @@ export default function Markdown({ content, className }: MarkdownProps) {
 		typographer: true,
 	});
 	return (
-		<div
-			className={`markdown-body${className ? " " + className : ""}`}
-			dangerouslySetInnerHTML={{ __html: md.render(content) }}
-		></div>
+		<div className={cn("markdown-body", className)} dangerouslySetInnerHTML={{ __html: md.render(content) }}></div>
 	);
 }

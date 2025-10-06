@@ -1,8 +1,9 @@
+import type { Metadata } from "next";
 import Privacy from "@/app/privacy/Privacy";
-import ContentError from "@/components/errors/ContentError";
+import ServerError from "@/components/ServerError";
 import { getPrivacyPage } from "@/lib/database";
 
-export const metadata = {
+export const metadata: Metadata = {
 	title: "Privacy",
 	description:
 		"Explore my top projects! Discover a showcase of my best work with detailed info, links, and insights into the creative and technical processes behind each project.",
@@ -17,7 +18,7 @@ export const revalidate = 60;
 
 export default async function PrivacyPage() {
 	const data = await getPrivacyPage();
-	if (!data) return <ContentError />;
+	if (!data) return <ServerError type="content" />;
 
 	return <Privacy data={data} />;
 }

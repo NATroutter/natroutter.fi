@@ -1,4 +1,4 @@
-import React, { type JSX, useEffect, useState } from "react";
+import { type JSX, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export interface AnimatedTextProps {
@@ -55,20 +55,7 @@ export default function AnimatedText({
 
 		const timer = setInterval(handleTextAnimation, speed);
 		return () => clearInterval(timer);
-	}, [
-		index,
-		isDeleting,
-		currentWord,
-		speed,
-		words,
-		earseSpeed,
-		writeSpeed,
-		pauseTime,
-	]);
+	}, [index, isDeleting, currentWord, speed, words, earseSpeed, writeSpeed, pauseTime]);
 
-	return (
-		<span className={cn("text-primary", className)}>
-			{text.length > 0 ? text : whenEmpty && whenEmpty}
-		</span>
-	);
+	return <span className={cn("text-primary", className)}>{text.length > 0 ? text : whenEmpty && whenEmpty}</span>;
 }

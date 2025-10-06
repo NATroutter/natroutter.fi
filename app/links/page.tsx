@@ -1,9 +1,9 @@
-import * as React from "react";
+import type { Metadata } from "next";
 import Links from "@/app/links/Links";
-import ContentError from "@/components/errors/ContentError";
-import { getFileURL, getLinkPage } from "@/lib/database";
+import ServerError from "@/components/ServerError";
+import { getLinkPage } from "@/lib/database";
 
-export const metadata = {
+export const metadata: Metadata = {
 	title: "Links",
 	description:
 		"Find all my important links in one place! Explore my social media, gaming profiles, and other resources to stay connected and discover more about what I do.",
@@ -18,13 +18,6 @@ export const revalidate = 60;
 
 export default async function LinksPage() {
 	const data = await getLinkPage();
-	if (!data) return <ContentError />;
-
-	data.map((entry) => {
-		entry.expand.links.map((link) => {
-			link.image = getFileURL("links", link.id, link.image);
-		});
-	});
-
+	if (!data) return <ServerError type="content" />;
 	return <Links data={data} />;
 }

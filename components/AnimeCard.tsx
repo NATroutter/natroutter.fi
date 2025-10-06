@@ -1,13 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import * as React from "react";
 import { GoDotFill } from "react-icons/go";
 import { AnimeDialog } from "@/components/AnimeDialog";
-import {
-	getAnimeSeason,
-	getAnimeStartYear,
-} from "@/components/charts/ChartAnimeSeasonsBest";
+import { getAnimeSeason, getAnimeStartYear } from "@/components/charts/ChartAnimeSeasonsBest";
 import { Card, CardContent } from "@/components/ui/card";
 import { toCapitalizedCase } from "@/lib/utils";
 import {
@@ -42,11 +38,11 @@ export function AnimeCard({ data, animation = true }: AnimeCardProps) {
 	const anime: AnimeInfo = data.node;
 
 	const season = getAnimeSeason(data);
-	let yearSeason;
+	let yearSeason: string | undefined;
 
 	if (season && anime.start_date) {
 		const year = new Date(anime.start_date).getFullYear();
-		yearSeason = toCapitalizedCase(season) + " " + year;
+		yearSeason = `${toCapitalizedCase(season)} ${year}`;
 	}
 
 	const statusColor = (() => {
@@ -104,9 +100,7 @@ export function AnimeCard({ data, animation = true }: AnimeCardProps) {
 							{/*Status*/}
 							<div className="flex flex-col items-start space-y-2 text-xs m-0 text-ellipsis flex-nowrap whitespace-nowrap">
 								{anime.status && (
-									<span
-										className={`${statusColor} px-2 py-1 font-medium rounded border bg-card border-card-border`}
-									>
+									<span className={`${statusColor} px-2 py-1 font-medium rounded border bg-card border-card-border`}>
 										{formatStatus(anime.status)}
 									</span>
 								)}
@@ -115,21 +109,13 @@ export function AnimeCard({ data, animation = true }: AnimeCardProps) {
 										<div>
 											{/*Year and episode data for propper good devices*/}
 											<span className="hidden xs:flex flex-row">
-												{yearSeason}{" "}
-												<GoDotFill
-													className="my-auto mx-0.5 text-muted"
-													size={10}
-												/>{" "}
-												{anime.num_episodes} episodes
+												{yearSeason} <GoDotFill className="my-auto mx-0.5 text-muted" size={10} /> {anime.num_episodes}{" "}
+												episodes
 											</span>
 
 											{/*Year and episode data for shit devices that should be thrown in to e-waste...*/}
 											<span className="flex xs:hidden flex-row">
-												{getAnimeStartYear(data)}{" "}
-												<GoDotFill
-													className="my-auto mx-0.5 text-muted"
-													size={10}
-												/>{" "}
+												{getAnimeStartYear(data)} <GoDotFill className="my-auto mx-0.5 text-muted" size={10} />{" "}
 												{anime.num_episodes}
 											</span>
 										</div>
@@ -157,23 +143,17 @@ export function AnimeCard({ data, animation = true }: AnimeCardProps) {
 										<div className="flex flex-col items-start">
 											<div>
 												<span className="text-yellow-500">★</span>
-												<span className="font-bold text-sm">
-													{anime.mean ? anime.mean.toFixed(2) : "N/A"}
-												</span>
+												<span className="font-bold text-sm">{anime.mean ? anime.mean.toFixed(2) : "N/A"}</span>
 											</div>
 											<div>
-												<p className="text-xs text-muted-foreground">
-													{anime.num_scoring_users} users
-												</p>
+												<p className="text-xs text-muted-foreground">{anime.num_scoring_users} users</p>
 											</div>
 										</div>
 									)}
 									{anime.rank && (
 										<div className="flex flex-col items-start">
 											<div>
-												<span className="font-bold text-foreground">
-													#{anime.rank}
-												</span>
+												<span className="font-bold text-foreground">#{anime.rank}</span>
 											</div>
 											<div>
 												<p className="text-xs text-muted-foreground">Ranking</p>
@@ -183,9 +163,9 @@ export function AnimeCard({ data, animation = true }: AnimeCardProps) {
 								</div>
 
 								<div className="flex gap-1.5">
-									{displayGenres.map((genre, index) => (
+									{displayGenres.map((genre) => (
 										<div
-											key={index}
+											key={genre.id}
 											className={`grid grid-cols-[repeat(auto-fit,minmax(0,1fr))] overflow-ellipsis truncate`}
 										>
 											<Tooltip>
@@ -211,8 +191,8 @@ export function AnimeCard({ data, animation = true }: AnimeCardProps) {
 											</TooltipTrigger>
 											<TooltipContent>
 												<div className="flex flex-col text-center">
-													{anime.genres.slice(maxGenres).map((genre, index) => (
-														<span key={index}>{genre.name}</span>
+													{anime.genres.slice(maxGenres).map((genre) => (
+														<span key={genre.id}>{genre.name}</span>
 													))}
 												</div>
 											</TooltipContent>

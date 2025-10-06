@@ -5,10 +5,9 @@ import "@/styles/globals.css";
 import { Montserrat } from "next/font/google";
 import Script from "next/script";
 import type { ReactNode } from "react";
-import * as React from "react";
-import ServerError from "@/components/errors/ServerError";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import ServerError from "@/components/ServerError";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { getFooterData } from "@/lib/database";
@@ -81,9 +80,7 @@ export const viewport: Viewport = {
 	themeColor: "#bb2e3a",
 };
 
-export default async function RootLayout({
-	children,
-}: Readonly<{ children: ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
 	const footerData = await getFooterData();
 
 	return (
@@ -137,11 +134,7 @@ export default async function RootLayout({
 					)}
 				</TooltipProvider>
 			</body>
-			<Script
-				async
-				src={process.env.UMAMI_SCRIPT}
-				data-website-id={process.env.UMAMI_TOKEN}
-			/>
+			<Script async src={process.env.UMAMI_SCRIPT} data-website-id={process.env.UMAMI_TOKEN} />
 		</html>
 	);
 }

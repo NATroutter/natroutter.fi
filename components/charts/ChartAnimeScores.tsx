@@ -1,16 +1,9 @@
 "use client";
 
-import type * as React from "react";
-import { useMemo } from "react";
+import { type CSSProperties, useMemo } from "react";
 import { Pie, PieChart } from "recharts";
 import type { ChartSettings } from "@/components/ChartSettingsDialog";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
 	type ChartConfig,
 	ChartContainer,
@@ -69,10 +62,7 @@ interface ChartAnimeScoresProps {
 	animeData: AnimeEntry[];
 }
 
-export default function ChartAnimeScores({
-	settings,
-	animeData,
-}: ChartAnimeScoresProps) {
+export default function ChartAnimeScores({ settings, animeData }: ChartAnimeScoresProps) {
 	const chartData = useMemo(() => {
 		const isAllYears = settings.viewingYear === "all";
 		const year = Number(settings.viewingYear);
@@ -90,23 +80,17 @@ export default function ChartAnimeScores({
 			counts[score] = (counts[score] || 0) + 1;
 		}
 
-		const totalCount = Object.values(counts).reduce(
-			(sum, count) => sum + count,
-			0,
-		);
+		const totalCount = Object.values(counts).reduce((sum, count) => sum + count, 0);
 		return Object.entries(counts)
 			.map(([score, count]) => ({
 				score: `score_${score}`,
 				scoreValue: Number(score),
 				count,
-				percentage:
-					totalCount > 0
-						? parseFloat(((count / totalCount) * 100).toFixed(1))
-						: 0,
+				percentage: totalCount > 0 ? parseFloat(((count / totalCount) * 100).toFixed(1)) : 0,
 				fill: chartConfig[`score_${score}` as keyof typeof chartConfig].color,
 			}))
 			.sort((a, b) => b.scoreValue - a.scoreValue); // Sort by score descending
-	}, [animeData, settings]);
+	}, [animeData, settings.viewingYear]);
 
 	return (
 		<Card className="flex flex-col mx-auto w-full h-full max-h-[400px] shadow-xl">
@@ -121,10 +105,7 @@ export default function ChartAnimeScores({
 				</div>
 			</CardHeader>
 			<CardContent className="flex-1 p-0!">
-				<ChartContainer
-					config={chartConfig}
-					className="mx-auto aspect-square max-h-[300px]"
-				>
+				<ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[300px]">
 					<PieChart className="p-0">
 						<ChartTooltip
 							content={
@@ -138,11 +119,10 @@ export default function ChartAnimeScores({
 												style={
 													{
 														"--color-bg": `var(--color-${name})`,
-													} as React.CSSProperties
+													} as CSSProperties
 												}
 											/>
-											{chartConfig[name as keyof typeof chartConfig]?.label ||
-												name}
+											{chartConfig[name as keyof typeof chartConfig]?.label || name}
 											<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
 												{value}
 											</div>
@@ -151,9 +131,7 @@ export default function ChartAnimeScores({
 												Percentage
 												<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
 													{item.payload.percentage}
-													<span className="text-muted-foreground font-normal">
-														%
-													</span>
+													<span className="text-muted-foreground font-normal">%</span>
 												</div>
 											</div>
 										</>
@@ -162,15 +140,7 @@ export default function ChartAnimeScores({
 							}
 							cursor={false}
 						/>
-						<Pie
-							data={chartData}
-							dataKey="count"
-							nameKey="score"
-							outerRadius={90}
-							strokeWidth={1}
-							stroke="0"
-							label
-						/>
+						<Pie data={chartData} dataKey="count" nameKey="score" outerRadius={90} strokeWidth={1} stroke="0" label />
 						<ChartLegend
 							content={<ChartLegendContent nameKey="score" />}
 							className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center text-nowrap"

@@ -1,8 +1,9 @@
+import type { Metadata } from "next";
 import About from "@/app/about/About";
-import ContentError from "@/components/errors/ContentError";
-import { getAboutPage, getFileURL } from "@/lib/database";
+import ServerError from "@/components/ServerError";
+import { getAboutPage } from "@/lib/database";
 
-export const metadata = {
+export const metadata: Metadata = {
 	title: "About Me",
 	description:
 		"Discover NATroutter, a programmer from Finland, passionate about backend development and exploring new technologies.",
@@ -17,9 +18,6 @@ export const revalidate = 60;
 
 export default async function AboutPage() {
 	const data = await getAboutPage();
-	if (!data) return <ContentError />;
-
-	data.image = getFileURL("page_about", data.id, data.image);
-
+	if (!data) return <ServerError type="content" />;
 	return <About data={data} />;
 }

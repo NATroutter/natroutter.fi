@@ -1,44 +1,16 @@
 "use client";
 
-import * as React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
-import {
-	MdFirstPage,
-	MdKeyboardArrowLeft,
-	MdKeyboardArrowRight,
-	MdLastPage,
-} from "react-icons/md";
+import { MdFirstPage, MdKeyboardArrowLeft, MdKeyboardArrowRight, MdLastPage } from "react-icons/md";
 import { AnimeCard } from "@/components/AnimeCard";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
-import {
-	getCompleted,
-	getDropped,
-	getOnHold,
-	getPlanToWatch,
-	getWatching,
-} from "@/lib/mal";
-import {
-	type AnimeEntry,
-	WATCH_STATUS_LABELS,
-	type WatchStatus,
-} from "@/types/animeData";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getCompleted, getDropped, getOnHold, getPlanToWatch, getWatching } from "@/lib/mal";
+import { type AnimeEntry, WATCH_STATUS_LABELS, type WatchStatus } from "@/types/animeData";
 
 interface SearchTypes {
 	type: string;
@@ -52,9 +24,7 @@ const searchTypes: SearchTypes[] = [
 		type: "title",
 		label: "Title",
 		getValue: (entry) =>
-			entry.node.alternative_titles.en.length > 0
-				? entry.node.alternative_titles.en
-				: entry.node.title,
+			entry.node.alternative_titles.en.length > 0 ? entry.node.alternative_titles.en : entry.node.title,
 		isNumeric: false,
 	},
 	{
@@ -86,8 +56,7 @@ const searchTypes: SearchTypes[] = [
 		label: "Progress",
 		getValue: (entry) =>
 			entry.node.num_episodes > 0
-				? (entry.list_status.num_episodes_watched / entry.node.num_episodes) *
-					100
+				? (entry.list_status.num_episodes_watched / entry.node.num_episodes) * 100
 				: entry.list_status.num_episodes_watched,
 		isNumeric: true,
 	},
@@ -161,9 +130,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 	const [isInitialLoad, setIsInitialLoad] = useState(true);
 	const [pageInputValue, setPageInputValue] = useState("1");
 	const isTypingRef = useRef(false);
-	const [fieldSearchType, setFieldSearchType] = useState<string>(
-		searchTypes[0].type,
-	);
+	const [fieldSearchType, setFieldSearchType] = useState<string>(searchTypes[0].type);
 
 	const titleMap: Record<WatchStatus | "all", string> = {
 		all: "Anime List",
@@ -229,11 +196,10 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 		if (searchValue.trim()) {
 			const search = searchValue.toLowerCase();
 			const searchNum = Number(searchValue);
-			const isNumericSearch = !isNaN(searchNum) && searchValue.trim() !== "";
+			const isNumericSearch = !Number.isNaN(searchNum) && searchValue.trim() !== "";
 
 			// Get the search type config
-			const searchTypeConfig =
-				searchTypes.find((st) => st.type === fieldSearchType) || searchTypes[0];
+			const searchTypeConfig = searchTypes.find((st) => st.type === fieldSearchType) || searchTypes[0];
 			const getFieldValue = searchTypeConfig.getValue;
 
 			data = data.filter((entry) => {
@@ -272,18 +238,16 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 		}
 
 		// Step 3: Sort (skip if we already sorted by proximity in search AND searching the same field we're sorting by)
-		const searchTypeConfigForSkip =
-			searchTypes.find((st) => st.type === fieldSearchType) || searchTypes[0];
+		const searchTypeConfigForSkip = searchTypes.find((st) => st.type === fieldSearchType) || searchTypes[0];
 		const skipRegularSort =
 			(searchValue.trim() &&
-				!isNaN(Number(searchValue)) &&
+				!Number.isNaN(Number(searchValue)) &&
 				searchTypeConfigForSkip.isNumeric &&
 				fieldSearchType === sortColumn) ||
 			sortColumn === "none";
 
 		if (!skipRegularSort) {
-			const sortTypeConfig =
-				searchTypes.find((st) => st.type === sortColumn) || searchTypes[0];
+			const sortTypeConfig = searchTypes.find((st) => st.type === sortColumn) || searchTypes[0];
 
 			data = [...data].sort((a, b) => {
 				const aVal = sortTypeConfig.getValue(a);
@@ -296,34 +260,20 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 
 				// String comparison
 				if (typeof aVal === "string" && typeof bVal === "string") {
-					return sortDirection === "asc"
-						? aVal.localeCompare(bVal)
-						: bVal.localeCompare(aVal);
+					return sortDirection === "asc" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
 				}
 
-				// Numeric comparison - ensure we're working with numbers
-				const numA = Number(aVal);
-				const numB = Number(bVal);
-
 				// Handle NaN values
-				if (isNaN(numA) && isNaN(numB)) return 0;
-				if (isNaN(numA)) return 1;
-				if (isNaN(numB)) return -1;
+				if (Number.isNaN(aVal) && Number.isNaN(bVal)) return 0;
+				if (Number.isNaN(aVal)) return 1;
+				if (Number.isNaN(bVal)) return -1;
 
-				return sortDirection === "asc" ? numA - numB : numB - numA;
+				return sortDirection === "asc" ? Number(aVal) - Number(bVal) : Number(bVal) - Number(aVal);
 			});
 		}
 
 		return data;
-	}, [
-		animeData,
-		selectedList,
-		searchValue,
-		sortColumn,
-		sortDirection,
-		isInitialLoad,
-		fieldSearchType,
-	]);
+	}, [animeData, selectedList, searchValue, sortColumn, sortDirection, isInitialLoad, fieldSearchType]);
 
 	// Paginated data
 	const paginatedData = useMemo(() => {
@@ -345,7 +295,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 
 		const timer = setTimeout(() => {
 			const pageNum = Number(pageInputValue);
-			if (!isNaN(pageNum) && pageNum > 0 && pageNum <= totalPages) {
+			if (!Number.isNaN(pageNum) && pageNum > 0 && pageNum <= totalPages) {
 				const newIndex = pageNum - 1;
 				if (newIndex !== pageIndex) {
 					setPageIndex(newIndex);
@@ -385,22 +335,17 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 							{/*Control (row-1) / Anime list type*/}
 							<div className="flex flex-col w-full">
 								<p className="text-sm font-medium">List Type</p>
-								<Select
-									defaultValue="all"
-									onValueChange={(e) => setSelectedList(e as WatchStatus)}
-								>
+								<Select defaultValue="all" onValueChange={(e) => setSelectedList(e as WatchStatus)}>
 									<SelectTrigger className="w-full">
 										<SelectValue placeholder="Select a list" />
 									</SelectTrigger>
 									<SelectContent>
 										<SelectItem value="all">All</SelectItem>
-										{Object.entries(WATCH_STATUS_LABELS).map(
-											([value, label], index) => (
-												<SelectItem key={index} value={value}>
-													{label}
-												</SelectItem>
-											),
-										)}
+										{Object.entries(WATCH_STATUS_LABELS).map(([value, label]) => (
+											<SelectItem key={value} value={value}>
+												{label}
+											</SelectItem>
+										))}
 									</SelectContent>
 								</Select>
 							</div>
@@ -423,8 +368,8 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 													<SelectValue placeholder="Search field" />
 												</SelectTrigger>
 												<SelectContent>
-													{searchTypes.map((e, index) => (
-														<SelectItem key={index} value={e.type}>
+													{searchTypes.map((e) => (
+														<SelectItem key={e.type} value={e.type}>
 															{e.label}
 														</SelectItem>
 													))}
@@ -462,8 +407,8 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 											</SelectTrigger>
 											<SelectContent>
 												<SelectItem value="none">None</SelectItem>
-												{searchTypes.map((e, index) => (
-													<SelectItem key={index} value={e.type}>
+												{searchTypes.map((e) => (
+													<SelectItem key={e.type} value={e.type}>
 														{e.label}
 													</SelectItem>
 												))}
@@ -474,11 +419,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 										<Button
 											size="icon"
 											className="h-10 w-10 rounded-l-none border-l-0 shadow-none"
-											onClick={() =>
-												setSortDirection((prev) =>
-													prev === "asc" ? "desc" : "asc",
-												)
-											}
+											onClick={() => setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))}
 										>
 											<span className="sr-only">Toggle sort direction</span>
 											{sortDirection === "asc" ? (
@@ -495,9 +436,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 							<div className="flex flex-col sm:flex-row gap-2 justify-between">
 								{/*Control (row-3) / Pagination / Card Amount Selector */}
 								<div className="flex gap-0 sm:gap-2 flex-col sm:flex-row">
-									<Label className="text-sm font-medium my-auto flex sm:hidden">
-										Per page
-									</Label>
+									<Label className="text-sm font-medium my-auto flex sm:hidden">Per page</Label>
 									<Select
 										defaultValue={pageSize.toString()}
 										onValueChange={(value) => {
@@ -509,20 +448,14 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 											<SelectValue placeholder="Select a amount" />
 										</SelectTrigger>
 										<SelectContent className="min-w-[3rem]">
-											{[10, 20, 30, 50, 100].map((e, index) => (
-												<SelectItem
-													checkMark={false}
-													key={index}
-													value={e.toString()}
-												>
+											{[10, 20, 30, 50, 100].map((e) => (
+												<SelectItem checkMark={false} key={e} value={e.toString()}>
 													{e.toString()}
 												</SelectItem>
 											))}
 										</SelectContent>
 									</Select>
-									<Label className="text-sm font-medium my-auto hidden sm:flex">
-										Per page
-									</Label>
+									<Label className="text-sm font-medium my-auto hidden sm:flex">Per page</Label>
 								</div>
 
 								{/*Control (row-3) / Pagination / Buttons */}

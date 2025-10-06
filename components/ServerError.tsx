@@ -4,11 +4,7 @@ export interface ServerErrorProps {
 	type: "config" | "content";
 }
 
-export default function ServerError({
-	reason,
-	location,
-	type,
-}: ServerErrorProps) {
+export default function ServerError({ reason, location, type }: ServerErrorProps) {
 	let errorType = "";
 	switch (type) {
 		case "config":
@@ -23,7 +19,7 @@ export default function ServerError({
 			<h1 className="text-4xl font-bold">Server Error</h1>
 			<p>
 				{errorType}
-				{location && " (" + location + ")"}
+				{location && ` (${location})`}
 			</p>
 			{reason && <p className="mt-2 text-gray-600">{reason}</p>}
 		</div>

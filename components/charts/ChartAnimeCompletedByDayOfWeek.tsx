@@ -1,22 +1,10 @@
 "use client";
 
-import type * as React from "react";
-import { useMemo } from "react";
+import { type CSSProperties, useMemo } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import type { ChartSettings } from "@/components/ChartSettingsDialog";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
-import {
-	type ChartConfig,
-	ChartContainer,
-	ChartTooltip,
-	ChartTooltipContent,
-} from "@/components/ui/chart";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import type { AnimeEntry } from "@/types/animeData";
 
 type Day = {
@@ -46,10 +34,7 @@ interface ChartAnimeCompletedByDayOfWeekProps {
 	animeData: AnimeEntry[];
 }
 
-export default function ChartAnimeCompletedByDayOfWeek({
-	settings,
-	animeData,
-}: ChartAnimeCompletedByDayOfWeekProps) {
+export default function ChartAnimeCompletedByDayOfWeek({ settings, animeData }: ChartAnimeCompletedByDayOfWeekProps) {
 	const chartData = useMemo(() => {
 		const isAllYears = settings.viewingYear === "all";
 		const year = Number(settings.viewingYear);
@@ -80,13 +65,10 @@ export default function ChartAnimeCompletedByDayOfWeek({
 			day: Labels[index].short,
 			fullDay: Labels[index].full,
 			count,
-			percentage:
-				totalCount > 0
-					? parseFloat(((count / totalCount) * 100).toFixed(1))
-					: 0,
+			percentage: totalCount > 0 ? parseFloat(((count / totalCount) * 100).toFixed(1)) : 0,
 			fill: chartConfig.count.color,
 		}));
-	}, [animeData, settings]);
+	}, [animeData, settings.viewingYear]);
 
 	return (
 		<Card className="py-0 w-full shadow-xl">
@@ -102,33 +84,20 @@ export default function ChartAnimeCompletedByDayOfWeek({
 			</CardHeader>
 
 			<CardContent className="px-2 p-6">
-				<ChartContainer
-					config={chartConfig}
-					className="aspect-auto h-[250px] w-full"
-				>
-					<BarChart
-						accessibilityLayer
-						data={chartData}
-						margin={{ left: 12, right: 12 }}
-					>
+				<ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
+					<BarChart accessibilityLayer data={chartData} margin={{ left: 12, right: 12 }}>
 						<CartesianGrid vertical={false} />
-						<XAxis
-							dataKey="day"
-							tickLine={false}
-							axisLine={false}
-							tickMargin={8}
-							minTickGap={16}
-						/>
+						<XAxis dataKey="day" tickLine={false} axisLine={false} tickMargin={8} minTickGap={16} />
 						<ChartTooltip
 							content={
 								<ChartTooltipContent
 									hideLabel
 									className="w-[180px]"
-									formatter={(value, name, item) => (
+									formatter={(value, _name, item) => (
 										<>
 											<div
 												className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
-												style={{ "--color-bg": `blue` } as React.CSSProperties}
+												style={{ "--color-bg": `blue` } as CSSProperties} //TODO what is this div???? is it important ????
 											/>
 											{item.payload.fullDay}
 											<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
@@ -139,9 +108,7 @@ export default function ChartAnimeCompletedByDayOfWeek({
 												Percentage
 												<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
 													{item.payload.percentage}
-													<span className="text-muted-foreground font-normal">
-														%
-													</span>
+													<span className="text-muted-foreground font-normal">%</span>
 												</div>
 											</div>
 										</>

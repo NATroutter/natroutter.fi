@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import * as React from "react";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -14,11 +13,7 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { formatDate, toCapitalizedCase } from "@/lib/utils";
-import {
-	type AlternativeTitles,
-	type AnimeEntry,
-	formatRating,
-} from "@/types/animeData";
+import { type AlternativeTitles, type AnimeEntry, formatRating } from "@/types/animeData";
 
 interface AnimeCardProps {
 	data: AnimeEntry;
@@ -53,9 +48,7 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 									/>
 								) : (
 									<div className="w-full rounded-lg h-[415px] bg-card-inner flex">
-										<p className="text-muted font-semibold m-auto text-center">
-											IMAGE NOT FOUND!
-										</p>
+										<p className="text-muted font-semibold m-auto text-center">IMAGE NOT FOUND!</p>
 									</div>
 								)}
 							</div>
@@ -68,18 +61,12 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 									<ul className="pl-5 list-disc">
 										{anime.rank > 0 && (
 											<li className="font-semibold">
-												Ranked:{" "}
-												<span className="text-primary font-normal">
-													#{anime.rank}
-												</span>
+												Ranked: <span className="text-primary font-normal">#{anime.rank}</span>
 											</li>
 										)}
 										{anime.popularity > 0 && (
 											<li className="font-semibold">
-												Popularity:{" "}
-												<span className="text-primary font-normal">
-													#{anime.popularity}
-												</span>
+												Popularity: <span className="text-primary font-normal">#{anime.popularity}</span>
 											</li>
 										)}
 										{anime.mean > 0 && (
@@ -93,10 +80,7 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 
 										{status.score > 0 && (
 											<li className="font-semibold">
-												Score:{" "}
-												<span className="text-primary font-normal">
-													{status.score}
-												</span>
+												Score: <span className="text-primary font-normal">{status.score}</span>
 											</li>
 										)}
 										{status.score > 0 && (
@@ -112,9 +96,7 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 											<li className="font-semibold">
 												Progress:{" "}
 												<span className="text-primary font-normal">
-													{status.num_episodes_watched}/{
-														anime.num_episodes
-													}{" "}
+													{status.num_episodes_watched}/{anime.num_episodes}{" "}
 												</span>
 											</li>
 										)}
@@ -139,43 +121,28 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 									<ul className="pl-5 list-disc">
 										{anime.media_type && (
 											<li className="font-semibold">
-												Type:{" "}
-												<span className="text-primary font-normal">
-													{anime.media_type.toUpperCase()}
-												</span>
+												Type: <span className="text-primary font-normal">{anime.media_type.toUpperCase()}</span>
 											</li>
 										)}
 										{anime.num_episodes > 0 && (
 											<li className="font-semibold">
-												Episodes:{" "}
-												<span className="text-primary font-normal">
-													{anime.num_episodes}
-												</span>
+												Episodes: <span className="text-primary font-normal">{anime.num_episodes}</span>
 											</li>
 										)}
 										{anime.status && (
 											<li className="font-semibold">
-												Status:{" "}
-												<span className="text-primary font-normal">
-													{toCapitalizedCase(anime.status)}
-												</span>
+												Status: <span className="text-primary font-normal">{toCapitalizedCase(anime.status)}</span>
 											</li>
 										)}
 
 										{anime.start_date && (
 											<li className="font-semibold">
-												Started:{" "}
-												<span className="text-primary font-normal">
-													{formatDate(anime.start_date)}
-												</span>
+												Started: <span className="text-primary font-normal">{formatDate(anime.start_date)}</span>
 											</li>
 										)}
 										{anime.end_date && (
 											<li className="font-semibold">
-												Ended:{" "}
-												<span className="text-primary font-normal">
-													{formatDate(anime.end_date)}
-												</span>
+												Ended: <span className="text-primary font-normal">{formatDate(anime.end_date)}</span>
 											</li>
 										)}
 
@@ -183,7 +150,7 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 											<li className="font-semibold">
 												<span>Studios: </span>
 												{anime.studios.map((studio, index) => (
-													<span key={index}>
+													<span key={studio.id}>
 														<Link
 															href={`https://myanimelist.net/anime/producer/${studio.id}/`}
 															target="_blank"
@@ -193,7 +160,7 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 														>
 															{studio.name}
 														</Link>
-														{index != anime.studios.length - 1 ? ", " : ""}
+														{index !== anime.studios.length - 1 ? ", " : ""}
 													</span>
 												))}
 											</li>
@@ -201,10 +168,7 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 
 										{anime.source && (
 											<li className="font-semibold">
-												Source:{" "}
-												<span className="text-primary font-normal">
-													{toCapitalizedCase(anime.source)}
-												</span>
+												Source: <span className="text-primary font-normal">{toCapitalizedCase(anime.source)}</span>
 											</li>
 										)}
 
@@ -212,7 +176,7 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 											<li className="font-semibold">
 												<span>Genres: </span>
 												{anime.genres.map((genre, index) => (
-													<span key={index}>
+													<span key={genre.id}>
 														<Link
 															href={`https://myanimelist.net/anime/genre/${genre.id}/`}
 															target="_blank"
@@ -222,7 +186,7 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 														>
 															{genre.name}
 														</Link>
-														{index != anime.genres.length - 1 ? ", " : ""}
+														{index !== anime.genres.length - 1 ? ", " : ""}
 													</span>
 												))}
 											</li>
@@ -232,17 +196,13 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 											<li className="font-semibold">
 												Duration:{" "}
 												<span className="text-primary font-normal">
-													{Math.floor(anime.average_episode_duration / 60)} min.
-													per ep.
+													{Math.floor(anime.average_episode_duration / 60)} min. per ep.
 												</span>
 											</li>
 										)}
 										{anime.rating && (
 											<li className="font-semibold">
-												Rating:{" "}
-												<span className="text-primary font-normal">
-													{formatRating(anime.rating)}
-												</span>
+												Rating: <span className="text-primary font-normal">{formatRating(anime.rating)}</span>
 											</li>
 										)}
 									</ul>
@@ -264,21 +224,15 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 						{/*Right side*/}
 						<div className="flex flex-col gap-4 w-fit">
 							<div className="flex flex-col">
-								<h1 className="text-2xl font-bold">
-									{titles.en.length > 0 ? titles.en : anime.title}
-								</h1>
+								<h1 className="text-2xl font-bold">{titles.en.length > 0 ? titles.en : anime.title}</h1>
 								{anime.alternative_titles.ja && (
-									<h2 className="text-base font-semibold">
-										{anime.alternative_titles.ja}
-									</h2>
+									<h2 className="text-base font-semibold">{anime.alternative_titles.ja}</h2>
 								)}
 							</div>
 
 							{anime.synopsis && (
 								<div>
-									<p>
-										{anime.synopsis.replace("[Written by MAL Rewrite]", "")}
-									</p>
+									<p>{anime.synopsis.replace("[Written by MAL Rewrite]", "")}</p>
 								</div>
 							)}
 						</div>
@@ -296,9 +250,7 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 								/>
 							) : (
 								<div className="w-full rounded-lg h-[415px] bg-card-inner flex">
-									<p className="text-muted font-semibold m-auto text-center">
-										IMAGE NOT FOUND!
-									</p>
+									<p className="text-muted font-semibold m-auto text-center">IMAGE NOT FOUND!</p>
 								</div>
 							)}
 						</div>

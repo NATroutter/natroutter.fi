@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { type ReactNode, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -15,13 +14,7 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { AnimeEntry } from "@/types/animeData";
 
 export interface ChartSettings {
@@ -39,12 +32,7 @@ interface ChartSettingsProps {
 	children?: ReactNode;
 }
 
-export default function ChartSettingsDialog({
-	animeData,
-	onSettingsSave,
-	settings,
-	children,
-}: ChartSettingsProps) {
+export default function ChartSettingsDialog({ animeData, onSettingsSave, settings, children }: ChartSettingsProps) {
 	const [tempSettings, setTempSettings] = useState<ChartSettings>(settings);
 
 	const handleSave = () => {
@@ -68,15 +56,12 @@ export default function ChartSettingsDialog({
 
 	return (
 		<Dialog onOpenChange={(open) => open && setTempSettings(settings)}>
-			<DialogTrigger asChild>
-				{children ? children : <Button variant="default">Settings</Button>}
-			</DialogTrigger>
+			<DialogTrigger asChild>{children ? children : <Button variant="default">Settings</Button>}</DialogTrigger>
 			<DialogContent className="flex flex-col gap-4 p-0 min-w-[20vw] max-h-[90vh] w-full">
 				<DialogHeader className="flex-col gap-0 border-b border-border p-4">
 					<DialogTitle className="py-2">Charts & Graphs Settings</DialogTitle>
 					<DialogDescription>
-						Make changes how to charts and graphs are displayed. Click save when
-						you&apos;re done.
+						Make changes how to charts and graphs are displayed. Click save when you&apos;re done.
 					</DialogDescription>
 				</DialogHeader>
 				<div className="grid gap-4 p-4">
@@ -84,19 +69,14 @@ export default function ChartSettingsDialog({
 						<Label htmlFor="name-1">Viewing Year</Label>
 						<Select
 							value={tempSettings.viewingYear}
-							onValueChange={(value) =>
-								setTempSettings({ ...tempSettings, viewingYear: value })
-							}
+							onValueChange={(value) => setTempSettings({ ...tempSettings, viewingYear: value })}
 						>
 							<SelectTrigger className="w-full">
 								<SelectValue placeholder="Select Year" />
 							</SelectTrigger>
 							<SelectContent>
-								{availableYears.map((value, index) => (
-									<SelectItem
-										key={index}
-										value={value.toString().toLowerCase()}
-									>
+								{availableYears.map((value) => (
+									<SelectItem key={value} value={value.toString().toLowerCase()}>
 										{value}
 									</SelectItem>
 								))}
