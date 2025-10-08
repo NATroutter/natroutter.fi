@@ -12,8 +12,9 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
+import { formatAnimeAgeRating } from "@/lib/anime-format";
 import { formatDate, toCapitalizedCase } from "@/lib/utils";
-import { type AlternativeTitles, type AnimeEntry, formatRating } from "@/types/animeData";
+import type { AnimeAlternativeTitles, AnimeEntry } from "@/types/animeData";
 
 interface AnimeCardProps {
 	data: AnimeEntry;
@@ -23,7 +24,7 @@ interface AnimeCardProps {
 export function AnimeDialog({ data, children }: AnimeCardProps) {
 	const anime = data.node;
 	const status = data.list_status;
-	const titles: AlternativeTitles = anime.alternative_titles;
+	const titles: AnimeAlternativeTitles = anime.alternative_titles;
 
 	return (
 		<Dialog>
@@ -61,18 +62,18 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 									<ul className="pl-5 list-disc">
 										{anime.rank > 0 && (
 											<li className="font-semibold">
-												Ranked: <span className="text-primary font-normal">#{anime.rank}</span>
+												Ranked: <span className="text-muted font-normal">#{anime.rank}</span>
 											</li>
 										)}
 										{anime.popularity > 0 && (
 											<li className="font-semibold">
-												Popularity: <span className="text-primary font-normal">#{anime.popularity}</span>
+												Popularity: <span className="text-muted font-normal">#{anime.popularity}</span>
 											</li>
 										)}
 										{anime.mean > 0 && (
 											<li className="font-semibold">
 												Rating:{" "}
-												<span className="text-primary font-normal">
+												<span className="text-muted font-normal">
 													{anime.mean} by {anime.num_scoring_users} users
 												</span>
 											</li>
@@ -80,22 +81,20 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 
 										{status.score > 0 && (
 											<li className="font-semibold">
-												Score: <span className="text-primary font-normal">{status.score}</span>
+												Score: <span className="text-muted font-normal">{status.score}</span>
 											</li>
 										)}
 										{status.score > 0 && (
 											<li className="font-semibold">
 												Difference:{" "}
-												<span className="text-primary font-normal">
-													{Math.abs(anime.mean - status.score).toFixed(2)}
-												</span>
+												<span className="text-muted font-normal">{Math.abs(anime.mean - status.score).toFixed(2)}</span>
 											</li>
 										)}
 
 										{anime.num_episodes > 0 && (
 											<li className="font-semibold">
 												Progress:{" "}
-												<span className="text-primary font-normal">
+												<span className="text-muted font-normal">
 													{status.num_episodes_watched}/{anime.num_episodes}{" "}
 												</span>
 											</li>
@@ -121,28 +120,28 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 									<ul className="pl-5 list-disc">
 										{anime.media_type && (
 											<li className="font-semibold">
-												Type: <span className="text-primary font-normal">{anime.media_type.toUpperCase()}</span>
+												Type: <span className="text-muted font-normal">{anime.media_type.toUpperCase()}</span>
 											</li>
 										)}
 										{anime.num_episodes > 0 && (
 											<li className="font-semibold">
-												Episodes: <span className="text-primary font-normal">{anime.num_episodes}</span>
+												Episodes: <span className="text-muted font-normal">{anime.num_episodes}</span>
 											</li>
 										)}
 										{anime.status && (
 											<li className="font-semibold">
-												Status: <span className="text-primary font-normal">{toCapitalizedCase(anime.status)}</span>
+												Status: <span className="text-muted font-normal">{toCapitalizedCase(anime.status)}</span>
 											</li>
 										)}
 
 										{anime.start_date && (
 											<li className="font-semibold">
-												Started: <span className="text-primary font-normal">{formatDate(anime.start_date)}</span>
+												Started: <span className="text-muted font-normal">{formatDate(anime.start_date)}</span>
 											</li>
 										)}
 										{anime.end_date && (
 											<li className="font-semibold">
-												Ended: <span className="text-primary font-normal">{formatDate(anime.end_date)}</span>
+												Ended: <span className="text-muted font-normal">{formatDate(anime.end_date)}</span>
 											</li>
 										)}
 
@@ -156,7 +155,7 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 															target="_blank"
 															data-umami-event={`[ANIME] Show Studio (${studio.id})`}
 															data-umami-event-url={`https://myanimelist.net/anime/producer/${studio.id}/`}
-															className="text-primary hover:text-secondary font-normal"
+															className="font-normal text-muted hover:text-link-hover"
 														>
 															{studio.name}
 														</Link>
@@ -168,7 +167,7 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 
 										{anime.source && (
 											<li className="font-semibold">
-												Source: <span className="text-primary font-normal">{toCapitalizedCase(anime.source)}</span>
+												Source: <span className="text-muted font-normal">{toCapitalizedCase(anime.source)}</span>
 											</li>
 										)}
 
@@ -182,7 +181,7 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 															target="_blank"
 															data-umami-event={`[ANIME] Show Genre (${genre.id})`}
 															data-umami-event-url={`https://myanimelist.net/anime/genre/${genre.id}/`}
-															className="text-primary hover:text-secondary font-normal"
+															className="font-normal text-muted hover:text-link-hover"
 														>
 															{genre.name}
 														</Link>
@@ -195,14 +194,15 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 										{anime.average_episode_duration > 0 && (
 											<li className="font-semibold">
 												Duration:{" "}
-												<span className="text-primary font-normal">
+												<span className="text-muted font-normal">
 													{Math.floor(anime.average_episode_duration / 60)} min. per ep.
 												</span>
 											</li>
 										)}
 										{anime.rating && (
 											<li className="font-semibold">
-												Rating: <span className="text-primary font-normal">{formatRating(anime.rating)}</span>
+												Rating:{" "}
+												<span className="text-muted font-normal">{formatAnimeAgeRating(anime.rating, true)}</span>
 											</li>
 										)}
 									</ul>

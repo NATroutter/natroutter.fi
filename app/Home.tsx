@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import AnimatedText from "@/components/AnimatedText";
+import DynamicIcon from "@/components/DynamicIcon";
 import { Button } from "@/components/ui/button";
-import DynamicIcon from "@/lib/dynamicIcon";
 import type { HomePage } from "@/types/interfaces";
 
 export default function Home({ data }: { data: HomePage }) {
@@ -55,10 +55,7 @@ export default function Home({ data }: { data: HomePage }) {
 
 							<div>
 								<Link href="/projects">
-									<Button
-										data-umami-event={`[HOME] (Explore My Work)`}
-										className="bg-primary px-5 py-3 rounded-full shadow-primary-glow font-semibold hover:scale-105 transition-transform duration-300 ease-in-out"
-									>
+									<Button data-umami-event={`[HOME] (Explore My Work)`} variant="glow">
 										Explore My Work
 									</Button>
 								</Link>

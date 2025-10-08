@@ -12,47 +12,48 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@/components/ui/chart";
-import { type AnimeEntry, formatScore } from "@/types/animeData";
+import { formatAnimeScore } from "@/lib/anime-format";
+import type { AnimeEntry } from "@/types/animeData";
 
 const chartConfig: ChartConfig = {
 	score_10: {
-		label: formatScore(10),
+		label: formatAnimeScore(10),
 		color: "var(--chart-1)",
 	},
 	score_9: {
-		label: formatScore(9),
+		label: formatAnimeScore(9),
 		color: "var(--chart-2)",
 	},
 	score_8: {
-		label: formatScore(8),
+		label: formatAnimeScore(8),
 		color: "var(--chart-3)",
 	},
 	score_7: {
-		label: formatScore(7),
+		label: formatAnimeScore(7),
 		color: "var(--chart-4)",
 	},
 	score_6: {
-		label: formatScore(6),
+		label: formatAnimeScore(6),
 		color: "var(--chart-5)",
 	},
 	score_5: {
-		label: formatScore(5),
+		label: formatAnimeScore(5),
 		color: "var(--chart-6)",
 	},
 	score_4: {
-		label: formatScore(4),
+		label: formatAnimeScore(4),
 		color: "var(--chart-7)",
 	},
 	score_3: {
-		label: formatScore(3),
+		label: formatAnimeScore(3),
 		color: "var(--chart-8)",
 	},
 	score_2: {
-		label: formatScore(2),
+		label: formatAnimeScore(2),
 		color: "var(--chart-9)",
 	},
 	score_1: {
-		label: formatScore(1),
+		label: formatAnimeScore(1),
 		color: "var(--chart-10)",
 	},
 } satisfies ChartConfig;

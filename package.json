@@ -7,8 +7,9 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"docker-build": "docker build -t natroutter-fi .",
-		"docker-start": "docker compose up"
+		"build-frontend": "docker build --no-cache -f frontend.Dockerfile -t natroutter-fi-frontend .",
+		"build-backend": "docker build --no-cache -f backend.Dockerfile -t natroutter-fi-backend --build-arg PB_VERSION=0.29.3 .",
+		"docker-start": "docker compose up -d"
 	},
 	"dependencies": {
 		"@radix-ui/react-dialog": "^1.1.15",
@@ -30,6 +31,7 @@
 		"next": "15.5.4",
 		"next-themes": "^0.4.6",
 		"pocketbase": "^0.25.1",
+		"radix-ui": "^1.4.3",
 		"react": "19.1.0",
 		"react-dom": "19.1.0",
 		"react-icons": "^5.4.0",

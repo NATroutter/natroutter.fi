@@ -1,54 +1,62 @@
+// import getConfig from "next/config";
 import PocketBase from "pocketbase";
+import logger from "@/lib/logger";
 import type { AboutPage, FooterData, HomePage, LinkPage, PrivacyPage, ProjectPage } from "@/types/interfaces";
+import {config} from "@/lib/config";
+
+// const { serverRuntimeConfig } = getConfig();
 
 //***************************************
 //*            DATABASE UTILS           *
 //***************************************
 export function getFileURL(collection: string, id: string, file: string): string {
-	return `${getPocketBase().baseURL}/api/files/${collection}/${id}/${file}`;
+	return `${config.POCKETBASE.PUBLIC}/api/files/${collection}/${id}/${file}`;
 }
 
 //***************************************
 //*          DATABASE GETTERS           *
 //***************************************
 export function getPocketBase(): PocketBase {
-	return new PocketBase(process.env.POCKETBASE_ADDRESS);
+	return new PocketBase(config.POCKETBASE.SERVER);
 }
 
-export async function getHomePage(): Promise<HomePage> {
+export async function getHomePage(): Promise<HomePage | undefined> {
 	try {
-		const pb = getPocketBase();
+		const pb = await getPocketBase();
 		const data = await pb.collection("page_home").getFirstListItem<HomePage>("", {
 			expand: "links",
 		});
+		if (!data) return undefined;
 		data.expand.links.map((link) => {
 			link.image = getFileURL("links", link.id, link.image);
 			return link;
 		});
 		return data;
 	} catch (err) {
-		throwPocketBaseError(err, "Failed to fetch data for HomePage");
+		return handlePocketBaseError(err, "Failed to fetch data for HomePage");
 	}
 }
 
 export async function getAboutPage(): Promise<AboutPage | undefined> {
 	try {
-		const pb = getPocketBase();
+		const pb = await getPocketBase();
 		const data = await pb.collection("page_about").getFirstListItem<AboutPage>("");
+		if (!data) return undefined;
 		data.image = getFileURL("page_about", data.id, data.image);
 		return data;
 	} catch (err) {
-		throwPocketBaseError(err, "Failed to fetch data for AboutPage");
+		return handlePocketBaseError(err, "Failed to fetch data for AboutPage");
 	}
 }
 
 export async function getLinkPage(): Promise<LinkPage[] | undefined> {
 	try {
-		const pb = getPocketBase();
+		const pb = await getPocketBase();
 		const data = await pb.collection("page_links").getFullList<LinkPage>({
 			expand: "links",
 			sort: "-priority",
 		});
+		if (!data) return undefined;
 		data.map((entry) =>
 			entry.expand.links.map((link) => {
 				link.image = getFileURL("links", link.id, link.image);
@@ -57,45 +65,50 @@ export async function getLinkPage(): Promise<LinkPage[] | undefined> {
 		);
 		return data;
 	} catch (err) {
-		throwPocketBaseError(err, "Failed to fetch data for LinkPage");
+		return handlePocketBaseError(err, "Failed to fetch data for LinkPage");
 	}
 }
 
 export async function getProjectsPage(): Promise<ProjectPage | undefined> {
 	try {
-		const pb = getPocketBase();
+		const pb = await getPocketBase();
 		const data = await pb.collection("page_projects").getFirstListItem<ProjectPage>("", {
 			expand: "projects.links",
 		});
+		if (!data) return undefined;
+
 		data.expand.projects.map((entry) => {
 			entry.image = getFileURL("projects", entry.id, entry.image);
-			entry.expand.links.map((link) => {
-				link.image = getFileURL("links", link.id, link.image);
-				return link;
-			});
+			if (entry.expand.links) {
+				entry.expand.links.map((link) => {
+					link.image = getFileURL("links", link.id, link.image);
+					return link;
+				});
+			}
 			return entry;
 		});
 		return data;
 	} catch (err: unknown) {
-		throwPocketBaseError(err, "Failed to fetch data for ProjectPage");
+		return handlePocketBaseError(err, "Failed to fetch data for ProjectPage");
 	}
 }
 
 export async function getPrivacyPage(): Promise<PrivacyPage | undefined> {
 	try {
-		const pb = getPocketBase();
+		const pb = await getPocketBase();
 		return await pb.collection("page_privacy").getFirstListItem<PrivacyPage>("");
 	} catch (err) {
-		throwPocketBaseError(err, "Failed to fetch data for PrivacyPage");
+		return handlePocketBaseError(err, "Failed to fetch data for PrivacyPage");
 	}
 }
 
 export async function getFooterData(): Promise<FooterData | undefined> {
 	try {
-		const pb = getPocketBase();
+		const pb = await getPocketBase();
 		const data = await pb.collection("footer").getFirstListItem<FooterData>("", {
 			expand: "contact,quick,social",
 		});
+		if (!data) return undefined;
 		data.expand.contact.map((link) => {
 			link.image = getFileURL("links", link.id, link.image);
 			return link;
@@ -110,7 +123,7 @@ export async function getFooterData(): Promise<FooterData | undefined> {
 		});
 		return data;
 	} catch (err) {
-		throwPocketBaseError(err, "Failed to fetch data for Footer");
+		return handlePocketBaseError(err, "Failed to fetch data for Footer");
 	}
 }
 
@@ -124,13 +137,14 @@ interface PocketBaseError {
 function isPocketBaseError(err: unknown): err is { response: PocketBaseError } {
 	return typeof err === "object" && err !== null && "response" in err;
 }
-function throwPocketBaseError(err: unknown, message: string): never {
+function handlePocketBaseError(err: unknown, message: string) {
 	if (err && isPocketBaseError(err)) {
 		const data = err.response;
 		const code = data.code ? ` (${data.code})` : "";
 		const resp = data.message ? `: ${data.message}` : "";
-		throw Error(`[PocketBase] ${message}${code}${resp}`);
+		logger.error(`[PocketBase] ${message}${code}${resp} - (${process.env.POCKETBASE_ADDRESS})`);
 	} else {
-		throw Error(`[PocketBase] Unknown Error : ${err}`);
+		logger.error(`[PocketBase] Unknown Error > ${err} - (${process.env.POCKETBASE_ADDRESS})`);
 	}
+	return undefined;
 }

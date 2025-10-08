@@ -12,7 +12,7 @@ export default function Links({ data }: { data: LinkPage[] }) {
 				{data.map((entry) => (
 					<Card key={entry.id} className="w-full h-full py-0">
 						<CardHeader className="flex flex-col items-stretch p-0 sm:flex-row h-24">
-							<div className="flex flex-1 flex-col gap-0.5 px-6 py-2">
+							<div className="flex flex-1 flex-col gap-0.5 px-6 py-2 my-auto">
 								<CardTitle className="text-xl">{entry.title}</CardTitle>
 								{entry.description && (
 									<CardDescription className="line-clamp-2 text-ellipsis text-md">{entry.description}</CardDescription>
@@ -27,7 +27,7 @@ export default function Links({ data }: { data: LinkPage[] }) {
 									target="_blank"
 									data-umami-event={`[LINKS] Link (${link.name})`}
 									data-umami-event-url={link.url}
-									className="flex p-1.5 m-3"
+									className="flex p-1.5 m-3 text-foreground"
 								>
 									<div className="flex w-full h-full p-2 bg-card-inner rounded-lg hover:scale-103 transition-transform duration-300 ease-in-out">
 										<div className="w-20 h-20 aspect-square my-auto">

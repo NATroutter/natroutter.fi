@@ -1,9 +1,9 @@
-export interface MainPicture {
+export interface AnimeMainPicture {
 	medium: string;
 	large: string;
 }
 
-export interface AlternativeTitles {
+export interface AnimeAlternativeTitles {
 	synonyms: string[];
 	en: string;
 	ja: string;
@@ -12,36 +12,36 @@ export interface AlternativeTitles {
 export interface AnimeInfo {
 	id: number;
 	title: string;
-	main_picture: MainPicture;
+	main_picture: AnimeMainPicture;
 	rank: number;
-	rating: AnimeRating;
+	rating: AnimeAgeRating;
 	status: AnimeStatus;
 	nsfw: "white" | "gray" | "black";
 	average_episode_duration: number;
 	popularity: number;
 	num_episodes: number;
 	num_scoring_users: number;
-	media_type: MediaType;
+	media_type: AnimeMediaType;
 	start_date: string;
 	end_date: string;
 	mean: number;
 	source: AnimeSource;
-	genres: Genre[];
-	alternative_titles: AlternativeTitles;
+	genres: AnimeGenre[];
+	alternative_titles: AnimeAlternativeTitles;
 	synopsis: string;
-	studios: Studio[];
+	studios: AnimeStudio[];
 }
 
-export interface Genre {
+export interface AnimeGenre {
 	id: number;
 	name: string;
 }
-export interface Studio {
+export interface AnimeStudio {
 	id: number;
 	name: string;
 }
-export type MediaType = "tv" | "ova" | "movie" | "special" | "tv_special" | "ona" | "music" | "unknown";
-export type WatchStatus = "plan_to_watch" | "watching" | "completed" | "on_hold" | "dropped";
+export type AnimeMediaType = "tv" | "ova" | "movie" | "special" | "tv_special" | "ona" | "music" | "unknown";
+export type AnimeWatchStatus = "plan_to_watch" | "watching" | "completed" | "on_hold" | "dropped";
 export type AnimeSource =
 	| "original"
 	| "manga"
@@ -59,10 +59,10 @@ export type AnimeSource =
 	| "music"
 	| "other";
 export type AnimeStatus = "finished_airing" | "currently_airing" | "not_yet_aired";
-export type AnimeRating = "g" | "pg" | "pg_13" | "r" | "r+" | "rx";
+export type AnimeAgeRating = "g" | "pg" | "pg_13" | "r" | "r+" | "rx";
 
 export interface ListStatus {
-	status: WatchStatus;
+	status: AnimeWatchStatus;
 	score: number;
 	num_episodes_watched: number;
 	is_rewatching: boolean;
@@ -84,87 +84,15 @@ export interface AnimeData {
 	paging: AnimePaging;
 }
 
-export const WATCH_STATUS_LABELS: Record<WatchStatus, string> = {
-	plan_to_watch: "Plan To Watch",
-	watching: "Watching",
-	completed: "Completed",
-	on_hold: "On Hold",
-	dropped: "Dropped",
-};
-
-export function formatWatchStatus(status: WatchStatus): string {
-	return WATCH_STATUS_LABELS[status];
+export interface AnimeHistoryEntry {
+	id: number;
+	title: string;
+	episodes: number;
+	anime: AnimeEntry | undefined;
 }
 
-export function formatMediaType(status: MediaType): string {
-	return status
-		.toString()
-		.split("_")
-		.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-		.join(" ");
-}
-
-export function formatSource(source: AnimeSource): string {
-	return source
-		.toString()
-		.split("_")
-		.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-		.join(" ");
-}
-export function formatStatus(source: AnimeStatus): string {
-	return source
-		.toString()
-		.split("_")
-		.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-		.join(" ");
-}
-
-export function formatScore(rating: number): string {
-	switch (rating) {
-		case 10:
-			return "Masterpiece";
-		case 9:
-			return "Great";
-		case 8:
-			return "Very Good";
-		case 7:
-			return "Good";
-		case 6:
-			return "Fine";
-		case 5:
-			return "Average";
-		case 4:
-			return "Bad";
-		case 3:
-			return "Very Bad";
-		case 2:
-			return "Horrible";
-		case 1:
-			return "Appalling";
-		case 0:
-			return "Unknown";
-		default:
-			return rating.toString();
-	}
-}
-
-export function formatRating(rating: AnimeRating): string {
-	switch (rating) {
-		case "g":
-			return "All Ages";
-		case "pg":
-			return "Children";
-		case "pg_13":
-			return "Teens 13 and Older";
-		case "r":
-			return "17+ (violence & profanity)";
-		case "r+":
-			return "Profanity & Mild Nudity";
-		case "rx":
-			return "Hentai";
-	}
-}
-
-export function formatRatingPG(rating: AnimeRating): string {
-	return rating.toString().replace("_", "").toUpperCase();
+export interface AnimeHistoryUpdate {
+	id: string;
+	date: string;
+	updates: AnimeHistoryEntry[];
 }

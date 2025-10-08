@@ -1,12 +1,15 @@
 "use client";
 
 import { useMemo } from "react";
-import type { ChartSettings } from "@/components/ChartSettingsDialog";
+import { IoSettings } from "react-icons/io5";
+import ChartSettingsDialog, { type ChartSettings } from "@/components/ChartSettingsDialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { type AnimeEntry, type AnimeSource, formatSource } from "@/types/animeData";
+import { formatAnime } from "@/lib/anime-format";
+import type { AnimeEntry, AnimeSource } from "@/types/animeData";
 
 interface ChartAnimeScoresProps {
 	settings: ChartSettings;
+	setChartSettings: (settings: ChartSettings) => void;
 	animeData: AnimeEntry[];
 }
 
@@ -15,7 +18,7 @@ type StatsData = {
 	value: number | string;
 };
 
-export default function ChartAnimeQuickStats({ settings, animeData }: ChartAnimeScoresProps) {
+export default function ChartAnimeQuickStats({ settings, setChartSettings, animeData }: ChartAnimeScoresProps) {
 	// Filter data based on selected year
 	const filteredData = useMemo(() => {
 		if (settings.viewingYear === "all") {
@@ -114,7 +117,7 @@ export default function ChartAnimeQuickStats({ settings, animeData }: ChartAnime
 		{ label: "OVA Explorer", value: ovaCount },
 		{
 			label: "Favorite Source",
-			value: formatSource(favoriteSource as AnimeSource),
+			value: formatAnime(favoriteSource as AnimeSource),
 		},
 		{ label: "Average Score", value: averageScoreGiven },
 		{ label: "Completion Rate", value: `${completionRate}%` },
@@ -131,6 +134,20 @@ export default function ChartAnimeQuickStats({ settings, animeData }: ChartAnime
 							? "Overview of your anime watching statistics across all years."
 							: `Overview of your anime watching statistics for ${settings.viewingYear}.`}
 					</CardDescription>
+				</div>
+				<div className="flex items-center px-6 pt-4 pb-3">
+					<ChartSettingsDialog
+						animeData={animeData}
+						settings={settings}
+						onSettingsSave={(value) => setChartSettings(value)}
+					>
+						<button
+							type="button"
+							className="flex gap-2 items-center text-muted hover:text-foreground transition-all duration-300 group"
+						>
+							<IoSettings size={28} className="group-hover:rotate-180 transition-transform duration-300" />
+						</button>
+					</ChartSettingsDialog>
 				</div>
 			</CardHeader>
 			<CardContent className="px-2 p-6">

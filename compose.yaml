@@ -1,10 +1,29 @@
 services:
-  natroutter-fi:
-    image: natroutter-fi:latest
-    hostname: natroutter-fi
-    container_name: natroutter-fi
-    restart: always
+  backend:
+    image: natroutter-fi-backend:latest
+    restart: unless-stopped
     ports:
-      - 3000:3000
+      - 8500:8080
+    volumes:
+      - ./backend/data:/pb_data
+      - ./backend/migrations:/pb_migrations
+      - ./backend/public:/pb_public
+      - ./backend/hooks:/pb_hooks
     env_file:
       - .env.production
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8080/api/health || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  frontend:
+    image: natroutter-fi-frontend:latest
+    restart: unless-stopped
+    ports:
+      - 3001:3000
+    env_file:
+      - .env.production
+    depends_on:
+      backend:
+        condition: service_healthy
+        restart: true

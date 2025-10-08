@@ -32,7 +32,7 @@ export interface NavigationData {
 	dropdown?: DropdownData[];
 }
 
-export const navigatorData: NavigationData[] = [
+export const navigatorConfig: NavigationData[] = [
 	{
 		data: {
 			name: "Home",
@@ -136,7 +136,7 @@ export default function Navigator() {
 			{/* Desktop Navigation */}
 			<NavigationMenu className="hidden md:flex" value={open} onValueChange={setOpen} ref={navRef}>
 				<NavigationMenuList className="gap-0">
-					{navigatorData.map((item) =>
+					{navigatorConfig.map((item) =>
 						item.dropdown ? (
 							<NavigationMenuItem key={item.data.name} className="relative border-r-2 border-header first:border-l-2">
 								<NavigationMenuTrigger className="z-20">

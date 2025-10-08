@@ -9,8 +9,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getCompleted, getDropped, getOnHold, getPlanToWatch, getWatching } from "@/lib/mal";
-import { type AnimeEntry, WATCH_STATUS_LABELS, type WatchStatus } from "@/types/animeData";
+import { getCompleted, getDropped, getOnHold, getPlanToWatch, getWatching } from "@/lib/anime-api";
+import { getWatchStatues } from "@/lib/anime-format";
+import type { AnimeEntry, AnimeWatchStatus } from "@/types/animeData";
 
 interface SearchTypes {
 	type: string;
@@ -121,7 +122,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 	// const animeDataArray = [...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1, ...copy1];
 	// animeData = animeDataArray;
 
-	const [selectedList, setSelectedList] = useState<WatchStatus | "all">("all");
+	const [selectedList, setSelectedList] = useState<AnimeWatchStatus | "all">("all");
 	const [searchValue, setSearchValue] = useState("");
 	const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 	const [sortColumn, setSortColumn] = useState<string>(searchTypes[0].type);
@@ -132,7 +133,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 	const isTypingRef = useRef(false);
 	const [fieldSearchType, setFieldSearchType] = useState<string>(searchTypes[0].type);
 
-	const titleMap: Record<WatchStatus | "all", string> = {
+	const titleMap: Record<AnimeWatchStatus | "all", string> = {
 		all: "Anime List",
 		plan_to_watch: "Plan to Watch",
 		watching: "Currently Watching",
@@ -141,7 +142,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 		dropped: "Dropped Anime",
 	};
 
-	const descriptionMap: Record<WatchStatus | "all", string> = {
+	const descriptionMap: Record<AnimeWatchStatus | "all", string> = {
 		all: "All anime from my list across all statuses.",
 		plan_to_watch: "Anime I'm planning to watch in the future.",
 		watching: "Anime I'm currently watching.",
@@ -335,15 +336,15 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 							{/*Control (row-1) / Anime list type*/}
 							<div className="flex flex-col w-full">
 								<p className="text-sm font-medium">List Type</p>
-								<Select defaultValue="all" onValueChange={(e) => setSelectedList(e as WatchStatus)}>
+								<Select defaultValue="all" onValueChange={(e) => setSelectedList(e as AnimeWatchStatus)}>
 									<SelectTrigger className="w-full">
 										<SelectValue placeholder="Select a list" />
 									</SelectTrigger>
 									<SelectContent>
 										<SelectItem value="all">All</SelectItem>
-										{Object.entries(WATCH_STATUS_LABELS).map(([value, label]) => (
-											<SelectItem key={value} value={value}>
-												{label}
+										{getWatchStatues().map((status) => (
+											<SelectItem key={status.replace(" ", "_")} value={status}>
+												{status}
 											</SelectItem>
 										))}
 									</SelectContent>

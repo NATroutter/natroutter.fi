@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "@/styles/markdown.css"; //TODO Fix enabling this breaks the tailwind auto complete system
 import "@/styles/globals.css";
 
+import getConfig from "next/config";
 import { Montserrat } from "next/font/google";
 import Script from "next/script";
 import type { ReactNode } from "react";
@@ -11,6 +12,9 @@ import ServerError from "@/components/ServerError";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { getFooterData } from "@/lib/database";
+import {config} from "@/lib/config";
+
+const { serverRuntimeConfig } = getConfig();
 
 const montserrat = Montserrat({
 	variable: "--font-montserrat",
@@ -88,29 +92,6 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 			<body
 				className={`${montserrat.variable} ${montserrat.className} bg-background bg-cover text-foreground font-normal flex flex-col h-screen m-0 p-0 overflow-hidden overscroll-y-none`}
 			>
-				{/*/!* Debug Breakpoint Indicator *!/*/}
-				{/*<div className="fixed bottom-4 right-4 bg-card border border-card-border rounded-lg p-3 text-xs font-mono z-50 shadow-lg">*/}
-				{/*	<div className="font-bold mb-2 text-primary">Active Breakpoint:</div>*/}
-				{/*	<div className="space-y-1">*/}
-				{/*		<div className="block xxxs:hidden text-red-500">• &lt; xxxs (240px)</div>*/}
-				{/*		<div className="hidden xxxs:block xxs:hidden text-orange-500">• xxxs (240px+)</div>*/}
-				{/*		<div className="hidden xxs:block xs:hidden text-yellow-500">• xxs (320px+)</div>*/}
-				{/*		<div className="hidden xs:block sm:hidden text-lime-500">• xs (448px+)</div>*/}
-				{/*		<div className="hidden sm:block md:hidden text-green-500">• sm (640px+)</div>*/}
-				{/*		<div className="hidden md:block lg:hidden text-cyan-500">• md (768px+)</div>*/}
-				{/*		<div className="hidden lg:block 2lg:hidden text-blue-500">• lg (1024px+)</div>*/}
-				{/*		<div className="hidden 2lg:block xxl:hidden text-indigo-500">• 2lg (1152px+)</div>*/}
-				{/*		<div className="hidden xxl:block 2xl:hidden text-purple-500">• xxl (1472px+)</div>*/}
-				{/*		<div className="hidden 2xl:block 2xxl:hidden text-pink-500">• 2xl (1536px+)</div>*/}
-				{/*		<div className="hidden 2xxl:block 3xl:hidden text-rose-500">• 2xxl (1840px+)</div>*/}
-				{/*		<div className="hidden 3xl:block 4xl:hidden text-violet-500">• 3xl (2000px+)</div>*/}
-				{/*		<div className="hidden 4xl:block 5xl:hidden text-fuchsia-500">• 4xl (2400px+)</div>*/}
-				{/*		<div className="hidden 5xl:block 6xl:hidden text-amber-500">• 5xl (2800px+)</div>*/}
-				{/*		<div className="hidden 6xl:block 7xl:hidden text-emerald-500">• 6xl (3840px+)</div>*/}
-				{/*		<div className="hidden 7xl:block text-teal-500">• 7xl (5120px+)</div>*/}
-				{/*	</div>*/}
-				{/*</div>*/}
-
 				<TooltipProvider>
 					{footerData ? (
 						<>
@@ -134,7 +115,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 					)}
 				</TooltipProvider>
 			</body>
-			<Script async src={process.env.UMAMI_SCRIPT} data-website-id={process.env.UMAMI_TOKEN} />
+			<Script async src={config.UMAMI.SCRIPT} data-website-id={config.UMAMI.TOKEN} />
 		</html>
 	);
 }

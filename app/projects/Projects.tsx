@@ -12,7 +12,7 @@ export default function Projects({ data }: { data: ProjectPage }) {
 				<div className="flex flex-col gap-5 md:my-20">
 					<Card className="w-full h-full py-0">
 						<CardHeader className="flex flex-col items-stretch p-0 sm:flex-row h-24">
-							<div className="flex flex-1 flex-col gap-0.5 px-6 py-2">
+							<div className="flex flex-1 flex-col gap-0.5 px-6 py-2 my-auto">
 								<CardTitle className="text-xl">{data.title}</CardTitle>
 								<CardDescription className="line-clamp-2 text-ellipsis text-md">{data.description}</CardDescription>
 							</div>

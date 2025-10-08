@@ -1,4 +1,4 @@
-Dockerfile
+frontend.Dockerfile
 .dockerignore
 node_modules
 npm-debug.log
@@ -8,3 +8,9 @@ README.md
 !.next/standalone
 .git
 .gitignore
+backend
+LICENCE
+biome.json
+compose.yaml
+ngrok.ps1
+backend.Dockerfile

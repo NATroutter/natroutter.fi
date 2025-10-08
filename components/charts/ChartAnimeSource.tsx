@@ -5,7 +5,8 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import type { ChartSettings } from "@/components/ChartSettingsDialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { type AnimeEntry, formatSource } from "@/types/animeData";
+import { formatAnime } from "@/lib/anime-format";
+import type { AnimeEntry } from "@/types/animeData";
 
 const chartConfig: ChartConfig = {
 	count: {
@@ -37,7 +38,7 @@ export default function ChartAnimeSource({ settings, animeData }: ChartAnimeSour
 				if (entryYear !== year) continue;
 			}
 
-			const formattedSource = formatSource(source);
+			const formattedSource = formatAnime(source);
 			counts[formattedSource] = (counts[formattedSource] || 0) + 1;
 		}
 

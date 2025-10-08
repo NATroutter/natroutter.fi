@@ -6,8 +6,12 @@
 	--color-foreground: hsl(200, 2%, 68%);
 	--color-muted: color-mix(in srgb, var(--color-foreground) 40%, transparent);
 
-	--color-primary: hsl(355, 61%, 46%);
-	--color-secondary: hsl(355, 60%, 39%);
+	--color-primary: hsl(355, 60%, 40%);
+	--color-secondary: hsl(355, 60%, 35%);
+
+	--color-link: hsl(355, 60%, 50%);
+	--color-link-hover: hsl(355, 60%, 40%);
+	/*hsl(355, 60%, 35%)*/
 
 	--color-header: hsl(210, 12%, 13%);
 	--color-header-border: hsl(230, 30%, 8%);
@@ -118,6 +122,12 @@
 	--radius-lg: var(--radius);
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-sm: calc(var(--radius) - 4px);
+}
+
+@layer base {
+	.link {
+		@apply text-link hover:text-link-hover transition-colors duration-200;
+	}
 }
 
 :root {

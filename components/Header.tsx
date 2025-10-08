@@ -27,7 +27,7 @@ export default function Header() {
 			<div className="bg-header shadow-header flex flex-row justify-between px-2 py-0 h-20 z-20">
 				<Link className="flex flex-row" href="https://NATroutter.fi">
 					<Image className="p-2 w-[4.1rem]" src="/images/logo.png" alt="Logo" sizes="100vw" width={0} height={0} />
-					<h1 className="m-auto text-secondary font-bold text-2xl">NATroutter.fi</h1>
+					<h1 className="m-auto text-primary font-bold text-2xl">NATroutter.fi</h1>
 				</Link>
 				<NavigatorMobile />
 			</div>

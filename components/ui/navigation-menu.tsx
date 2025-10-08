@@ -51,21 +51,33 @@ const NavigationMenuTrigger = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Trigger> & {
 		hideChevron?: boolean;
 	}
->(({ className, children, hideChevron, ...props }, ref) => (
-	<NavigationMenuPrimitive.Trigger
-		ref={ref}
-		className={cn(navigationMenuTriggerStyle(), "group", className)}
-		{...props}
-	>
-		{children}{" "}
-		{!hideChevron && (
-			<ChevronDown
-				className="relative top-[1px] ml-1 h-3 w-3 transition duration-300 group-data-[state=open]:rotate-180"
-				aria-hidden="true"
-			/>
-		)}
-	</NavigationMenuPrimitive.Trigger>
-));
+>(({ className, children, hideChevron, ...props }, ref) => {
+	const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+		// On hover-capable devices (mouse), prevent click when using hover to open menu
+		const pointerType = (e.nativeEvent as PointerEvent).pointerType;
+		if (pointerType === "mouse") {
+			e.preventDefault();
+			e.stopPropagation();
+		}
+	};
+
+	return (
+		<NavigationMenuPrimitive.Trigger
+			ref={ref}
+			className={cn(navigationMenuTriggerStyle(), "group", className)}
+			onClick={handleClick}
+			{...props}
+		>
+			{children}{" "}
+			{!hideChevron && (
+				<ChevronDown
+					className="relative top-[1px] ml-1 h-3 w-3 transition duration-300 group-data-[state=open]:rotate-180"
+					aria-hidden="true"
+				/>
+			)}
+		</NavigationMenuPrimitive.Trigger>
+	);
+});
 NavigationMenuTrigger.displayName = NavigationMenuPrimitive.Trigger.displayName;
 
 const NavigationMenuContent = React.forwardRef<
@@ -91,7 +103,11 @@ const NavigationMenuContent = React.forwardRef<
 ));
 NavigationMenuContent.displayName = NavigationMenuPrimitive.Content.displayName;
 
-const NavigationMenuLink = NavigationMenuPrimitive.Link;
+const NavigationMenuLink = React.forwardRef<
+	React.ElementRef<typeof NavigationMenuPrimitive.Link>,
+	React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Link>
+>(({ className, ...props }, ref) => <NavigationMenuPrimitive.Link ref={ref} className={cn(className)} {...props} />);
+NavigationMenuLink.displayName = NavigationMenuPrimitive.Link.displayName;
 
 const NavigationMenuViewport = React.forwardRef<
 	React.ElementRef<typeof NavigationMenuPrimitive.Viewport>,

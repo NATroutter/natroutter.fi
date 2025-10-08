@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-import { type DropdownData, type NavigationData, navigatorData } from "@/components/Navigator";
+import { type DropdownData, type NavigationData, navigatorConfig } from "@/components/Navigator";
 import {
 	NavigationMenu,
 	NavigationMenuContent,
@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 
 export default function NavigatorMobile({ className }: { className?: string }) {
-	const [navData, setNavData] = useState<NavigationData[] | DropdownData[]>(navigatorData);
+	const [navData, setNavData] = useState<NavigationData[] | DropdownData[]>(navigatorConfig);
 	const [navHistory, setNavHistory] = useState<(NavigationData[] | DropdownData[])[]>([]);
 	const [open, setOpen] = useState<string>("");
 	const navRef = useRef<HTMLDivElement>(null);
@@ -24,7 +24,7 @@ export default function NavigatorMobile({ className }: { className?: string }) {
 		const handleClickOutside = (event: MouseEvent | TouchEvent) => {
 			if (navRef.current && !navRef.current.contains(event.target as Node) && open !== "") {
 				setOpen("");
-				setNavData(navigatorData);
+				setNavData(navigatorConfig);
 				setNavHistory([]);
 			}
 		};
@@ -32,7 +32,7 @@ export default function NavigatorMobile({ className }: { className?: string }) {
 		const handleScroll = () => {
 			if (open !== "") {
 				setOpen("");
-				setNavData(navigatorData);
+				setNavData(navigatorConfig);
 				setNavHistory([]);
 			}
 		};
@@ -86,6 +86,7 @@ export default function NavigatorMobile({ className }: { className?: string }) {
 						<NavigationMenuContent className="w-screen -z-10">
 							{navHistory.length > 0 && (
 								<Button
+									variant={"ghost"}
 									onClick={handleMobileNavBack}
 									className="flex items-center gap-1 p-4 pb-0 hover:bg-transparent text-foreground hover:text-muted transition-colors"
 								>

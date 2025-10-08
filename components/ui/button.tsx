@@ -11,6 +11,7 @@ const buttonVariants = cva(
 				default: "bg-btn text-btn-foreground border border-btn-border shadow-sm hover:bg-btn-hover",
 				mal: "text-md bg-[#3557a5] hover:bg-[#253c73] active:bg-[#253c73] rounded-lg text-white transition-colors ease-in-out duration-300 px-4 py-3 m-auto w-full font-mal",
 				ghost: "",
+				glow: "text-foreground bg-primary px-5 py-3 rounded-full shadow-primary-glow font-semibold hover:scale-105 transition-transform duration-300 ease-in-out",
 			},
 			size: {
 				default: "h-9 px-4 py-2",

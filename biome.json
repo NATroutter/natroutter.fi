@@ -26,10 +26,12 @@
 				"noDangerouslySetInnerHtml": "off"
 			},
 			"style": {
-				"noDescendingSpecificity": "off"
+				"noDescendingSpecificity": "off",
+				"useImportType": "error"
 			},
 			"complexity": {
-				"noImportantStyles": "off"
+				"noImportantStyles": "off",
+				"useLiteralKeys": "off"
 			}
 		}
 	},

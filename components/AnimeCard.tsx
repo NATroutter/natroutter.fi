@@ -5,14 +5,9 @@ import { GoDotFill } from "react-icons/go";
 import { AnimeDialog } from "@/components/AnimeDialog";
 import { getAnimeSeason, getAnimeStartYear } from "@/components/charts/ChartAnimeSeasonsBest";
 import { Card, CardContent } from "@/components/ui/card";
+import { formatAnimeAgeRating, formatAnimeStatus, formatAnimeWatchStatus, getStatusStyle } from "@/lib/anime-format";
 import { toCapitalizedCase } from "@/lib/utils";
-import {
-	type AlternativeTitles,
-	type AnimeEntry,
-	type AnimeInfo,
-	formatRatingPG,
-	formatStatus,
-} from "@/types/animeData";
+import type { AnimeAlternativeTitles, AnimeEntry, AnimeInfo } from "@/types/animeData";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 interface AnimeCardProps {
@@ -45,25 +40,12 @@ export function AnimeCard({ data, animation = true }: AnimeCardProps) {
 		yearSeason = `${toCapitalizedCase(season)} ${year}`;
 	}
 
-	const statusColor = (() => {
-		switch (anime.status) {
-			case "currently_airing":
-				return "text-currently-airing";
-			case "finished_airing":
-				return "text-finished-airing";
-			case "not_yet_aired":
-				return "text-not-yet-aired";
-			default:
-				return "text-foreground";
-		}
-	})();
-
 	// Get genres (limit to display)
 	const maxGenres = 2;
 	const displayGenres = anime.genres?.slice(0, maxGenres) || [];
 	const hasMoreGenres = anime.genres && anime.genres.length > maxGenres;
 
-	const titles: AlternativeTitles = anime.alternative_titles;
+	const titles: AnimeAlternativeTitles = anime.alternative_titles;
 
 	return (
 		<AnimeDialog data={data}>
@@ -88,7 +70,7 @@ export function AnimeCard({ data, animation = true }: AnimeCardProps) {
 							{/* Rating badge on image */}
 							{anime.rating && (
 								<div className="absolute bottom-2 left-2 font-semibold z-20 text-xs">
-									| {formatRatingPG(anime.rating)}
+									| {formatAnimeAgeRating(anime.rating)}
 								</div>
 							)}
 						</div>
@@ -100,8 +82,10 @@ export function AnimeCard({ data, animation = true }: AnimeCardProps) {
 							{/*Status*/}
 							<div className="flex flex-col items-start space-y-2 text-xs m-0 text-ellipsis flex-nowrap whitespace-nowrap">
 								{anime.status && (
-									<span className={`${statusColor} px-2 py-1 font-medium rounded border bg-card border-card-border`}>
-										{formatStatus(anime.status)}
+									<span
+										className={`${getStatusStyle(anime.status)} px-2 py-1 font-medium rounded border bg-card border-card-border`}
+									>
+										{formatAnimeStatus(anime.status)}
 									</span>
 								)}
 								{yearSeason ? (

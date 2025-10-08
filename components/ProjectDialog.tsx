@@ -61,7 +61,7 @@ export function ProjectDialog({ data, children }: ProjectDialogProps) {
 												target="_blank"
 												data-umami-event={`[PROJECTS] Link (${data.name} > github)`}
 												data-umami-event-url={data.github}
-												className="text-primary hover:text-secondary font-normal"
+												className="font-normal link"
 											>
 												GitHub
 											</Link>
@@ -76,7 +76,7 @@ export function ProjectDialog({ data, children }: ProjectDialogProps) {
 													target="_blank"
 													data-umami-event={`[PROJECTS] Link (${data.name} > ${link.name})`}
 													data-umami-event-url={link.url}
-													className="text-primary hover:text-secondary font-normal"
+													className="font-normal link"
 												>
 													{link.display_name}
 												</Link>

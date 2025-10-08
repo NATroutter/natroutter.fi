@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import AnimeFaves from "@/app/anime/favourites/AnimeFavs";
 import ServerError from "@/components/ServerError";
-import { getAnimeData } from "@/lib/mal";
+import { getAnimeData } from "@/lib/anime-api";
 
 export const metadata: Metadata = {
 	title: "Anime Favorite",

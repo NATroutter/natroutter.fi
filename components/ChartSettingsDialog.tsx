@@ -58,13 +58,13 @@ export default function ChartSettingsDialog({ animeData, onSettingsSave, setting
 		<Dialog onOpenChange={(open) => open && setTempSettings(settings)}>
 			<DialogTrigger asChild>{children ? children : <Button variant="default">Settings</Button>}</DialogTrigger>
 			<DialogContent className="flex flex-col gap-4 p-0 min-w-[20vw] max-h-[90vh] w-full">
-				<DialogHeader className="flex-col gap-0 border-b border-border p-4">
+				<DialogHeader className="flex-col gap-0 border-b border-border p-4 bg-black/10">
 					<DialogTitle className="py-2">Charts & Graphs Settings</DialogTitle>
 					<DialogDescription>
 						Make changes how to charts and graphs are displayed. Click save when you&apos;re done.
 					</DialogDescription>
 				</DialogHeader>
-				<div className="grid gap-4 p-4">
+				<div className="grid gap-4 p-4 py-10">
 					<div className="grid gap-3">
 						<Label htmlFor="name-1">Viewing Year</Label>
 						<Select
@@ -84,7 +84,7 @@ export default function ChartSettingsDialog({ animeData, onSettingsSave, setting
 						</Select>
 					</div>
 				</div>
-				<DialogFooter className="flex-row items-center justify-end border-t border-border p-4">
+				<DialogFooter className="flex-row items-center justify-end border-t border-border p-4 bg-black/10">
 					<DialogClose asChild>
 						<Button variant="default" onClick={handleSave}>
 							Save changes
