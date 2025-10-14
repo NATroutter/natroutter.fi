@@ -7,7 +7,7 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "biome check --write",
-		"docker-build": "docker build --no-cache -t ghcr.io/natroutter/natroutter-fi-frontend:local .",
+		"docker-build": "docker build --no-cache -t natroutter-fi-frontend:local .",
 		"docker-start": "docker compose up -d"
 	},
 	"dependencies": {

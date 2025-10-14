@@ -99,6 +99,7 @@ export async function getAnimeData(): Promise<AnimeEntry[] | undefined> {
 	let nextURL: string | undefined = getEndpoint("anime_data");
 
 	const client_id = config.MAL_CLIENT_ID;
+	if (!client_id) return undefined;
 
 	while (nextURL) {
 		const response = await fetch(nextURL, {
