@@ -9,14 +9,6 @@ env:
   REGISTRY: ghcr.io
   IMAGE: natroutter/natroutter-fi-frontend:latest
 
-  #Project envs for building
-  MAL_CLIENT_ID: ""
-  UMAMI_SCRIPT: ""
-  UMAMI_TOKEN: ""
-  PB_SERVER: ""
-  PB_PUBLIC_ADDRESS: ""
-  PB_ENCRYPTION: ""
-
 jobs:
   publish:
     name: publish image

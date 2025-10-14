@@ -3,14 +3,15 @@ services:
     image: ghcr.io/natroutter/pocketbase:latest
     restart: unless-stopped
     ports:
-      - 8500:8080
+      - 127.0.0.1:8500:8080 #For production
+      #- 8500:8080 # For testing
     volumes:
-      - ./backend/data:/pb_data
-      - ./backend/migrations:/pb_migrations
-      - ./backend/public:/pb_public
-      - ./backend/hooks:/pb_hooks
+      - ./data:/pb_data
+      - ./migrations:/pb_migrations
+      - ./public:/pb_public
+      - ./hooks:/pb_hooks
     env_file:
-      - .env.production
+      - .env
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:8080/api/health || exit 1
       interval: 5s
@@ -18,12 +19,13 @@ services:
       retries: 5
   frontend:
     image: ghcr.io/natroutter/natroutter-fi-frontend:latest
-#     image: natroutter-fi-frontend:local #Local testing image
+    #image: natroutter-fi-frontend:local #For testing
     restart: unless-stopped
     ports:
-      - 3001:3000
+      - 127.0.0.1:8510:3000 #For production
+      #- 8510:3000 #For testing
     env_file:
-      - .env.production
+      - .env
     depends_on:
       backend:
         condition: service_healthy
