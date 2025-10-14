@@ -1,6 +1,6 @@
 "use client";
 
-import { type CSSProperties, useMemo } from "react";
+import { useMemo } from "react";
 import { Pie, PieChart } from "recharts";
 import type { ChartSettings } from "@/components/ChartSettingsDialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -109,12 +109,10 @@ export default function ChartAnimeSeason({ settings, animeData }: ChartSeasonDis
 									formatter={(value, name, item) => (
 										<>
 											<div
-												className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
-												style={
-													{
-														"--color-bg": `var(--color-${name})`,
-													} as CSSProperties
-												}
+												className="h-2.5 w-2.5 shrink-0 rounded-[2px]"
+												style={{
+													backgroundColor: item.payload.fill,
+												}}
 											/>
 											{chartConfig[name as keyof typeof chartConfig]?.label || name}
 											<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">

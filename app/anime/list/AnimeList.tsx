@@ -9,7 +9,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getCompleted, getDropped, getOnHold, getPlanToWatch, getWatching } from "@/lib/anime-api";
 import { getWatchStatues } from "@/lib/anime-format";
 import type { AnimeEntry, AnimeWatchStatus } from "@/types/animeData";
 
@@ -127,7 +126,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 	const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 	const [sortColumn, setSortColumn] = useState<string>(searchTypes[0].type);
 	const [pageIndex, setPageIndex] = useState(0);
-	const [pageSize, setPageSize] = useState(10);
+	const [pageSize, setPageSize] = useState(30);
 	const [isInitialLoad, setIsInitialLoad] = useState(true);
 	const [pageInputValue, setPageInputValue] = useState("1");
 	const isTypingRef = useRef(false);
@@ -174,19 +173,19 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 			// Only filter for the selected list type, not all types
 			switch (selectedList) {
 				case "plan_to_watch":
-					data = getPlanToWatch(animeData);
+					data = animeData.filter((anime) => anime.list_status.status === "plan_to_watch");
 					break;
 				case "watching":
-					data = getWatching(animeData);
+					data = animeData.filter((anime) => anime.list_status.status === "watching");
 					break;
 				case "completed":
-					data = getCompleted(animeData);
+					data = animeData.filter((anime) => anime.list_status.status === "plan_to_watch");
 					break;
 				case "on_hold":
-					data = getOnHold(animeData);
+					data = animeData.filter((anime) => anime.list_status.status === "on_hold");
 					break;
 				case "dropped":
-					data = getDropped(animeData);
+					data = animeData.filter((anime) => anime.list_status.status === "dropped");
 					break;
 				default:
 					data = animeData;
@@ -322,7 +321,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 
 	return (
 		<div className="flex flex-col justify-center mx-auto w-full p-6">
-			<div className="gap-5 md:my-20 w-full max-w-[90vw] 2xl:w-640 flex flex-col self-center place-items-center">
+			<div className="gap-5 md:my-14 w-full max-w-[90vw] 2xl:w-640 flex flex-col self-center place-items-center">
 				<Card className="w-full h-full">
 					<CardHeader className="flex flex-col items-stretch p-0 sm:flex-row">
 						<div className="flex flex-1 flex-col justify-center gap-1 px-6 pb-3 pt-4">
@@ -460,8 +459,8 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 								</div>
 
 								{/*Control (row-3) / Pagination / Buttons */}
-								<div className="flex justify-center gap-1 pt-3 sm:pt-0">
-									<div className="flex flex-row items-center gap-2">
+								<div className="flex flex-col xs:flex-row justify-center gap-1 pt-3 sm:pt-0">
+									<div className="flex flex-row items-center gap-2 justify-center xs:justify-start">
 										<div className="flex">
 											{/*Control (row-3) / Pagination / Buttons / First Page */}
 											<Button
@@ -488,8 +487,8 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 											</Button>
 										</div>
 
-										{/*Control (row-3) / Pagination / Current page field */}
-										<div className="flex">
+										{/*Control (row-3) / Pagination / Current page field (for big layouts)*/}
+										<div className="hidden xs:flex">
 											<Input
 												className="text-right w-14 pr-1 my-auto bg-transparent focus:bg-card-inner-focus"
 												value={pageInputValue}
@@ -531,9 +530,25 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 								</div>
 							</div>
 
-							{/* Display search results */}
-							<div className="flex-1 text-sm font-semibold my-auto text-muted ">
-								{processedData.length} total entries
+							<div className="flex">
+								{/* Display search results */}
+								<div className="flex-1 text-sm font-semibold my-auto text-muted ">
+									{processedData.length} total entries
+								</div>
+
+								{/*Control (row-3) / Pagination / Current page field (for small layouts)*/}
+								<div className="flex xs:hidden">
+									<Input
+										className="text-right w-14 pr-1 my-auto bg-transparent focus:bg-card-inner-focus"
+										value={pageInputValue}
+										useRing={false}
+										onChange={(e) => {
+											isTypingRef.current = true;
+											setPageInputValue(e.target.value);
+										}}
+									/>
+									<span className="my-auto">of {totalPages}</span>
+								</div>
 							</div>
 						</div>
 

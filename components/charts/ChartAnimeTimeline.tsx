@@ -1,6 +1,3 @@
-import Link from "next/link";
-import { FaTv } from "react-icons/fa";
-import { AnimeDialog } from "@/components/AnimeDialog";
 import type { ChartSettings } from "@/components/ChartSettingsDialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -88,19 +85,19 @@ export default function ChartAnimeTimeline({ settings, animeHistory }: ChartAnim
 									<TimelineIndicator className="bg-neutral-500 translate-y-2 text-primary-muted flex size-3 items-center justify-center border-none -left-7"></TimelineIndicator>
 								</TimelineHeader>
 								<TimelineContent>
-									{item.updates.map((edit) => (
-										<p key={edit.id} className="text-base">
-											<FaTv className="inline-block align-middle mr-1" size={19} />
-											{edit.anime ? (
-												<AnimeDialog data={edit.anime}>
-													<span className="link align-middle">{edit.title}</span>
-												</AnimeDialog>
-											) : (
-												<span className="link align-middle">{edit.title}</span>
-											)}
-											<span> • {edit.episodes} episodes</span>
-										</p>
-									))}
+									{/*{item.updates.map((edit) => (*/}
+									{/*	<p key={edit.id} className="text-base">*/}
+									{/*		<FaTv className="inline-block align-middle mr-1" size={19} />*/}
+									{/*		{edit.anime ? (*/}
+									{/*			<AnimeDialog data={edit.anime}>*/}
+									{/*				<span className="link align-middle">{edit.title}</span>*/}
+									{/*			</AnimeDialog>*/}
+									{/*		) : (*/}
+									{/*			<span className="link align-middle">{edit.title}</span>*/}
+									{/*		)}*/}
+									{/*		<span> • {edit.episodes} episodes</span>*/}
+									{/*	</p>*/}
+									{/*))}*/}
 								</TimelineContent>
 							</TimelineItem>
 						),

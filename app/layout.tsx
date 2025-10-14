@@ -1,20 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import "@/styles/markdown.css"; //TODO Fix enabling this breaks the tailwind auto complete system
+import "@/styles/markdown.css";
 import "@/styles/globals.css";
 
-import getConfig from "next/config";
 import { Montserrat } from "next/font/google";
 import Script from "next/script";
 import type { ReactNode } from "react";
+import { ContentError } from "@/components/error";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import ServerError from "@/components/ServerError";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { config } from "@/lib/config";
 import { getFooterData } from "@/lib/database";
-import {config} from "@/lib/config";
-
-const { serverRuntimeConfig } = getConfig();
 
 const montserrat = Montserrat({
 	variable: "--font-montserrat",
@@ -105,14 +102,13 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 									<Footer data={footerData} />
 								</div>
 							</main>
-							<Toaster />
 						</>
 					) : (
 						<main className="flex flex-col grow justify-center m-auto text-center">
-							<ServerError type="content" location="footer" />
-							<Toaster />
+							<ContentError location="Footer" />
 						</main>
 					)}
+					<Toaster />
 				</TooltipProvider>
 			</body>
 			<Script async src={config.UMAMI.SCRIPT} data-website-id={config.UMAMI.TOKEN} />

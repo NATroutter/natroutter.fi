@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Privacy from "@/app/privacy/Privacy";
-import ServerError from "@/components/ServerError";
+import { ContentError } from "@/components/error";
 import { getPrivacyPage } from "@/lib/database";
 
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export const revalidate = 60;
 
 export default async function PrivacyPage() {
 	const data = await getPrivacyPage();
-	if (!data) return <ServerError type="content" />;
+	if (!data) return <ContentError location="Privacy" />;
 
 	return <Privacy data={data} />;
 }

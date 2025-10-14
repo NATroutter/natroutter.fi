@@ -5,7 +5,7 @@ import { GoDotFill } from "react-icons/go";
 import { AnimeDialog } from "@/components/AnimeDialog";
 import { getAnimeSeason, getAnimeStartYear } from "@/components/charts/ChartAnimeSeasonsBest";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatAnimeAgeRating, formatAnimeStatus, formatAnimeWatchStatus, getStatusStyle } from "@/lib/anime-format";
+import { formatAnimeAgeRating, formatAnimeStatus, getStatusStyle } from "@/lib/anime-format";
 import { toCapitalizedCase } from "@/lib/utils";
 import type { AnimeAlternativeTitles, AnimeEntry, AnimeInfo } from "@/types/animeData";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
@@ -19,10 +19,10 @@ export function AnimeCard({ data, animation = true }: AnimeCardProps) {
 	if (!data || !data.node || !data.list_status) {
 		return (
 			<Card
-				className={`select-none w-full h-full min-h-[200px] max-w-[400px] overflow-hidden cursor-pointer bg-transparent shadow-xl border border-card-border ${animation && "hover:scale-103 transition-transform duration-300 ease-in-out"}`}
+				className={`select-none w-full h-full min-h-52 max-h-52 overflow-hidden cursor-pointer bg-card-inner shadow-xl border border-card-inner-border ${animation && "hover:scale-103 transition-transform duration-300 ease-in-out"}`}
 			>
 				<CardContent className="p-2 flex gap-4 w-full h-full">
-					<div className="h-[200px] w-full flex justify-center">
+					<div className="w-full flex justify-center">
 						<p className="text-center my-auto text-muted">No anime data</p>
 					</div>
 				</CardContent>
@@ -49,17 +49,16 @@ export function AnimeCard({ data, animation = true }: AnimeCardProps) {
 
 	return (
 		<AnimeDialog data={data}>
-			{/*   w-48 h-24 min-w-48 min-h-24   */}
 			<Card
-				className={`select-none w-full h-full max-h-52 overflow-hidden cursor-pointer bg-card-inner shadow-xl border border-card-inner-border ${animation && "hover:scale-103 transition-transform duration-300 ease-in-out"}`}
+				className={`select-none w-full h-full min-h-52 overflow-hidden cursor-pointer bg-card-inner shadow-xl border border-card-inner-border ${animation && "hover:scale-103 transition-transform duration-300 ease-in-out"}`}
 			>
-				<CardContent className="p-2 flex gap-4 w-full h-full">
+				<CardContent className="p-2 flex flex-col xs:flex-row gap-4 w-full h-full">
 					{/* Left side - Anime Poster */}
-					<div className="flex-1 overflow-hidden rounded-xl max-w-1/3 xs:min-w-32 xs:max-w-32">
-						<div className="relative h-full w-full">
-							<div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent z-10 pointer-events-none" />
+					<div className="flex flex-1 overflow-hidden w-full xs:max-w-32 justify-center xs:justify-start">
+						<div className="relative min-w-44 x max-w-44 xs:min-w-32 x xs:max-w-32">
+							<div className="absolute inset-0 rounded-xl bg-gradient-to-t from-black/90 to-transparent z-10 pointer-events-none" />
 							<Image
-								className="h-full w-full m-auto pointer-events-none"
+								className="h-full w-full m-auto rounded-xl pointer-events-none"
 								src={anime.main_picture.medium || anime.main_picture.large}
 								alt={anime.title}
 								sizes="100vw"
@@ -77,8 +76,8 @@ export function AnimeCard({ data, animation = true }: AnimeCardProps) {
 					</div>
 
 					{/* Right side - Info */}
-					<div className="flex-1 pr-4 flex flex-col justify-between">
-						<div className="space-y-2 flex flex-col justify-between h-full">
+					<div className="flex-1 xs:pr-4 flex flex-col justify-between">
+						<div className="space-y-0 xs:space-y-2 flex flex-col justify-between h-full">
 							{/*Status*/}
 							<div className="flex flex-col items-start space-y-2 text-xs m-0 text-ellipsis flex-nowrap whitespace-nowrap">
 								{anime.status && (
@@ -115,7 +114,7 @@ export function AnimeCard({ data, animation = true }: AnimeCardProps) {
 
 							{/*Title*/}
 							<div className="flex flex-col m-0">
-								<h3 className="font-semibold text-base line-clamp-2 leading-tight m-0 my-3 overflow-hidden break-words">
+								<h3 className="font-semibold text-base line-clamp-2 leading-tight m-0 xs:my-3 overflow-hidden break-words">
 									{titles.en.length > 0 ? titles.en : anime.title}
 								</h3>
 							</div>

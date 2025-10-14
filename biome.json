@@ -20,7 +20,8 @@
 				"useExhaustiveDependencies": "off"
 			},
 			"suspicious": {
-				"noUnknownAtRules": "off"
+				"noUnknownAtRules": "off",
+				"noShadowRestrictedNames": "off"
 			},
 			"security": {
 				"noDangerouslySetInnerHtml": "off"

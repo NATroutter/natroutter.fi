@@ -1,6 +1,6 @@
 "use client";
 
-import { type CSSProperties, useMemo } from "react";
+import { useMemo } from "react";
 import { Pie, PieChart } from "recharts";
 import type { ChartSettings } from "@/components/ChartSettingsDialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -46,7 +46,7 @@ interface ChartAnimeRatingsProps {
 	animeData: AnimeEntry[];
 }
 
-export default function ChartAnimeRatings({ settings, animeData }: ChartAnimeRatingsProps) {
+export default function ChartAnimeAgeRatings({ settings, animeData }: ChartAnimeRatingsProps) {
 	const chartData = useMemo(() => {
 		const isAllYears = settings.viewingYear === "all";
 		const year = Number(settings.viewingYear);
@@ -101,12 +101,10 @@ export default function ChartAnimeRatings({ settings, animeData }: ChartAnimeRat
 									formatter={(value, name, item) => (
 										<>
 											<div
-												className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
-												style={
-													{
-														"--color-bg": `var(--color-${name})`,
-													} as CSSProperties
-												}
+												className="h-2.5 w-2.5 shrink-0 rounded-[2px]"
+												style={{
+													backgroundColor: item.payload.fill,
+												}}
 											/>
 											{chartConfig[name as keyof typeof chartConfig]?.label || name}
 											<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">

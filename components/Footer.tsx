@@ -16,7 +16,7 @@ export default function Footer({ data }: { data: FooterData }) {
 							{data.expand.contact.map((item) => (
 								<li key={item.id} className="flex">
 									<Link
-										className="flex my-auto text-muted hover:text-link-hover group"
+										className="flex my-auto link-muted group"
 										href={item.url}
 										target="_blank"
 										data-umami-event={`[FOOTER] Link (Contact > ${item.display_name})`}
@@ -24,7 +24,7 @@ export default function Footer({ data }: { data: FooterData }) {
 									>
 										<div>
 											<DynamicIcon
-												className="p-1.5 text-muted group-hover:text-link-hover"
+												className="p-1.5 text-muted group-hover:text-link-hover transition-colors duration-200"
 												iconName={item.icon}
 												size={30}
 											/>
@@ -40,7 +40,7 @@ export default function Footer({ data }: { data: FooterData }) {
 							{data.expand.quick.map((item) => (
 								<li key={item.id} className="flex">
 									<Link
-										className="flex my-auto text-muted hover:text-link-hover group"
+										className="flex my-auto link-muted group"
 										href={item.url}
 										target={item.url.startsWith("http://") || item.url.startsWith("https://") ? "_blank" : "_self"}
 										data-umami-event={`[FOOTER] Open (Quick > ${item.name})`}
@@ -48,7 +48,7 @@ export default function Footer({ data }: { data: FooterData }) {
 									>
 										<div>
 											<DynamicIcon
-												className="p-1.5 text-muted group-hover:text-link-hover"
+												className="p-1.5 text-muted group-hover:text-link-hover transition-colors duration-200"
 												iconName={item.icon}
 												size={30}
 											/>
@@ -65,7 +65,7 @@ export default function Footer({ data }: { data: FooterData }) {
 							{data.expand.social.map((item) => (
 								<li key={item.id} className="flex">
 									<Link
-										className="flex my-auto hover:text-link-hover group"
+										className="flex my-auto link-muted group"
 										href={item.url}
 										target="_blank"
 										data-umami-event={`[FOOTER] Link (About > ${item.display_name})`}
@@ -73,7 +73,7 @@ export default function Footer({ data }: { data: FooterData }) {
 									>
 										<div>
 											<DynamicIcon
-												className="p-1.5 text-muted group-hover:text-link-hover"
+												className="p-1.5 text-muted group-hover:text-link-hover transition-colors duration-200"
 												iconName={item.icon}
 												size={30}
 											/>
@@ -86,7 +86,7 @@ export default function Footer({ data }: { data: FooterData }) {
 				</div>
 				<div className="flex flex-col justify-center text-center p-5">
 					<Link
-						className="text-sm text-muted hover:text-foreground w-fit text-center m-auto"
+						className="text-sm text-muted hover:text-foreground transition-colors duration-200 w-fit text-center m-auto"
 						href="/privacy"
 						data-umami-event={`[FOOTER] Open (Privacy)`}
 					>

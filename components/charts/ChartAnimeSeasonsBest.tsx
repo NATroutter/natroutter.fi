@@ -109,11 +109,11 @@ export default function ChartAnimeSeasonsBest({ settings, animeData }: ChartAnim
 		<Card className="py-0 w-full shadow-xl">
 			<CardHeader className="flex flex-col items-stretch p-0! sm:flex-row">
 				<div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
-					<CardTitle>Top Rated Anime by Season</CardTitle>
+					<CardTitle>Top-Scoring Anime I Watched Each Season</CardTitle>
 					<CardDescription>
 						{settings.viewingYear === "all"
-							? "Highest rated anime from each season across all years."
-							: `Highest rated anime from each season in ${settings.viewingYear}.`}
+							? "My highest-rated show from each season across all years."
+							: `My highest-rated show from each season in ${settings.viewingYear}.`}
 					</CardDescription>
 				</div>
 			</CardHeader>
@@ -125,6 +125,7 @@ export default function ChartAnimeSeasonsBest({ settings, animeData }: ChartAnim
 								<h1 className="w-full text-xl font-semibold text-center">{item?.season}</h1>
 							</div>
 							<div className="flex pb-3 flex-1 justify-center">
+								{/*<AnimeCard key={index} data={item?.anime} />*/}
 								<AnimeCard key={index} data={item?.anime} />
 							</div>
 						</div>

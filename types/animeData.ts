@@ -88,11 +88,69 @@ export interface AnimeHistoryEntry {
 	id: number;
 	title: string;
 	episodes: number;
-	anime: AnimeEntry | undefined;
 }
 
 export interface AnimeHistoryUpdate {
 	id: string;
 	date: string;
 	updates: AnimeHistoryEntry[];
+}
+
+export interface SavedAnimeHistory {
+	data: AnimeHistoryUpdate[];
+}
+
+export interface AnimeFavoritesData {
+	data: {
+		anime: AnimeFaveAnime[];
+		characters: AnimeFaveCharacters[];
+	};
+}
+
+export interface AnimeHistoryResponse {
+	data: {
+		entry: {
+			mal_id: number;
+			type: string;
+			name: string;
+			url: string;
+		};
+		increment: number;
+		date: string;
+	}[];
+}
+
+export interface AnimeFaveAnime {
+	mal_id: number;
+	url: string;
+	images: {
+		jpg: {
+			image_url: string;
+			small_image_url: string;
+			large_image_url: string;
+		};
+		webp: {
+			image_url: string;
+			small_image_url: string;
+			large_image_url: string;
+		};
+	};
+	title: string;
+	type: string;
+	start_year: number;
+}
+
+export interface AnimeFaveCharacters {
+	mal_id: number;
+	url: string;
+	images: {
+		jpg: {
+			image_url: string;
+		};
+		webp: {
+			image_url: string;
+			small_image_url: string;
+		};
+	};
+	name: string;
 }

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Links from "@/app/links/Links";
-import ServerError from "@/components/ServerError";
+import { ContentError } from "@/components/error";
 import { getLinkPage } from "@/lib/database";
 
 export const metadata: Metadata = {
@@ -18,6 +18,6 @@ export const revalidate = 60;
 
 export default async function LinksPage() {
 	const data = await getLinkPage();
-	if (!data) return <ServerError type="content" />;
+	if (!data) return <ContentError location="Links" />;
 	return <Links data={data} />;
 }

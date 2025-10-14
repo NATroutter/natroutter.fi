@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import AnimeList from "@/app/anime/list/AnimeList";
-import ServerError from "@/components/ServerError";
+import { ContentError } from "@/components/error";
 import { getAnimeData } from "@/lib/anime-api";
 
 export const metadata: Metadata = {
@@ -18,6 +18,6 @@ export const revalidate = 120;
 
 export default async function AnimeListPage() {
 	const data = await getAnimeData();
-	if (!data) return <ServerError type="content" />;
+	if (!data) return <ContentError location="AnimeList" />;
 	return <AnimeList animeData={data} />;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { type CSSProperties, useMemo } from "react";
+import { useMemo } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import type { ChartSettings } from "@/components/ChartSettingsDialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -97,12 +97,10 @@ export default function ChartAnimeUpdatesByMonth({ settings, animeData }: ChartA
 									formatter={(value, _name, item) => (
 										<>
 											<div
-												className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
-												style={
-													{
-														"--color-bg": chartConfig.count.color,
-													} as CSSProperties
-												}
+												className="h-2.5 w-2.5 shrink-0 rounded-[2px]"
+												style={{
+													backgroundColor: item.payload.fill,
+												}}
 											/>
 											{item.payload.fullMonth}
 											<div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">

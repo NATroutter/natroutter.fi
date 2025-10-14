@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import About from "@/app/about/About";
-import ServerError from "@/components/ServerError";
+import { ContentError } from "@/components/error";
 import { getAboutPage } from "@/lib/database";
 
 export const metadata: Metadata = {
@@ -18,6 +18,6 @@ export const revalidate = 60;
 
 export default async function AboutPage() {
 	const data = await getAboutPage();
-	if (!data) return <ServerError type="content" />;
+	if (!data) return <ContentError location="About" />;
 	return <About data={data} />;
 }

@@ -101,7 +101,7 @@ export function ProjectDialog({ data, children }: ProjectDialogProps) {
 						</div>
 
 						{/*Image For mobile layout*/}
-						<div className="flex lg:hidden my-0 m-auto w-[20rem] py-3 pl-0">
+						<div className="flex lg:hidden my-0 m-auto w-full max-w-[20rem] py-3 pl-0">
 							{data.image ? (
 								<Image
 									className="w-full rounded-lg"

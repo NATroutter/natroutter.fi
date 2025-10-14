@@ -53,7 +53,7 @@ export default function Home({ data }: { data: HomePage }) {
 								))}
 							</div>
 
-							<div>
+							<div className="">
 								<Link href="/projects">
 									<Button data-umami-event={`[HOME] (Explore My Work)`} variant="glow">
 										Explore My Work

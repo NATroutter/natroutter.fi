@@ -1,0 +1,29 @@
+name: publish
+
+on:
+  push:
+    branches: [ "master" ]
+
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: ghcr.io
+  IMAGE: ${{ github.actor }}/natroutter-fi-frontend:latest
+  PB_VERSION: 0.29.3
+
+jobs:
+  publish:
+    name: publish image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login
+        run: |
+          echo ${{ secrets.PAT }} | docker login ghcr.io -u natroutter --password-stdin
+      - name: Build
+        run: |
+          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE }} \
+            --label "org.opencontainers.image.source=https://github.com/${{ github.repository }}" \
+            --label "org.opencontainers.image.description=NATroutter.fi Frontend" \
+            --label "org.opencontainers.image.licenses=MIT" \
+            .
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE }}

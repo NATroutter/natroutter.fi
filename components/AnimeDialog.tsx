@@ -238,7 +238,7 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 						</div>
 
 						{/*Image For mobile layout*/}
-						<div className="flex lg:hidden my-0 m-auto w-[20rem] py-3 pl-0">
+						<div className="flex lg:hidden my-0 m-auto w-full max-w-[20rem] py-3 pl-0">
 							{anime.main_picture.large || anime.main_picture.medium ? (
 								<Image
 									className="w-full rounded-lg"

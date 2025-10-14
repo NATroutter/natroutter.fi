@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import AnimeStats from "@/app/anime/AnimeStats";
-import ServerError from "@/components/ServerError";
-import { getAnimeData, getHistory } from "@/lib/anime-api";
+import { ContentError } from "@/components/error";
+import { getAnimeData } from "@/lib/anime-api";
 
 export const metadata: Metadata = {
 	title: "Anime Statistics",
@@ -16,10 +16,10 @@ export const revalidate = 120;
 
 export default async function AnimePage() {
 	const data = await getAnimeData();
-	if (!data) return <ServerError type="content" reason="Failed to fetch anime data!" />;
+	if (!data) return <ContentError location="Anime" />;
 
-	const history = await getHistory(data);
-	if (!history) return <ServerError type="content" reason="Failed to fetch anime history!" />;
+	// const history = await getCurrentHistory();
+	// if (!history) return <ServerError type="content" reason="Failed to fetch anime history!" />;
 
-	return <AnimeStats animeData={data} animeHistory={history} />;
+	return <AnimeStats animeData={data} />;
 }

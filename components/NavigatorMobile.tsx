@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { type DropdownData, type NavigationData, navigatorConfig } from "@/components/Navigator";
@@ -95,39 +96,57 @@ export default function NavigatorMobile({ className }: { className?: string }) {
 								</Button>
 							)}
 							<ul className="grid p-4 grid-cols-1">
-								{navData.map((entry) => (
-									<li
-										key={"name" in entry ? entry.name : entry.data.name}
-										className="hover:translate-x-2 transition-transform duration-300 ease-in-out select-none drag"
-									>
-										<NavigationMenuLink
-											href={"url" in entry ? entry.url : entry.data.url}
-											onClick={(e) => {
-												if ("dropdown" in entry && entry.dropdown) {
-													e.preventDefault();
-													handleMobileNavClick(entry);
-												}
-											}}
-											className="flex flex-row gap-3 p-3 select-none rounded-md leading-none no-underline outline-hidden"
+								{navData.map((entry) => {
+									const hasDropdown = "dropdown" in entry && entry.dropdown;
+									const href = "url" in entry ? entry.url : entry.data.url;
+									const name = "name" in entry ? entry.name : entry.data.name;
+									const Icon = "icon" in entry ? entry.icon : entry.data.icon;
+									const description = "description" in entry ? entry.description : undefined;
+
+									return (
+										<li
+											key={name}
+											className="hover:translate-x-2 transition-transform duration-300 ease-in-out select-none drag"
 										>
-											<div className="flex">
-												{"icon" in entry ? (
-													<entry.icon className="flex text-primary" size={24} />
+											<NavigationMenuLink asChild>
+												{hasDropdown ? (
+													<button
+														type="button"
+														data-umami-event={`[NAV(mobile)] Open (${name})`}
+														onClick={() => handleMobileNavClick(entry)}
+														className="flex flex-row gap-3 p-3 select-none rounded-md leading-none no-underline outline-hidden w-full text-left"
+													>
+														<div className="flex">
+															<Icon className="flex text-primary" size={24} />
+														</div>
+														<div className="flex flex-col gap-2 justify-between">
+															<div className="text-base font-medium leading-none">{name}</div>
+															{description && (
+																<p className="line-clamp-2 text-xs leading-snug text-muted">{description}</p>
+															)}
+														</div>
+													</button>
 												) : (
-													<entry.data.icon className="flex text-primary" size={24} />
+													<Link
+														href={href}
+														data-umami-event={`[NAV(mobile)] Open (${name})`}
+														className="flex flex-row gap-3 p-3 select-none rounded-md leading-none no-underline outline-hidden"
+													>
+														<div className="flex">
+															<Icon className="flex text-primary" size={24} />
+														</div>
+														<div className="flex flex-col gap-2 justify-between">
+															<div className="text-base font-medium leading-none">{name}</div>
+															{description && (
+																<p className="line-clamp-2 text-xs leading-snug text-muted">{description}</p>
+															)}
+														</div>
+													</Link>
 												)}
-											</div>
-											<div className="flex flex-col gap-2 justify-between">
-												<div className="text-base font-medium leading-none">
-													{"name" in entry ? entry.name : entry.data.name}
-												</div>
-												{"description" in entry && (
-													<p className="line-clamp-2 text-xs leading-snug text-muted">{entry.description}</p>
-												)}
-											</div>
-										</NavigationMenuLink>
-									</li>
-								))}
+											</NavigationMenuLink>
+										</li>
+									);
+								})}
 							</ul>
 						</NavigationMenuContent>
 					</NavigationMenuItem>

@@ -9,7 +9,7 @@ export default function Projects({ data }: { data: ProjectPage }) {
 	return (
 		<div className="flex flex-col justify-center mx-auto w-full p-6">
 			<div className="w-full max-w-[90vw] 2xl:w-640 flex flex-col self-center place-items-center">
-				<div className="flex flex-col gap-5 md:my-20">
+				<div className="flex flex-col gap-5 md:my-14">
 					<Card className="w-full h-full py-0">
 						<CardHeader className="flex flex-col items-stretch p-0 sm:flex-row h-24">
 							<div className="flex flex-1 flex-col gap-0.5 px-6 py-2 my-auto">

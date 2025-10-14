@@ -1,28 +1,20 @@
-// import getConfig from "next/config";
+"use server";
+
 import PocketBase from "pocketbase";
+import { config } from "@/lib/config";
 import logger from "@/lib/logger";
 import type { AboutPage, FooterData, HomePage, LinkPage, PrivacyPage, ProjectPage } from "@/types/interfaces";
-import {config} from "@/lib/config";
 
-// const { serverRuntimeConfig } = getConfig();
-
-//***************************************
-//*            DATABASE UTILS           *
-//***************************************
-export function getFileURL(collection: string, id: string, file: string): string {
+function getFileURL(collection: string, id: string, file: string): string {
 	return `${config.POCKETBASE.PUBLIC}/api/files/${collection}/${id}/${file}`;
 }
-
-//***************************************
-//*          DATABASE GETTERS           *
-//***************************************
-export function getPocketBase(): PocketBase {
+function getPocketBase(): PocketBase {
 	return new PocketBase(config.POCKETBASE.SERVER);
 }
 
 export async function getHomePage(): Promise<HomePage | undefined> {
 	try {
-		const pb = await getPocketBase();
+		const pb = getPocketBase();
 		const data = await pb.collection("page_home").getFirstListItem<HomePage>("", {
 			expand: "links",
 		});
@@ -39,7 +31,7 @@ export async function getHomePage(): Promise<HomePage | undefined> {
 
 export async function getAboutPage(): Promise<AboutPage | undefined> {
 	try {
-		const pb = await getPocketBase();
+		const pb = getPocketBase();
 		const data = await pb.collection("page_about").getFirstListItem<AboutPage>("");
 		if (!data) return undefined;
 		data.image = getFileURL("page_about", data.id, data.image);
@@ -51,7 +43,7 @@ export async function getAboutPage(): Promise<AboutPage | undefined> {
 
 export async function getLinkPage(): Promise<LinkPage[] | undefined> {
 	try {
-		const pb = await getPocketBase();
+		const pb = getPocketBase();
 		const data = await pb.collection("page_links").getFullList<LinkPage>({
 			expand: "links",
 			sort: "-priority",
@@ -71,7 +63,7 @@ export async function getLinkPage(): Promise<LinkPage[] | undefined> {
 
 export async function getProjectsPage(): Promise<ProjectPage | undefined> {
 	try {
-		const pb = await getPocketBase();
+		const pb = getPocketBase();
 		const data = await pb.collection("page_projects").getFirstListItem<ProjectPage>("", {
 			expand: "projects.links",
 		});
@@ -95,7 +87,7 @@ export async function getProjectsPage(): Promise<ProjectPage | undefined> {
 
 export async function getPrivacyPage(): Promise<PrivacyPage | undefined> {
 	try {
-		const pb = await getPocketBase();
+		const pb = getPocketBase();
 		return await pb.collection("page_privacy").getFirstListItem<PrivacyPage>("");
 	} catch (err) {
 		return handlePocketBaseError(err, "Failed to fetch data for PrivacyPage");
@@ -104,7 +96,7 @@ export async function getPrivacyPage(): Promise<PrivacyPage | undefined> {
 
 export async function getFooterData(): Promise<FooterData | undefined> {
 	try {
-		const pb = await getPocketBase();
+		const pb = getPocketBase();
 		const data = await pb.collection("footer").getFirstListItem<FooterData>("", {
 			expand: "contact,quick,social",
 		});
@@ -137,7 +129,7 @@ interface PocketBaseError {
 function isPocketBaseError(err: unknown): err is { response: PocketBaseError } {
 	return typeof err === "object" && err !== null && "response" in err;
 }
-function handlePocketBaseError(err: unknown, message: string) {
+export async function handlePocketBaseError(err: unknown, message: string) {
 	if (err && isPocketBaseError(err)) {
 		const data = err.response;
 		const code = data.code ? ` (${data.code})` : "";

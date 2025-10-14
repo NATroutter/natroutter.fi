@@ -1,6 +1,6 @@
 services:
   backend:
-    image: natroutter-fi-backend:latest
+    image: ghcr.io/natroutter/pocketbase:latest
     restart: unless-stopped
     ports:
       - 8500:8080
@@ -17,7 +17,8 @@ services:
       timeout: 5s
       retries: 5
   frontend:
-    image: natroutter-fi-frontend:latest
+    image: ghcr.io/natroutter/natroutter-fi-frontend:latest
+#     image: natroutter-fi-frontend:local #Local testing image
     restart: unless-stopped
     ports:
       - 3001:3000

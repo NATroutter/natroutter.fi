@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import type { IconType } from "react-icons";
 import { FaHome, FaLink, FaProjectDiagram, FaUser } from "react-icons/fa";
@@ -86,9 +87,9 @@ export const navigatorConfig: NavigationData[] = [
 				icon: IoIosListBox,
 			},
 			{
-				name: "Favourites",
+				name: "Favorites",
 				description: "My favorite anime series, movies, and characters",
-				url: "/anime/favourites",
+				url: "/anime/favorites",
 				icon: MdFavorite,
 			},
 		],
@@ -149,16 +150,18 @@ export default function Navigator() {
 												key={entry.name}
 												className="hover:translate-x-2 transition-transform duration-300 ease-in-out"
 											>
-												<NavigationMenuLink href={entry.url}>
-													<div className="flex flex-row gap-3 p-3 select-none rounded-md leading-none no-underline outline-hidden transition-colors hover:bg-popover-focus/60 focus:bg-popover-focus/60">
-														<div className="flex">
-															<entry.icon className="flex text-primary" size={24} />
+												<NavigationMenuLink asChild>
+													<Link href={entry.url} data-umami-event={`[NAV] Open (${entry.name})`}>
+														<div className="flex flex-row gap-3 p-3 select-none rounded-md leading-none no-underline outline-hidden transition-colors hover:bg-popover-focus/60 focus:bg-popover-focus/60">
+															<div className="flex">
+																<entry.icon className="flex text-primary" size={24} />
+															</div>
+															<div className="flex flex-col gap-2 justify-between">
+																<div className="text-base font-medium leading-none">{entry.name}</div>
+																<p className="line-clamp-2 text-xs leading-snug text-muted">{entry.description}</p>
+															</div>
 														</div>
-														<div className="flex flex-col gap-2 justify-between">
-															<div className="text-base font-medium leading-none">{entry.name}</div>
-															<p className="line-clamp-2 text-xs leading-snug text-muted">{entry.description}</p>
-														</div>
-													</div>
+													</Link>
 												</NavigationMenuLink>
 											</li>
 										))}
@@ -167,8 +170,14 @@ export default function Navigator() {
 							</NavigationMenuItem>
 						) : (
 							<NavigationMenuItem key={item.data.name} className="border-r-2 border-header first:border-l-2 z-40">
-								<NavigationMenuLink href={item.data.url} className={navigationMenuTriggerStyle({ useHover: true })}>
-									<NavText entity={item}>{item.data.name}</NavText>
+								<NavigationMenuLink asChild>
+									<Link
+										href={item.data.url}
+										className={navigationMenuTriggerStyle({ useHover: true })}
+										data-umami-event={`[NAV] Open (${item.data.name})`}
+									>
+										<NavText entity={item}>{item.data.name}</NavText>
+									</Link>
 								</NavigationMenuLink>
 							</NavigationMenuItem>
 						),
