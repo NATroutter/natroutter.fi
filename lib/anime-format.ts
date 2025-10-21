@@ -58,7 +58,7 @@ export function getStatusStyle(status: string | AnimeStatus): string {
 	return ANIME_STATUES[status as AnimeStatus].style;
 }
 export function getWatchStatues(): string[] {
-	return Object.entries(ANIME_WATCH_STATUES).map(([_value, label]) => label);
+	return Object.entries(ANIME_WATCH_STATUES).map(([value]) => value);
 }
 
 export function formatAnime(source: AnimeSource): string {

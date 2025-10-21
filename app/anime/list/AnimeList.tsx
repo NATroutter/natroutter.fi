@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getWatchStatues } from "@/lib/anime-format";
+import {formatAnimeWatchStatus, getWatchStatues} from "@/lib/anime-format";
 import type { AnimeEntry, AnimeWatchStatus } from "@/types/animeData";
 
 interface SearchTypes {
@@ -179,7 +179,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 					data = animeData.filter((anime) => anime.list_status.status === "watching");
 					break;
 				case "completed":
-					data = animeData.filter((anime) => anime.list_status.status === "plan_to_watch");
+					data = animeData.filter((anime) => anime.list_status.status === "completed");
 					break;
 				case "on_hold":
 					data = animeData.filter((anime) => anime.list_status.status === "on_hold");
@@ -335,15 +335,18 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 							{/*Control (row-1) / Anime list type*/}
 							<div className="flex flex-col w-full">
 								<p className="text-sm font-medium">List Type</p>
-								<Select defaultValue="all" onValueChange={(e) => setSelectedList(e as AnimeWatchStatus)}>
+								<Select value={selectedList} onValueChange={(e) => {
+									console.log("test: ",e)
+									setSelectedList(e as AnimeWatchStatus)
+								}}>
 									<SelectTrigger className="w-full">
 										<SelectValue placeholder="Select a list" />
 									</SelectTrigger>
 									<SelectContent>
 										<SelectItem value="all">All</SelectItem>
 										{getWatchStatues().map((status) => (
-											<SelectItem key={status.replace(" ", "_")} value={status}>
-												{status}
+											<SelectItem key={status} value={status}>
+												{formatAnimeWatchStatus(status)}
 											</SelectItem>
 										))}
 									</SelectContent>
@@ -359,7 +362,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 										{/*Control (row-2) / Filter Anime / Filter type */}
 										<div className="flex flex-col">
 											<Select
-												defaultValue={searchTypes[0].type}
+												value={fieldSearchType}
 												onValueChange={(value) => {
 													setFieldSearchType(value);
 												}}
@@ -396,7 +399,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 									<div className="flex w-full md:w-fit shadow-sm">
 										{/*Control (row-2) / Sorting / Type */}
 										<Select
-											defaultValue={searchTypes[0].type}
+											value={sortColumn}
 											onValueChange={(value) => {
 												setSortColumn(value);
 												setPageIndex(0);
@@ -438,7 +441,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 								<div className="flex gap-0 sm:gap-2 flex-col sm:flex-row">
 									<Label className="text-sm font-medium my-auto flex sm:hidden">Per page</Label>
 									<Select
-										defaultValue={pageSize.toString()}
+										value={pageSize.toString()}
 										onValueChange={(value) => {
 											setPageSize(Number(value));
 											setPageIndex(0);
