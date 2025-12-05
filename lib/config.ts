@@ -7,7 +7,6 @@ export const config = {
 	POCKETBASE: {
 		SERVER: getEnv("PB_SERVER"),
 		PUBLIC: getEnv("PB_PUBLIC_ADDRESS"),
-		ENCRYPT: getEnv("PB_ENCRYPTION"),
 	},
 };
 
