@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
-import { MdFirstPage, MdKeyboardArrowLeft, MdKeyboardArrowRight, MdLastPage } from "react-icons/md";
 import { AnimeCard } from "@/components/AnimeCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +16,7 @@ interface SearchTypes {
 	label: string;
 	getValue: (entry: AnimeEntry) => string | number;
 	isNumeric: boolean;
+	reversed?: boolean;
 }
 
 const searchTypes: SearchTypes[] = [
@@ -25,6 +25,12 @@ const searchTypes: SearchTypes[] = [
 		label: "Title",
 		getValue: (entry) =>
 			entry.node.alternative_titles.en.length > 0 ? entry.node.alternative_titles.en : entry.node.title,
+		isNumeric: false,
+	},
+	{
+		type: "updated",
+		label: "Updated",
+		getValue: (entry) => entry.list_status.updated_at,
 		isNumeric: false,
 	},
 	{
@@ -123,14 +129,14 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 
 	const [selectedList, setSelectedList] = useState<AnimeWatchStatus | "all">("all");
 	const [searchValue, setSearchValue] = useState("");
-	const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-	const [sortColumn, setSortColumn] = useState<string>(searchTypes[0].type);
-	const [pageIndex, setPageIndex] = useState(0);
-	const [pageSize, setPageSize] = useState(30);
+	const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+	const [sortColumn, setSortColumn] = useState<string>(searchTypes[1].type);
+	const [itemsPerLoad] = useState(30);
+	const [visibleCount, setVisibleCount] = useState(30);
 	const [isInitialLoad, setIsInitialLoad] = useState(true);
-	const [pageInputValue, setPageInputValue] = useState("1");
-	const isTypingRef = useRef(false);
+	const [isLoadingMore, setIsLoadingMore] = useState(false);
 	const [fieldSearchType, setFieldSearchType] = useState<string>(searchTypes[0].type);
+	const loadMoreRef = useRef<HTMLDivElement>(null);
 
 	const titleMap: Record<AnimeWatchStatus | "all", string> = {
 		all: "Anime List",
@@ -243,11 +249,15 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 			(searchValue.trim() &&
 				!Number.isNaN(Number(searchValue)) &&
 				searchTypeConfigForSkip.isNumeric &&
-				fieldSearchType === sortColumn) ||
-			sortColumn === "none";
+				fieldSearchType === sortColumn);
 
 		if (!skipRegularSort) {
 			const sortTypeConfig = searchTypes.find((st) => st.type === sortColumn) || searchTypes[0];
+
+			// Apply reversed logic: if reversed is true, flip the sort direction
+			const effectiveDirection = sortTypeConfig.reversed
+				? (sortDirection === "asc" ? "desc" : "asc")
+				: sortDirection;
 
 			data = [...data].sort((a, b) => {
 				const aVal = sortTypeConfig.getValue(a);
@@ -260,7 +270,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 
 				// String comparison
 				if (typeof aVal === "string" && typeof bVal === "string") {
-					return sortDirection === "asc" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+					return effectiveDirection === "asc" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
 				}
 
 				// Handle NaN values
@@ -268,56 +278,59 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 				if (Number.isNaN(aVal)) return 1;
 				if (Number.isNaN(bVal)) return -1;
 
-				return sortDirection === "asc" ? Number(aVal) - Number(bVal) : Number(bVal) - Number(aVal);
+				return effectiveDirection === "asc" ? Number(aVal) - Number(bVal) : Number(bVal) - Number(aVal);
 			});
 		}
 
 		return data;
 	}, [animeData, selectedList, searchValue, sortColumn, sortDirection, isInitialLoad, fieldSearchType]);
 
-	// Paginated data
-	const paginatedData = useMemo(() => {
-		const start = pageIndex * pageSize;
-		return processedData.slice(start, start + pageSize);
-	}, [processedData, pageIndex, pageSize]);
+	// Visible data for infinite scroll
+	const visibleData = useMemo(() => {
+		return processedData.slice(0, visibleCount);
+	}, [processedData, visibleCount]);
 
-	const totalPages = Math.ceil(processedData.length / pageSize);
+	const hasMore = visibleCount < processedData.length;
 
-	// Reset to first page when filters change
+	// Reset visible count when filters change
 	useEffect(() => {
-		setPageIndex(0);
-		setPageInputValue("1");
-	}, [searchValue, selectedList, fieldSearchType]);
+		setVisibleCount(itemsPerLoad);
+	}, [searchValue, selectedList, fieldSearchType, itemsPerLoad]);
 
-	// Debounce page input changes
+	// Load more items callback
+	const loadMore = useCallback(() => {
+		if (isLoadingMore || !hasMore) return;
+
+		setIsLoadingMore(true);
+		// Simulate a small delay for smooth UX
+		setTimeout(() => {
+			setVisibleCount((prev) => prev + itemsPerLoad);
+			setIsLoadingMore(false);
+		}, 300);
+	}, [isLoadingMore, hasMore, itemsPerLoad]);
+
+	// Infinite scroll with IntersectionObserver
 	useEffect(() => {
-		if (!isTypingRef.current) return; // Skip if not from user input
-
-		const timer = setTimeout(() => {
-			const pageNum = Number(pageInputValue);
-			if (!Number.isNaN(pageNum) && pageNum > 0 && pageNum <= totalPages) {
-				const newIndex = pageNum - 1;
-				if (newIndex !== pageIndex) {
-					setPageIndex(newIndex);
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
+					loadMore();
 				}
-			} else {
-				setPageIndex(0);
-				setPageInputValue("1");
-			}
-			isTypingRef.current = false;
-		}, 500);
-		return () => clearTimeout(timer);
-	}, [pageInputValue, totalPages, pageIndex]);
+			},
+			{ threshold: 0.1 }
+		);
 
-	// Update input value when page changes externally (e.g., via buttons)
-	useEffect(() => {
-		if (!isTypingRef.current) {
-			const expectedValue = (pageIndex + 1).toString();
-			if (pageInputValue !== expectedValue) {
-				setPageInputValue(expectedValue);
-			}
+		const currentRef = loadMoreRef.current;
+		if (currentRef) {
+			observer.observe(currentRef);
 		}
-	}, [pageIndex, pageInputValue]);
+
+		return () => {
+			if (currentRef) {
+				observer.unobserve(currentRef);
+			}
+		};
+	}, [hasMore, isLoadingMore, loadMore]);
 
 	return (
 		<div className="flex flex-col justify-center mx-auto w-full p-6">
@@ -336,7 +349,6 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 							<div className="flex flex-col w-full">
 								<p className="text-sm font-medium">List Type</p>
 								<Select value={selectedList} onValueChange={(e) => {
-									console.log("test: ",e)
 									setSelectedList(e as AnimeWatchStatus)
 								}}>
 									<SelectTrigger className="w-full">
@@ -402,14 +414,12 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 											value={sortColumn}
 											onValueChange={(value) => {
 												setSortColumn(value);
-												setPageIndex(0);
 											}}
 										>
 											<SelectTrigger className="w-full md:w-fit md:max-w-48 rounded-r-none border-r-0 shadow-none">
 												<SelectValue placeholder="Select sort" />
 											</SelectTrigger>
 											<SelectContent>
-												<SelectItem value="none">None</SelectItem>
 												{searchTypes.map((e) => (
 													<SelectItem key={e.type} value={e.type}>
 														{e.label}
@@ -435,122 +445,10 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 								</div>
 							</div>
 
-							{/*Control (row-3) / Pagination */}
-							<div className="flex flex-col sm:flex-row gap-2 justify-between">
-								{/*Control (row-3) / Pagination / Card Amount Selector */}
-								<div className="flex gap-0 sm:gap-2 flex-col sm:flex-row">
-									<Label className="text-sm font-medium my-auto flex sm:hidden">Per page</Label>
-									<Select
-										value={pageSize.toString()}
-										onValueChange={(value) => {
-											setPageSize(Number(value));
-											setPageIndex(0);
-										}}
-									>
-										<SelectTrigger className="w-full sm:w-[110px]">
-											<SelectValue placeholder="Select a amount" />
-										</SelectTrigger>
-										<SelectContent className="min-w-[3rem]">
-											{[10, 20, 30, 50, 100].map((e) => (
-												<SelectItem checkMark={false} key={e} value={e.toString()}>
-													{e.toString()}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-									<Label className="text-sm font-medium my-auto hidden sm:flex">Per page</Label>
-								</div>
-
-								{/*Control (row-3) / Pagination / Buttons */}
-								<div className="flex flex-col xs:flex-row justify-center gap-1 pt-3 sm:pt-0">
-									<div className="flex flex-row items-center gap-2 justify-center xs:justify-start">
-										<div className="flex">
-											{/*Control (row-3) / Pagination / Buttons / First Page */}
-											<Button
-												className="flex h-10 w-10 p-0 rounded-r-none border-r-0"
-												onClick={() => {
-													isTypingRef.current = false;
-													setPageIndex(0);
-												}}
-												disabled={pageIndex === 0}
-											>
-												<MdFirstPage />
-											</Button>
-
-											{/*Control (row-3) / Pagination / Buttons / Previous Page */}
-											<Button
-												className="flex h-10 w-10 p-0 rounded-l-none border-l-0"
-												onClick={() => {
-													isTypingRef.current = false;
-													setPageIndex((prev) => prev - 1);
-												}}
-												disabled={pageIndex === 0}
-											>
-												<MdKeyboardArrowLeft />
-											</Button>
-										</div>
-
-										{/*Control (row-3) / Pagination / Current page field (for big layouts)*/}
-										<div className="hidden xs:flex">
-											<Input
-												className="text-right w-14 pr-1 my-auto bg-transparent focus:bg-card-inner-focus"
-												value={pageInputValue}
-												useRing={false}
-												onChange={(e) => {
-													isTypingRef.current = true;
-													setPageInputValue(e.target.value);
-												}}
-											/>
-											<span className="my-auto">of {totalPages}</span>
-										</div>
-
-										<div className="flex">
-											{/*Control (row-3) / Pagination / Buttons / Next Page */}
-											<Button
-												className="flex h-10 w-10 p-0 border-r-0 rounded-r-none"
-												onClick={() => {
-													isTypingRef.current = false;
-													setPageIndex((prev) => prev + 1);
-												}}
-												disabled={pageIndex >= totalPages - 1}
-											>
-												<MdKeyboardArrowRight />
-											</Button>
-
-											{/*Control (row-3) / Pagination / Buttons / Last Page */}
-											<Button
-												className="flex h-10 w-10 p-0 border-l-0 rounded-l-none"
-												onClick={() => {
-													isTypingRef.current = false;
-													setPageIndex(totalPages - 1);
-												}}
-												disabled={pageIndex >= totalPages - 1}
-											>
-												<MdLastPage />
-											</Button>
-										</div>
-									</div>
-								</div>
-							</div>
-
+							{/* Display info */}
 							<div className="flex">
-								{/* Display search results */}
-								<div className="flex-1 text-sm font-semibold my-auto text-muted ">
-									{processedData.length} total entries
-								</div>
-
-								{/*Control (row-3) / Pagination / Current page field (for small layouts)*/}
-								<div className="flex xs:hidden">
-									<Input
-										className="text-right w-14 pr-1 my-auto bg-transparent focus:bg-card-inner-focus"
-										value={pageInputValue}
-										useRing={false}
-										onChange={(e) => {
-											isTypingRef.current = true;
-											setPageInputValue(e.target.value);
-										}}
-									/>
-									<span className="my-auto">of {totalPages}</span>
+								<div className="flex-1 text-sm font-semibold my-auto text-muted">
+									Showing {visibleData.length} of {processedData.length} entries
 								</div>
 							</div>
 						</div>
@@ -564,13 +462,23 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 								<div className="h-24 flex items-center justify-center text-center text-muted-foreground">
 									Loading...
 								</div>
-							) : paginatedData.length > 0 ? (
-								//    grid-cols-1 xl:grid-cols-2 xxl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6
-								<div className="grid gap-4 place-items-center grid-cols-1 xl:grid-cols-2 xxl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6">
-									{paginatedData.map((entry) => (
-										<AnimeCard key={entry.node.id} data={entry} />
-									))}
-								</div>
+							) : visibleData.length > 0 ? (
+								<>
+									<div className="grid gap-4 place-items-center grid-cols-1 xl:grid-cols-2 xxl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6">
+										{visibleData.map((entry) => (
+											<AnimeCard key={entry.node.id} data={entry} />
+										))}
+									</div>
+
+									{/* Infinite scroll trigger */}
+									{hasMore && (
+										<div ref={loadMoreRef} className="h-20 flex items-center justify-center mt-4">
+											{isLoadingMore && (
+												<div className="text-sm text-muted-foreground">Loading more...</div>
+											)}
+										</div>
+									)}
+								</>
 							) : (
 								<div className="h-24 flex items-center justify-center text-center text-muted-foreground">
 									No results.
