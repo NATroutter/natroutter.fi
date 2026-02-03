@@ -20,6 +20,14 @@ interface ProjectDialogProps {
 }
 
 export function ProjectDialog({ data, children }: ProjectDialogProps) {
+
+	function extractGitHubRepo(url: string): string {
+		const match = url.match(/github\.com\/([^\/]+\/[^\/]+)/);
+		if (!match) { return url; }
+
+		return match[1].replace(/\.git$/, '');
+	}
+
 	return (
 		<Dialog>
 			<DialogTrigger asChild data-umami-event={`[PROJECTS] Expand (${data.name})`}>
@@ -63,7 +71,7 @@ export function ProjectDialog({ data, children }: ProjectDialogProps) {
 												data-umami-event-url={data.github}
 												className="font-normal link"
 											>
-												GitHub
+												{extractGitHubRepo(data.github)}
 											</Link>
 										</span>
 									</li>
@@ -72,7 +80,7 @@ export function ProjectDialog({ data, children }: ProjectDialogProps) {
 											<span>{link.name}: </span>
 											<span>
 												<Link
-													href={data.github}
+													href={link.url}
 													target="_blank"
 													data-umami-event={`[PROJECTS] Link (${data.name} > ${link.name})`}
 													data-umami-event-url={link.url}
