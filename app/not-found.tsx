@@ -1,5 +1,8 @@
 import Image from "next/image";
 
+// ISR: Revalidate every 60 seconds
+export const revalidate = 60;
+
 export default function NotFound() {
 	return (
 		<div className="flex min-h-screen flex-col items-center justify-center p-6">
