@@ -18,7 +18,9 @@ cronAdd("Update Anime History", "0 0 * * *", () => {
 		return;
 	}
 
+	const now = new Date();
 	const apiData = res.json;
+	apiData.data = apiData.data.filter((entry) => new Date(entry.date) <= now);
 
 	//Find the latest created record
 	let record = $app.findRecordsByFilter(
@@ -57,7 +59,7 @@ cronAdd("Update Anime History", "0 0 * * *", () => {
 
 			let collection = $app.findCollectionByNameOrId("anime_history")
 			let record = new Record(collection)
-			record.set("data", res.json)
+			record.set("data", apiData)
 			$app.save(record);
 
 			$app.logger().info("[AnimeHistroy] New anime history saved successfully!")
@@ -70,7 +72,7 @@ cronAdd("Update Anime History", "0 0 * * *", () => {
 
 		let collection = $app.findCollectionByNameOrId("anime_history")
 		let record = new Record(collection)
-		record.set("data", res.json)
+		record.set("data", apiData)
 		$app.save(record);
 
 		$app.logger().info("[AnimeHistroy] New anime history saved successfully!")

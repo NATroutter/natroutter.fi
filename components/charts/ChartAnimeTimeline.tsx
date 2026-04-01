@@ -9,14 +9,21 @@ import {
 	TimelineItem,
 	TimelineSeparator,
 } from "@/components/ui/timeline";
-import type { AnimeHistoryUpdate } from "@/types/animeData";
+import type { AnimeEntry, AnimeHistoryUpdate } from "@/types/animeData";
+import {AnimeDialog} from "@/components/AnimeDialog";
+import {FaTv} from "react-icons/fa";
 
 interface ChartAnimeTimelineProps {
 	settings: ChartSettings;
 	animeHistory: AnimeHistoryUpdate[];
+	animeData: AnimeEntry[];
 }
 
-export default function ChartAnimeTimeline({ settings, animeHistory }: ChartAnimeTimelineProps) {
+export default function ChartAnimeTimeline({ settings, animeHistory, animeData }: ChartAnimeTimelineProps) {
+	const filteredHistory = settings.viewingYear === "all"
+		? animeHistory
+		: animeHistory.filter(item => new Date(item.date).getFullYear() === Number(settings.viewingYear));
+
 	// Find the first occurrence of each month in the dataset (when sorted newest first)
 	const isFirstOfMonth = (currentItem: AnimeHistoryUpdate, index: number) => {
 		const currentDate = new Date(currentItem.date);
@@ -24,7 +31,7 @@ export default function ChartAnimeTimeline({ settings, animeHistory }: ChartAnim
 		const currentYear = currentDate.getFullYear();
 
 		// Check if any previous items are in the same month
-		const hasPreviousItemInSameMonth = animeHistory.slice(0, index).some((item) => {
+		const hasPreviousItemInSameMonth = filteredHistory.slice(0, index).some((item) => {
 			const itemDate = new Date(item.date);
 			return itemDate.getMonth() === currentMonth && itemDate.getFullYear() === currentYear;
 		});
@@ -56,13 +63,17 @@ export default function ChartAnimeTimeline({ settings, animeHistory }: ChartAnim
 			</CardHeader>
 
 			<CardContent className="px-2 p-6">
-				<Timeline className="pl-6">
-					{animeHistory.map((item, index) =>
+
+				{filteredHistory.length === 0 ? (
+					<p className="text-muted-foreground text-sm text-center">No watch history available.</p>
+				) :
+					<Timeline className="pl-6">
+					{filteredHistory.map((item, index) =>
 						isFirstOfMonth(item, index) ? (
 							<TimelineItem
 								key={item.id}
-								step={animeHistory.length}
-								className="ms-24 pb-16! -translate-x-20 sm:translate-x-0 w-full"
+								step={filteredHistory.length}
+								className="ms-24 pb-16! -translate-x-20 sm:translate-x-0"
 							>
 								<TimelineHeader>
 									<TimelineSeparator className="-left-7 h-full" />
@@ -74,8 +85,9 @@ export default function ChartAnimeTimeline({ settings, animeHistory }: ChartAnim
 						) : (
 							<TimelineItem
 								key={item.id}
-								step={animeHistory.length}
-								className="ms-24 -translate-x-20 sm:translate-x-0 w-full"
+								id={`timeline-${item.date}`}
+								step={filteredHistory.length}
+								className="ms-24 -translate-x-20 sm:translate-x-0"
 							>
 								<TimelineHeader className="my-auto">
 									<TimelineSeparator className="-left-7 h-full" />
@@ -85,24 +97,30 @@ export default function ChartAnimeTimeline({ settings, animeHistory }: ChartAnim
 									<TimelineIndicator className="bg-neutral-500 translate-y-2 text-primary-muted flex size-3 items-center justify-center border-none -left-7"></TimelineIndicator>
 								</TimelineHeader>
 								<TimelineContent>
-									{/*{item.updates.map((edit) => (*/}
-									{/*	<p key={edit.id} className="text-base">*/}
-									{/*		<FaTv className="inline-block align-middle mr-1" size={19} />*/}
-									{/*		{edit.anime ? (*/}
-									{/*			<AnimeDialog data={edit.anime}>*/}
-									{/*				<span className="link align-middle">{edit.title}</span>*/}
-									{/*			</AnimeDialog>*/}
-									{/*		) : (*/}
-									{/*			<span className="link align-middle">{edit.title}</span>*/}
-									{/*		)}*/}
-									{/*		<span> • {edit.episodes} episodes</span>*/}
-									{/*	</p>*/}
-									{/*))}*/}
+									{item.updates.map((edit) => {
+										const entry = animeData.find(a => a.node.id === edit.id);
+										return (
+											<div key={edit.id} className="flex items-start gap-1 text-base w-full overflow-hidden">
+												<FaTv className="shrink-0 mt-1" size={19} />
+												<span className="break-words min-w-0">
+													{entry ? (
+														<AnimeDialog data={entry}>
+															<span className="link">{edit.title}</span>
+														</AnimeDialog>
+													) : (
+														edit.title
+													)}
+													<span className="text-muted-foreground"> • {edit.episodes} ep</span>
+												</span>
+											</div>
+										);
+									})}
 								</TimelineContent>
 							</TimelineItem>
 						),
 					)}
-				</Timeline>
+				</Timeline>}
+
 			</CardContent>
 		</Card>
 	);

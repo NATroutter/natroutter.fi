@@ -4,6 +4,7 @@ import PocketBase from "pocketbase";
 import { config } from "@/lib/config";
 import logger from "@/lib/logger";
 import type { AboutPage, FooterData, HomePage, LinkPage, PrivacyPage, ProjectPage } from "@/types/interfaces";
+import type { AnimeHistoryEntry, AnimeHistoryResponse, AnimeHistoryUpdate } from "@/types/animeData";
 
 function getFileURL(collection: string, id: string, file: string): string {
 	return `${config.POCKETBASE.PUBLIC}/api/files/${collection}/${id}/${file}`;
@@ -117,6 +118,78 @@ export async function getFooterData(): Promise<FooterData | undefined> {
 	} catch (err) {
 		return handlePocketBaseError(err, "Failed to fetch data for Footer");
 	}
+}
+
+//***************************************
+//*         ANIME HISTORY               *
+//***************************************
+export async function getHistory(): Promise<AnimeHistoryUpdate[]> {
+	let records: { data: AnimeHistoryResponse }[] | undefined;
+	try {
+		const pb = getPocketBase();
+		records = await pb.collection("anime_history").getFullList<{ data: AnimeHistoryResponse }>({});
+	} catch (err) {
+		await handlePocketBaseError(err, "Failed to fetch data for AnimeHistory");
+	}
+
+	if (!records || records.length === 0) return [];
+
+	// Merge all snapshots, deduplicating by normalized UTC timestamp + anime ID
+	// (same event can appear with different timezone offsets across snapshots)
+	const seenKeys = new Set<string>();
+	const allEntries: AnimeHistoryResponse["data"] = [];
+
+	const now = Date.now();
+
+	for (const record of records) {
+		const response = record.data;
+		if (!response?.data) continue;
+		for (const entry of response.data) {
+			if (new Date(entry.date).getTime() > now) continue;
+			const key = `${entry.entry.mal_id}-${entry.increment}`;
+			if (!seenKeys.has(key)) {
+				seenKeys.add(key);
+				allEntries.push(entry);
+			}
+		}
+	}
+
+	// Group by UTC date + anime, counting episodes
+	const dateMap = new Map<string, Map<string, { title: string; malId: number; episodes: number }>>();
+
+	for (const entry of allEntries) {
+		const date = new Date(entry.date).toISOString().split("T")[0];
+		const animeKey = `${entry.entry.mal_id}`;
+
+		let dayMap = dateMap.get(date);
+		if (!dayMap) {
+			dayMap = new Map();
+			dateMap.set(date, dayMap);
+		}
+
+		if (!dayMap.has(animeKey)) {
+			dayMap.set(animeKey, { title: entry.entry.name, malId: entry.entry.mal_id, episodes: 0 });
+		}
+
+		const day = dayMap.get(animeKey);
+		if (day) day.episodes++;
+	}
+
+	const entries: AnimeHistoryUpdate[] = [];
+	let idCounter = 1;
+
+	for (const [date, animeMap] of dateMap.entries()) {
+		const updates: AnimeHistoryEntry[] = Array.from(animeMap.values()).map((anime) => ({
+			id: anime.malId,
+			title: anime.title,
+			episodes: anime.episodes,
+		}));
+		entries.push({ id: String(idCounter++), date, updates });
+	}
+
+	entries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+	return entries;
 }
 
 //***************************************

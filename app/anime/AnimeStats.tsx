@@ -19,14 +19,16 @@ import ChartAnimeStudio from "@/components/charts/ChartAnimeStudio";
 import ChartAnimeUpdatesByDayOfWeek from "@/components/charts/ChartAnimeUpdatesByDayOfWeek";
 import ChartAnimeUpdatesByMonth from "@/components/charts/ChartAnimeUpdatesByMonth";
 import ChartAnimeYearPreference from "@/components/charts/ChartAnimeYearPreference";
-import type { AnimeEntry } from "@/types/animeData";
+import type {AnimeEntry, AnimeHistoryUpdate} from "@/types/animeData";
+import ChartAnimeTimeline from "@/components/charts/ChartAnimeTimeline";
+import ChartAnimeActivityMap from "@/components/charts/ChartAnimeActivityMap";
 
 interface AnimeStatsProps {
 	animeData: AnimeEntry[];
-	// animeHistory: AnimeHistoryUpdate[];
+	animeHistory: AnimeHistoryUpdate[];
 }
 
-export default function AnimeStats({ animeData }: AnimeStatsProps) {
+export default function AnimeStats({ animeData, animeHistory }: AnimeStatsProps) {
 	const [chartSettings, setChartSettings] = useState<ChartSettings>(defaultSettings);
 
 	return (
@@ -35,6 +37,8 @@ export default function AnimeStats({ animeData }: AnimeStatsProps) {
 				<div className="w-full flex flex-col gap-5 md:my-14">
 					<ChartAnimeQuickStats settings={chartSettings} setChartSettings={setChartSettings} animeData={animeData} />
 					<ChartAnimeSeasonsBest settings={chartSettings} animeData={animeData} />
+
+					<ChartAnimeActivityMap settings={chartSettings} animeHistory={animeHistory} />
 
 					<div className="grid place-content-between gap-5 grid-cols-1 sm:grid-cols-2 xxl:grid-cols-4">
 						<ChartAnimeStatus settings={chartSettings} animeData={animeData} />
@@ -67,9 +71,9 @@ export default function AnimeStats({ animeData }: AnimeStatsProps) {
 						<ChartAnimeStudio settings={chartSettings} animeData={animeData} />
 					</div>
 
-					{/*<div className="flex flex-col lg:flex-row gap-5 w-full">*/}
-					{/*	<ChartAnimeTimeline settings={chartSettings} animeHistory={animeHistory} />*/}
-					{/*</div>*/}
+					<div className="flex flex-col lg:flex-row gap-5 w-full">
+						<ChartAnimeTimeline settings={chartSettings} animeHistory={animeHistory} animeData={animeData} />
+					</div>
 				</div>
 			</div>
 		</div>
