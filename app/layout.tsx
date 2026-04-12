@@ -5,8 +5,10 @@ import "@/styles/globals.css";
 import { Montserrat } from "next/font/google";
 import Script from "next/script";
 import type { ReactNode } from "react";
+import { Suspense } from "react";
 import { ContentError } from "@/components/error";
 import Footer from "@/components/Footer";
+import FooterSkeleton from "@/components/FooterSkeleton";
 import Header from "@/components/Header";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -81,33 +83,28 @@ export const viewport: Viewport = {
 	themeColor: "#bb2e3a",
 };
 
-export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+async function FooterContent() {
 	const footerData = await getFooterData();
+	if (!footerData) return <ContentError location="Footer" />;
+	return <Footer data={footerData} />;
+}
 
+export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
 	return (
 		<html lang="en">
 			<body
 				className={`${montserrat.variable} ${montserrat.className} bg-background bg-cover text-foreground font-normal flex flex-col h-screen m-0 p-0 overflow-hidden overscroll-y-none`}
 			>
 				<TooltipProvider>
-					{footerData ? (
-						<>
-							<Header />
-							<main
-								className="relative overflow-y-auto mt-header"
-								style={{ height: "calc(100vh - var(--header-height))" }}
-							>
-								<div className="flex flex-col min-h-full">
-									<div className="flex-1">{children}</div>
-									<Footer data={footerData} />
-								</div>
-							</main>
-						</>
-					) : (
-						<main className="flex flex-col grow justify-center m-auto text-center">
-							<ContentError location="Footer" />
-						</main>
-					)}
+					<Header />
+					<main className="relative overflow-y-auto mt-header" style={{ height: "calc(100vh - var(--header-height))" }}>
+						<div className="flex flex-col min-h-full">
+							<div className="flex-1">{children}</div>
+							<Suspense fallback={<FooterSkeleton />}>
+								<FooterContent />
+							</Suspense>
+						</div>
+					</main>
 					<Toaster />
 				</TooltipProvider>
 			</body>
