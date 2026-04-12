@@ -2,11 +2,25 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
+import useSWR from "swr";
 import DynamicIcon from "@/components/DynamicIcon";
+import { ContentError } from "@/components/error";
+import FooterSkeleton from "@/components/FooterSkeleton";
 import Markdown from "@/components/Markdown";
 import type { FooterData } from "@/types/interfaces";
 
-export default function Footer({ data }: { data: FooterData }) {
+const fetcher = (url: string) =>
+	fetch(url).then((res) => {
+		if (!res.ok) throw new Error("Failed to fetch footer");
+		return res.json();
+	});
+
+export default function Footer() {
+	const { data, error, isLoading } = useSWR<FooterData>("/api/footer", fetcher);
+
+	if (isLoading) return <FooterSkeleton />;
+	if (error || !data) return <ContentError location="Footer" />;
+
 	return (
 		<footer className="bg-footer border-t border-footer-border">
 			<div className="flex flex-col justify-center m-auto my-5">

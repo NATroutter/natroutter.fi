@@ -5,15 +5,11 @@ import "@/styles/globals.css";
 import { Montserrat } from "next/font/google";
 import Script from "next/script";
 import type { ReactNode } from "react";
-import { Suspense } from "react";
-import { ContentError } from "@/components/error";
 import Footer from "@/components/Footer";
-import FooterSkeleton from "@/components/FooterSkeleton";
 import Header from "@/components/Header";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { config } from "@/lib/config";
-import { getFooterData } from "@/lib/database";
 
 const montserrat = Montserrat({
 	variable: "--font-montserrat",
@@ -83,12 +79,6 @@ export const viewport: Viewport = {
 	themeColor: "#bb2e3a",
 };
 
-async function FooterContent() {
-	const footerData = await getFooterData();
-	if (!footerData) return <ContentError location="Footer" />;
-	return <Footer data={footerData} />;
-}
-
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
 	return (
 		<html lang="en">
@@ -100,9 +90,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
 					<main className="relative overflow-y-auto mt-header" style={{ height: "calc(100vh - var(--header-height))" }}>
 						<div className="flex flex-col min-h-full">
 							<div className="flex-1">{children}</div>
-							<Suspense fallback={<FooterSkeleton />}>
-								<FooterContent />
-							</Suspense>
+							<Footer />
 						</div>
 					</main>
 					<Toaster />

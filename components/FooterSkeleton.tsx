@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <skeleton component> */
 export default function FooterSkeleton() {
 	return (
 		<footer className="bg-footer border-t border-footer-border">
