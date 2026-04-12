@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import AnimeSkeleton from "@/app/anime/AnimeSkeleton";
 import AnimeStats from "@/app/anime/AnimeStats";
 import { ContentError } from "@/components/error";
 import { getAnimeData } from "@/lib/anime-api";
@@ -15,12 +17,18 @@ export const metadata: Metadata = {
 // ISR: Revalidate
 export const revalidate = 120;
 
-export default async function AnimePage() {
-	const data = await getAnimeData();
+async function AnimeContent() {
+	const [data, history] = await Promise.all([getAnimeData(), getHistory()]);
+
 	if (!data) return <ContentError location="Anim-data" />;
 
-	const history = await getHistory();
-	if (!history) return <ContentError location="anime-history"/>;
-
 	return <AnimeStats animeData={data} animeHistory={history} />;
+}
+
+export default function AnimePage() {
+	return (
+		<Suspense fallback={<AnimeSkeleton />}>
+			<AnimeContent />
+		</Suspense>
+	);
 }

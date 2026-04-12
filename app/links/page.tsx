@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Links from "@/app/links/Links";
+import LinksSkeleton from "@/app/links/LinksSkeleton";
 import { ContentError } from "@/components/error";
 import { getLinkPage } from "@/lib/database";
 
@@ -16,8 +18,16 @@ export const metadata: Metadata = {
 // ISR: Revalidate every 60 seconds
 export const revalidate = 60;
 
-export default async function LinksPage() {
+async function LinksContent() {
 	const data = await getLinkPage();
 	if (!data) return <ContentError location="Links" />;
 	return <Links data={data} />;
+}
+
+export default function LinksPage() {
+	return (
+		<Suspense fallback={<LinksSkeleton />}>
+			<LinksContent />
+		</Suspense>
+	);
 }

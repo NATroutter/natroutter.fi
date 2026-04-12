@@ -20,14 +20,20 @@ function getEndpoint(endpoint: Endpoint): string {
 }
 
 export async function getFavorites(): Promise<AnimeFavoritesData | undefined> {
-	const response = await fetch(getEndpoint("favorites"), {
-		method: "GET",
-	});
-	if (!response.ok) {
-		throw Error(`Failed to fetch anime data from jikan.moe : (${response.status}) ${response.statusText}`);
+	try {
+		const response = await fetch(getEndpoint("favorites"), {
+			method: "GET",
+		});
+		if (!response.ok) {
+			console.error(`Failed to fetch anime data from jikan.moe : (${response.status}) ${response.statusText}`);
+			return undefined;
+		}
+		const json = await response.json();
+		return json as AnimeFavoritesData;
+	} catch (err) {
+		console.error("Failed to fetch favorites:", err);
+		return undefined;
 	}
-	const json = await response.json();
-	return json as AnimeFavoritesData;
 }
 
 export async function getAnimeData(): Promise<AnimeEntry[] | undefined> {
@@ -38,24 +44,29 @@ export async function getAnimeData(): Promise<AnimeEntry[] | undefined> {
 	const client_id = config.MAL_CLIENT_ID;
 	if (!client_id) return undefined;
 
-	while (nextURL) {
-		const response = await fetch(nextURL, {
-			method: "GET",
-			headers: {
-				"X-MAL-CLIENT-ID": client_id,
-			},
-		});
-		if (!response.ok) {
-			throw Error(`Failed to fetch anime data from MyAnimeList.net : (${response.status}) ${response.statusText}`);
-		}
-		const json = await response.json();
-		const resp: AnimeData = json as AnimeData;
+	try {
+		while (nextURL) {
+			const response = await fetch(nextURL, {
+				method: "GET",
+				headers: {
+					"X-MAL-CLIENT-ID": client_id,
+				},
+			});
+			if (!response.ok) {
+				console.error(`Failed to fetch anime data from MyAnimeList.net : (${response.status}) ${response.statusText}`);
+				return undefined;
+			}
+			const json = await response.json();
+			const resp: AnimeData = json as AnimeData;
 
-		if (!resp || !resp.data) break;
-		data.push(...resp.data);
-		nextURL = resp.paging?.next;
+			if (!resp || !resp.data) break;
+			data.push(...resp.data);
+			nextURL = resp.paging?.next;
+		}
+	} catch (err) {
+		console.error("Failed to fetch anime data:", err);
+		return undefined;
 	}
 
 	return data.length > 0 ? data : undefined;
 }
-
