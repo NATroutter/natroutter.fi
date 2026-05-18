@@ -2,6 +2,7 @@
 	"name": "natroutter.fi",
 	"version": "1.0.0",
 	"private": true,
+	"packageManager": "pnpm@10.0.0",
 	"scripts": {
 		"dev": "next dev --turbopack",
 		"build": "next build",
