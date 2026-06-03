@@ -100,6 +100,117 @@ export interface SavedAnimeHistory {
 	data: AnimeHistoryUpdate[];
 }
 
+export interface AnimeCharacterData {
+	data: AnimeCharacterEntry[];
+}
+
+export interface AnimeCharacterListData {
+	data: AnimeCharacterListEntry[];
+}
+
+export interface AnimeCharacterListEntry {
+	character: AnimeCharacter;
+	role: string;
+	favorites: number;
+	voice_actors: AnimeVoiceActor[];
+}
+
+export interface AnimeCharacterRecord {
+	id: string;
+	character_id: number;
+	data: AnimeCharacterFull;
+	fetched_at: string;
+}
+
+export type AnimeCharactersByAnimeId = Record<number, AnimeCharacterData>;
+
+export interface AnimeSeriesRecord {
+	anime_id: number;
+	title?: string;
+	characters?: string[];
+	character_meta?: AnimeSeriesCharacterMetaById;
+	fetched_at: string;
+	expand?: {
+		characters?: AnimeCharacterRecord[];
+	};
+}
+
+export type AnimeSeriesCharacterMetaById = Record<number, AnimeSeriesCharacterMeta>;
+
+export interface AnimeSeriesCharacterMeta {
+	role: string;
+	favorites: number;
+}
+
+export interface AnimeCharacterEntry {
+	character: AnimeCharacterFull;
+	role: string;
+	favorites: number;
+}
+
+export interface AnimeCharacter {
+	mal_id: number;
+	url: string;
+	images: {
+		jpg: {
+			image_url: string;
+		};
+		webp: {
+			image_url: string;
+			small_image_url: string;
+		};
+	};
+	name: string;
+}
+
+export interface AnimeCharacterFull extends AnimeCharacter {
+	name_kanji: string | null;
+	nicknames: string[];
+	favorites: number;
+	about: string | null;
+	anime: {
+		role: string;
+		anime: AnimeCharacterRelatedMedia;
+	}[];
+	manga: {
+		role: string;
+		manga: AnimeCharacterRelatedMedia;
+	}[];
+	voices: AnimeVoiceActor[];
+}
+
+export interface AnimeCharacterRelatedMedia {
+	mal_id: number;
+	url: string;
+	images: {
+		jpg: {
+			image_url: string;
+			small_image_url: string;
+			large_image_url: string;
+		};
+		webp: {
+			image_url: string;
+			small_image_url: string;
+			large_image_url: string;
+		};
+	};
+	title: string;
+}
+
+export interface AnimeVoiceActor {
+	person: {
+		mal_id: number;
+		url: string;
+		images: {
+			jpg: {
+				image_url: string;
+			};
+		};
+		name: string;
+	};
+	language: string;
+}
+
 export interface AnimeFavoritesData {
 	data: {
 		anime: AnimeFaveAnime[];

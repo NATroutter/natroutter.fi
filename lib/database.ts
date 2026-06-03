@@ -3,8 +3,15 @@
 import PocketBase from "pocketbase";
 import { config } from "@/lib/config";
 import logger from "@/lib/logger";
+import type {
+	AnimeCharacterData,
+	AnimeCharactersByAnimeId,
+	AnimeHistoryEntry,
+	AnimeHistoryResponse,
+	AnimeHistoryUpdate,
+	AnimeSeriesRecord,
+} from "@/types/animeData";
 import type { AboutPage, FooterData, HomePage, LinkPage, PrivacyPage, ProjectPage } from "@/types/interfaces";
-import type { AnimeHistoryEntry, AnimeHistoryResponse, AnimeHistoryUpdate } from "@/types/animeData";
 
 function getFileURL(collection: string, id: string, file: string): string {
 	return `${config.POCKETBASE.PUBLIC}/api/files/${collection}/${id}/${file}`;
@@ -190,6 +197,55 @@ export async function getHistory(): Promise<AnimeHistoryUpdate[]> {
 	entries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
 	return entries;
+}
+
+//***************************************
+//*        ANIME CHARACTERS             *
+//***************************************
+export async function getAnimeSeriesCharacters(): Promise<AnimeSeriesRecord[]> {
+	try {
+		const pb = getPocketBase();
+		return await pb.collection("anime_series").getFullList<AnimeSeriesRecord>({
+			expand: "characters",
+			fields:
+				"anime_id,characters,character_meta,fetched_at,expand.characters.id,expand.characters.character_id,expand.characters.data",
+		});
+	} catch (err) {
+		await handlePocketBaseError(err, "Failed to fetch data for AnimeSeriesCharacters");
+		return [];
+	}
+}
+
+export async function getAnimeCharactersByAnimeIdMap(): Promise<AnimeCharactersByAnimeId> {
+	const seriesRecords = await getAnimeSeriesCharacters();
+
+	return seriesRecords.reduce<AnimeCharactersByAnimeId>((acc, record) => {
+		const characterMeta = record.character_meta ?? {};
+		const characters = record.expand?.characters ?? [];
+
+		const data = characters
+			.map((characterRecord) => {
+				const meta = characterMeta[characterRecord.character_id];
+				if (!meta) return undefined;
+				return {
+					character: characterRecord.data,
+					role: meta.role,
+					favorites: meta.favorites,
+				};
+			})
+			.filter((entry): entry is AnimeCharacterData["data"][number] => entry !== undefined);
+
+		if (data.length > 0) {
+			acc[record.anime_id] = { data };
+		}
+
+		return acc;
+	}, {});
+}
+
+export async function getAnimeCharactersByAnimeId(animeId: number): Promise<AnimeCharacterData | undefined> {
+	const animeCharacters = await getAnimeCharactersByAnimeIdMap();
+	return animeCharacters[animeId];
 }
 
 //***************************************

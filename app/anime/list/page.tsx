@@ -4,6 +4,7 @@ import AnimeList from "@/app/anime/list/AnimeList";
 import AnimeListSkeleton from "@/app/anime/list/AnimeListSkeleton";
 import { ContentError } from "@/components/error";
 import { getAnimeData } from "@/lib/anime-api";
+import { getAnimeCharactersByAnimeIdMap } from "@/lib/database";
 
 export const metadata: Metadata = {
 	title: "Anime List",
@@ -19,9 +20,10 @@ export const metadata: Metadata = {
 export const revalidate = 120;
 
 async function AnimeListContent() {
-	const data = await getAnimeData();
+	const [data, animeCharacters] = await Promise.all([getAnimeData(), getAnimeCharactersByAnimeIdMap()]);
+
 	if (!data) return <ContentError location="AnimeList" />;
-	return <AnimeList animeData={data} />;
+	return <AnimeList animeData={data} animeCharacters={animeCharacters} />;
 }
 
 export default function AnimeListPage() {

@@ -1,11 +1,10 @@
 "use server";
 
 import { config } from "@/lib/config";
-import type { AnimeData, AnimeEntry, AnimeFavoritesData } from "@/types/animeData";
+import type { AnimeCharacterListData, AnimeData, AnimeEntry, AnimeFavoritesData } from "@/types/animeData";
 
-type Endpoint = "anime_data" | "favorites";
-function getEndpoint(endpoint: Endpoint): string {
-	const username = "NATroutter";
+type Endpoint = "anime_data" | "favorites" | "characters";
+function getEndpoint(endpoint: Endpoint, data: string[]): string {
 	const jikan = `https://api.jikan.moe/v4`;
 	const mal = "https://api.myanimelist.net/v2";
 	const mal_fields: string =
@@ -13,15 +12,34 @@ function getEndpoint(endpoint: Endpoint): string {
 
 	switch (endpoint) {
 		case "anime_data":
-			return `${mal}/users/${username}/animelist?fields=${mal_fields}&limit=1000&sort=list_updated_at&nsfw=1`;
+			return `${mal}/users/${data[0]}/animelist?fields=${mal_fields}&limit=1000&sort=list_updated_at&nsfw=1`;
 		case "favorites":
-			return `${jikan}/users/${username}/favorites`;
+			return `${jikan}/users/${data[0]}/favorites`;
+		case "characters":
+			return `${jikan}/anime/${data[0]}/characters`;
+	}
+}
+
+export async function getCharacters(animeid: string): Promise<AnimeCharacterListData | undefined> {
+	try {
+		const response = await fetch(getEndpoint("characters",[animeid]), {
+			method: "GET",
+		});
+		if (!response.ok) {
+			console.error(`Failed to fetch anime data from jikan.moe : (${response.status}) ${response.statusText}`);
+			return undefined;
+		}
+		const json = await response.json();
+		return json as AnimeCharacterListData;
+	} catch (err) {
+		console.error("Failed to fetch characters:", err);
+		return undefined;
 	}
 }
 
 export async function getFavorites(): Promise<AnimeFavoritesData | undefined> {
 	try {
-		const response = await fetch(getEndpoint("favorites"), {
+		const response = await fetch(getEndpoint("favorites",["NATroutter"]), {
 			method: "GET",
 		});
 		if (!response.ok) {
@@ -39,7 +57,7 @@ export async function getFavorites(): Promise<AnimeFavoritesData | undefined> {
 export async function getAnimeData(): Promise<AnimeEntry[] | undefined> {
 	const data: AnimeEntry[] = [];
 
-	let nextURL: string | undefined = getEndpoint("anime_data");
+	let nextURL: string | undefined = getEndpoint("anime_data",["NATroutter"]);
 
 	const client_id = config.MAL_CLIENT_ID;
 	if (!client_id) return undefined;

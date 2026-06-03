@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import "@/app/bones/registry";
 import "@/styles/markdown.css";
 import "@/styles/globals.css";
 

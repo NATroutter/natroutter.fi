@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { AnimeEntry, AnimeWatchStatus } from "@/types/animeData";
+import type { AnimeCharactersByAnimeId, AnimeEntry, AnimeWatchStatus } from "@/types/animeData";
 import { AnimeGrid } from "./AnimeGrid";
 import { AnimeListTypeSelector } from "./AnimeListTypeSelector";
 import { AnimeSearchFilter } from "./AnimeSearchFilter";
@@ -27,7 +27,12 @@ const descriptionMap: Record<AnimeWatchStatus | "all", string> = {
 	dropped: "Anime I've decided not to continue watching.",
 };
 
-export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
+interface AnimeListProps {
+	animeData: AnimeEntry[];
+	animeCharacters: AnimeCharactersByAnimeId;
+}
+
+export default function AnimeList({ animeData, animeCharacters }: AnimeListProps) {
 	const {
 		selectedList,
 		setSelectedList,
@@ -101,6 +106,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 								hasMore={hasMore}
 								isLoadingMore={isLoadingMore}
 								loadMoreRef={loadMoreRef}
+								animeCharacters={animeCharacters}
 							/>
 						</div>
 					</CardContent>

@@ -14,17 +14,21 @@ import {
 } from "@/components/ui/dialog";
 import { formatAnimeAgeRating } from "@/lib/anime-format";
 import { formatDate, toCapitalizedCase } from "@/lib/utils";
-import type { AnimeAlternativeTitles, AnimeEntry } from "@/types/animeData";
+import type { AnimeAlternativeTitles, AnimeEntry, AnimeCharacterData } from "@/types/animeData";
+import { AnimeCharacterCarousel } from "./AnimeCharacterCarousel";
 
 interface AnimeCardProps {
 	data: AnimeEntry;
+	characterData?: AnimeCharacterData;
 	children?: ReactNode;
 }
 
-export function AnimeDialog({ data, children }: AnimeCardProps) {
+export function AnimeDialog({ data, children, characterData }: AnimeCardProps) {
 	const anime = data.node;
 	const status = data.list_status;
 	const titles: AnimeAlternativeTitles = anime.alternative_titles;
+
+	const hasCharacterData = Array.isArray(characterData?.data);
 
 	return (
 		<Dialog>
@@ -35,7 +39,7 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 				<DialogHeader className="outline-hidden w-full">
 					<DialogTitle className="hidden" />
 					<DialogDescription className="hidden" />
-					<div className="flex flex-col-reverse lg:flex-row gap-4 text-left">
+					<div className="flex flex-col-reverse lg:flex-row gap-4 text-left min-w-0">
 						<div className="flex flex-col min-w-full max-w-full w-full lg:min-w-[20rem] lg:max-w-[20rem] lg:w-[20rem]">
 							<div className="hidden lg:flex my-0 m-auto w-[20rem] py-0 pl-0 pr-6">
 								{anime.main_picture.large || anime.main_picture.medium ? (
@@ -222,20 +226,31 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 						</div>
 
 						{/*Right side*/}
-						<div className="flex flex-col gap-4 w-fit">
-							<div className="flex flex-col">
-								<h1 className="text-2xl font-bold">{titles.en.length > 0 ? titles.en : anime.title}</h1>
-								{anime.alternative_titles.ja && (
-									<h2 className="text-base font-semibold">{anime.alternative_titles.ja}</h2>
+						<div className="flex min-w-0 w-full flex-1 flex-col gap-4 justify-between overflow-hidden">
+
+							{/*Top section - title synopsis*/}
+							<div className="flex min-w-0 flex-col gap-4">
+								<div className="flex flex-col">
+									<h1 className="text-2xl font-bold">{titles.en.length > 0 ? titles.en : anime.title}</h1>
+									{anime.alternative_titles.ja && (
+										<h2 className="text-base font-semibold">{anime.alternative_titles.ja}</h2>
+									)}
+								</div>
+
+								{anime.synopsis && (
+									<div>
+										<p>{anime.synopsis.replace("[Written by MAL Rewrite]", "")}</p>
+									</div>
 								)}
 							</div>
 
-							{anime.synopsis && (
-								<div>
-									<p>{anime.synopsis.replace("[Written by MAL Rewrite]", "")}</p>
-								</div>
-							)}
+							{/*bottom section - Characters*/}
+							<div className="grid min-w-0 w-full grid-cols-[minmax(0,1fr)] gap-4">
+
+								{hasCharacterData && <AnimeCharacterCarousel characterData={characterData} />}
+							</div>
 						</div>
+
 
 						{/*Image For mobile layout*/}
 						<div className="flex lg:hidden my-0 m-auto w-full max-w-[20rem] py-3 pl-0">
