@@ -4,7 +4,8 @@ import AnimeSkeleton from "@/app/anime/AnimeSkeleton";
 import AnimeStats from "@/app/anime/AnimeStats";
 import { ContentError } from "@/components/error";
 import { getAnimeData } from "@/lib/anime-api";
-import { getHistory } from "@/lib/database";
+import { getHistory, getAnimeCharactersByAnimeIdMap } from "@/lib/database";
+
 
 export const metadata: Metadata = {
 	title: "Anime Statistics",
@@ -18,11 +19,11 @@ export const metadata: Metadata = {
 export const revalidate = 120;
 
 async function AnimeContent() {
-	const [data, history] = await Promise.all([getAnimeData(), getHistory()]);
+	const [data, history, animeCharacters] = await Promise.all([getAnimeData(), getHistory(), getAnimeCharactersByAnimeIdMap()]);
 
 	if (!data) return <ContentError location="Anim-data" />;
 
-	return <AnimeStats animeData={data} animeHistory={history} />;
+	return <AnimeStats animeData={data} animeHistory={history} animeCharacters={animeCharacters} />;
 }
 
 export default function AnimePage() {

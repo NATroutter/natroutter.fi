@@ -9,7 +9,7 @@ import {
 	TimelineItem,
 	TimelineSeparator,
 } from "@/components/ui/timeline";
-import type { AnimeEntry, AnimeHistoryUpdate } from "@/types/animeData";
+import type { AnimeEntry, AnimeHistoryUpdate,AnimeCharactersByAnimeId } from "@/types/animeData";
 import {AnimeDialog} from "@/components/AnimeDialog";
 import {FaTv} from "react-icons/fa";
 
@@ -17,9 +17,10 @@ interface ChartAnimeTimelineProps {
 	settings: ChartSettings;
 	animeHistory: AnimeHistoryUpdate[];
 	animeData: AnimeEntry[];
+	animeCharacters: AnimeCharactersByAnimeId;
 }
 
-export default function ChartAnimeTimeline({ settings, animeHistory, animeData }: ChartAnimeTimelineProps) {
+export default function ChartAnimeTimeline({ settings, animeHistory, animeData, animeCharacters }: ChartAnimeTimelineProps) {
 	const filteredHistory = settings.viewingYear === "all"
 		? animeHistory
 		: animeHistory.filter(item => new Date(item.date).getFullYear() === Number(settings.viewingYear));
@@ -104,7 +105,7 @@ export default function ChartAnimeTimeline({ settings, animeHistory, animeData }
 												<FaTv className="shrink-0 mt-1" size={19} />
 												<span className="break-words min-w-0">
 													{entry ? (
-														<AnimeDialog data={entry}>
+														<AnimeDialog data={entry} characterData={animeCharacters[entry.node.id]}>
 															<span className="link">{edit.title}</span>
 														</AnimeDialog>
 													) : (

@@ -78,7 +78,7 @@ export function AnimeCard({ data, characterData, animation = true }: AnimeCardPr
 							{/* Dubbed badge */}
 							{hasCharacterData && (
 								<div
-									className={`absolute top-1 right-1 font-semibold z-20 text-xs p-1 rounded-sm ${dubbed ? "bg-green-700/70" : "bg-red-700/70"}`}
+									className={`absolute top-1 right-1 font-semibold z-20 text-xs p-1 rounded-sm ${dubbed ? "bg-green-700/70" : "bg-blue-700/70"}`}
 								>
 									{dubbed ? "DUB" : "SUB"}
 								</div>
