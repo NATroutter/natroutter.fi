@@ -8,6 +8,22 @@ const ANIME_WATCH_STATUES: Record<AnimeWatchStatus, string> = {
 	dropped: "Dropped",
 };
 
+const ANIME_WATCH_STATUS_SHORT: Record<AnimeWatchStatus, string> = {
+	plan_to_watch: "PTW",
+	watching: "CW",
+	completed: "C",
+	on_hold: "OH",
+	dropped: "D",
+};
+
+const ANIME_WATCH_STATUS_STYLES: Record<AnimeWatchStatus, string> = {
+	plan_to_watch: "bg-sky-700/80 text-white",
+	watching: "bg-emerald-700/80 text-white",
+	completed: "bg-violet-700/80 text-white",
+	on_hold: "bg-amber-600/80 text-white",
+	dropped: "bg-rose-700/80 text-white",
+};
+
 const ANIME_STATUES: Record<AnimeStatus, { name: string; style: string }> = {
 	currently_airing: { name: "Currently Airing", style: "text-currently-airing" },
 	finished_airing: { name: "Finished Airing", style: "text-finished-airing" },
@@ -67,4 +83,12 @@ export function formatAnime(source: AnimeSource): string {
 		.split("_")
 		.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
 		.join(" ");
+}
+
+export function formatAnimeWatchStatusShort(status: AnimeWatchStatus): string {
+	return ANIME_WATCH_STATUS_SHORT[status];
+}
+
+export function getWatchStatusStyle(status: AnimeWatchStatus): string {
+	return ANIME_WATCH_STATUS_STYLES[status];
 }

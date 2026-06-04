@@ -1,12 +1,13 @@
 "use client";
 
+import { useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { AnimeCharactersByAnimeId, AnimeEntry, AnimeWatchStatus } from "@/types/animeData";
 import { AnimeGrid } from "./AnimeGrid";
 import { AnimeListTypeSelector } from "./AnimeListTypeSelector";
 import { AnimeSearchFilter } from "./AnimeSearchFilter";
 import { AnimeSortControl } from "./AnimeSortControl";
-import { searchTypes } from "./animeListTypes";
+import { getAnimeSearchTypes } from "./animeListTypes";
 import { useAnimeFiltering } from "./useAnimeFiltering";
 
 const titleMap: Record<AnimeWatchStatus | "all", string> = {
@@ -33,15 +34,15 @@ interface AnimeListProps {
 }
 
 export default function AnimeList({ animeData, animeCharacters }: AnimeListProps) {
+	const sortTypes = useMemo(() => getAnimeSearchTypes(animeCharacters), [animeCharacters]);
+	const searchTypes = useMemo(() => sortTypes.filter((searchType) => searchType.searchable), [sortTypes]);
 	const {
 		selectedList,
 		setSelectedList,
 		searchValue,
 		setSearchValue,
-		sortDirection,
-		setSortDirection,
-		sortColumn,
-		setSortColumn,
+		sortRules,
+		setSortRules,
 		fieldSearchType,
 		setFieldSearchType,
 		processedData,
@@ -50,7 +51,7 @@ export default function AnimeList({ animeData, animeCharacters }: AnimeListProps
 		hasMore,
 		isLoadingMore,
 		loadMoreRef,
-	} = useAnimeFiltering(animeData);
+	} = useAnimeFiltering(animeData, searchTypes, sortTypes);
 
 	return (
 		<div className="flex flex-col justify-center mx-auto w-full p-6">
@@ -69,7 +70,7 @@ export default function AnimeList({ animeData, animeCharacters }: AnimeListProps
 							<AnimeListTypeSelector selectedList={selectedList} onListChange={setSelectedList} />
 
 							{/* Search and Sort Controls */}
-							<div className="flex flex-row gap-1 flex-wrap">
+							<div className="flex flex-col gap-2">
 								<AnimeSearchFilter
 									searchTypes={searchTypes}
 									fieldSearchType={fieldSearchType}
@@ -78,13 +79,7 @@ export default function AnimeList({ animeData, animeCharacters }: AnimeListProps
 									onSearchValueChange={setSearchValue}
 								/>
 
-								<AnimeSortControl
-									searchTypes={searchTypes}
-									sortColumn={sortColumn}
-									sortDirection={sortDirection}
-									onSortColumnChange={setSortColumn}
-									onSortDirectionToggle={() => setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))}
-								/>
+								<AnimeSortControl searchTypes={sortTypes} sortRules={sortRules} onSortRulesChange={setSortRules} />
 							</div>
 
 							{/* Display info */}

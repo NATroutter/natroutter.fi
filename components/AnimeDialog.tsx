@@ -12,9 +12,9 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { formatAnimeAgeRating } from "@/lib/anime-format";
+import { formatAnimeAgeRating, formatAnimeWatchStatus, getWatchStatusStyle } from "@/lib/anime-format";
 import { formatDate, toCapitalizedCase } from "@/lib/utils";
-import type { AnimeAlternativeTitles, AnimeEntry, AnimeCharacterData } from "@/types/animeData";
+import type { AnimeAlternativeTitles, AnimeCharacterData, AnimeEntry } from "@/types/animeData";
 import { AnimeCharacterCarousel } from "./AnimeCharacterCarousel";
 
 interface AnimeCardProps {
@@ -27,6 +27,7 @@ export function AnimeDialog({ data, children, characterData }: AnimeCardProps) {
 	const anime = data.node;
 	const status = data.list_status;
 	const titles: AnimeAlternativeTitles = anime.alternative_titles;
+	const watchStatusStyle = getWatchStatusStyle(status.status);
 
 	const hasCharacterData = Array.isArray(characterData?.data);
 
@@ -227,14 +228,20 @@ export function AnimeDialog({ data, children, characterData }: AnimeCardProps) {
 
 						{/*Right side*/}
 						<div className="flex min-w-0 w-full flex-1 flex-col gap-4 justify-between overflow-hidden">
-
 							{/*Top section - title synopsis*/}
 							<div className="flex min-w-0 flex-col gap-4">
 								<div className="flex flex-col">
-									<h1 className="text-2xl font-bold">{titles.en.length > 0 ? titles.en : anime.title}</h1>
+									<div className="flex flex-col">
+										<h1 className="text-2xl font-bold">{titles.en.length > 0 ? titles.en : anime.title}</h1>
+									</div>
 									{anime.alternative_titles.ja && (
 										<h2 className="text-base font-semibold">{anime.alternative_titles.ja}</h2>
 									)}
+									<span
+										className={`mt-2 w-fit shrink-0 rounded-sm px-2 py-1 text-xs font-semibold ${watchStatusStyle}`}
+									>
+										{formatAnimeWatchStatus(status.status)}
+									</span>
 								</div>
 
 								{anime.synopsis && (
@@ -246,11 +253,9 @@ export function AnimeDialog({ data, children, characterData }: AnimeCardProps) {
 
 							{/*bottom section - Characters*/}
 							<div className="grid min-w-0 w-full grid-cols-[minmax(0,1fr)] gap-4">
-
 								{hasCharacterData && <AnimeCharacterCarousel characterData={characterData} />}
 							</div>
 						</div>
-
 
 						{/*Image For mobile layout*/}
 						<div className="flex lg:hidden my-0 m-auto w-full max-w-[20rem] py-3 pl-0">

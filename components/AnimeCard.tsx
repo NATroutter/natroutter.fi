@@ -5,7 +5,13 @@ import { GoDotFill } from "react-icons/go";
 import { AnimeDialog } from "@/components/AnimeDialog";
 import { getAnimeSeason, getAnimeStartYear } from "@/components/charts/ChartAnimeSeasonsBest";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatAnimeAgeRating, formatAnimeStatus, getStatusStyle } from "@/lib/anime-format";
+import {
+	formatAnimeAgeRating,
+	formatAnimeStatus,
+	formatAnimeWatchStatusShort,
+	getStatusStyle,
+	getWatchStatusStyle,
+} from "@/lib/anime-format";
 import { toCapitalizedCase } from "@/lib/utils";
 import type { AnimeAlternativeTitles, AnimeCharacterData, AnimeEntry, AnimeInfo } from "@/types/animeData";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
@@ -54,6 +60,9 @@ export function AnimeCard({ data, characterData, animation = true }: AnimeCardPr
 			entry.character.voices.some((actor) => actor.language.toLowerCase().includes("english")),
 		);
 
+	const watchStatusShort = formatAnimeWatchStatusShort(data.list_status.status);
+	const watchStatusStyle = getWatchStatusStyle(data.list_status.status);
+
 	return (
 		<AnimeDialog data={data} characterData={characterData}>
 			<Card
@@ -74,6 +83,11 @@ export function AnimeCard({ data, characterData, animation = true }: AnimeCardPr
 								width={0}
 								height={0}
 							/>
+
+							{/* Watch status badge */}
+							<div className={`absolute top-1 left-1 font-semibold z-20 text-xs p-1 rounded-sm ${watchStatusStyle}`}>
+								{watchStatusShort}
+							</div>
 
 							{/* Dubbed badge */}
 							{hasCharacterData && (

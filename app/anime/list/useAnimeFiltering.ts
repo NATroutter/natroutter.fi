@@ -1,12 +1,31 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { AnimeEntry, AnimeWatchStatus } from "@/types/animeData";
-import { searchTypes } from "./animeListTypes";
+import { type AnimeSortRule, DEFAULT_ANIME_SORT_RULES, type SearchTypes } from "./animeListTypes";
 
-export function useAnimeFiltering(animeData: AnimeEntry[]) {
+function compareSortValues(
+	aVal: string | number,
+	bVal: string | number,
+	direction: AnimeSortRule["direction"],
+): number {
+	if (aVal == null && bVal == null) return 0;
+	if (aVal == null) return 1;
+	if (bVal == null) return -1;
+
+	if (typeof aVal === "string" && typeof bVal === "string") {
+		return direction === "asc" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+	}
+
+	if (Number.isNaN(aVal) && Number.isNaN(bVal)) return 0;
+	if (Number.isNaN(aVal)) return 1;
+	if (Number.isNaN(bVal)) return -1;
+
+	return direction === "asc" ? Number(aVal) - Number(bVal) : Number(bVal) - Number(aVal);
+}
+
+export function useAnimeFiltering(animeData: AnimeEntry[], searchTypes: SearchTypes[], sortTypes: SearchTypes[]) {
 	const [selectedList, setSelectedList] = useState<AnimeWatchStatus | "all">("all");
 	const [searchValue, setSearchValue] = useState("");
-	const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
-	const [sortColumn, setSortColumn] = useState<string>(searchTypes[1].type);
+	const [sortRules, setSortRules] = useState<AnimeSortRule[]>(DEFAULT_ANIME_SORT_RULES);
 	const [itemsPerLoad] = useState(30);
 	const [visibleCount, setVisibleCount] = useState(30);
 	const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -102,40 +121,37 @@ export function useAnimeFiltering(animeData: AnimeEntry[]) {
 			searchValue.trim() &&
 			!Number.isNaN(Number(searchValue)) &&
 			searchTypeConfigForSkip.isNumeric &&
-			fieldSearchType === sortColumn;
+			fieldSearchType === sortRules[0]?.column;
 
 		if (!skipRegularSort) {
-			const sortTypeConfig = searchTypes.find((st) => st.type === sortColumn) || searchTypes[0];
-
-			// Apply reversed logic: if reversed is true, flip the sort direction
-			const effectiveDirection = sortTypeConfig.reversed
-				? sortDirection === "asc"
-					? "desc"
-					: "asc"
-				: sortDirection;
+			const activeSortRules = sortRules.length > 0 ? sortRules : DEFAULT_ANIME_SORT_RULES;
 
 			data = [...data].sort((a, b) => {
-				const aVal = sortTypeConfig.getValue(a);
-				const bVal = sortTypeConfig.getValue(b);
+				for (const sortRule of activeSortRules) {
+					const sortTypeConfig = sortTypes.find((st) => st.type === sortRule.column);
 
-				if (aVal == null && bVal == null) return 0;
-				if (aVal == null) return 1;
-				if (bVal == null) return -1;
+					if (!sortTypeConfig) {
+						continue;
+					}
 
-				if (typeof aVal === "string" && typeof bVal === "string") {
-					return effectiveDirection === "asc" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+					const effectiveDirection = sortTypeConfig.reversed
+						? sortRule.direction === "asc"
+							? "desc"
+							: "asc"
+						: sortRule.direction;
+					const result = compareSortValues(sortTypeConfig.getValue(a), sortTypeConfig.getValue(b), effectiveDirection);
+
+					if (result !== 0) {
+						return result;
+					}
 				}
 
-				if (Number.isNaN(aVal) && Number.isNaN(bVal)) return 0;
-				if (Number.isNaN(aVal)) return 1;
-				if (Number.isNaN(bVal)) return -1;
-
-				return effectiveDirection === "asc" ? Number(aVal) - Number(bVal) : Number(bVal) - Number(aVal);
+				return 0;
 			});
 		}
 
 		return data;
-	}, [animeData, selectedList, searchValue, sortColumn, sortDirection, isInitialLoad, fieldSearchType]);
+	}, [animeData, selectedList, searchValue, sortRules, isInitialLoad, fieldSearchType, searchTypes, sortTypes]);
 
 	// Visible data for infinite scroll
 	const visibleData = useMemo(() => {
@@ -147,7 +163,7 @@ export function useAnimeFiltering(animeData: AnimeEntry[]) {
 	// Reset visible count when filters change
 	useEffect(() => {
 		setVisibleCount(itemsPerLoad);
-	}, [searchValue, selectedList, fieldSearchType, itemsPerLoad]);
+	}, [searchValue, selectedList, fieldSearchType, sortRules, itemsPerLoad]);
 
 	// Load more items callback
 	const loadMore = useCallback(() => {
@@ -168,7 +184,7 @@ export function useAnimeFiltering(animeData: AnimeEntry[]) {
 					loadMore();
 				}
 			},
-			{ threshold: 0.1 }
+			{ threshold: 0.1 },
 		);
 
 		const currentRef = loadMoreRef.current;
@@ -188,10 +204,8 @@ export function useAnimeFiltering(animeData: AnimeEntry[]) {
 		setSelectedList,
 		searchValue,
 		setSearchValue,
-		sortDirection,
-		setSortDirection,
-		sortColumn,
-		setSortColumn,
+		sortRules,
+		setSortRules,
 		fieldSearchType,
 		setFieldSearchType,
 		processedData,
