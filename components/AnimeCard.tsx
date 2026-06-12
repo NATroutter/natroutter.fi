@@ -70,6 +70,7 @@ export function AnimeCard({ data, animation = true }: AnimeCardProps) {
 								src={anime.main_picture.medium || anime.main_picture.large}
 								alt={anime.title}
 								sizes="100vw"
+								loading="eager"
 								width={0}
 								height={0}
 							/>

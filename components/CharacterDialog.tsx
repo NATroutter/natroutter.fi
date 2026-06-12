@@ -38,6 +38,7 @@ export function CharacterDialog({ character, children }: CharacterDialogProps) {
 								src={data.images.jpg.image_url}
 								alt={data.name}
 								sizes="20rem"
+								loading="eager"
 								width={0}
 								height={0}
 							/>
@@ -86,6 +87,7 @@ export function CharacterDialog({ character, children }: CharacterDialogProps) {
 													src={actor.person.images.jpg.image_url}
 													alt={actor.person.name}
 													sizes="3rem"
+													loading="eager"
 													width={48}
 													height={48}
 												/>

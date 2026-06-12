@@ -99,6 +99,7 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 										src={anime.main_picture.large || anime.main_picture.medium}
 										alt="Anime_picture"
 										sizes="100vw"
+										loading="eager"
 										width={0}
 										height={0}
 									/>
@@ -326,6 +327,7 @@ export function AnimeDialog({ data, children }: AnimeCardProps) {
 									src={anime.main_picture.large || anime.main_picture.medium}
 									alt="Anime_picture"
 									sizes="100vw"
+									loading="eager"
 									width={0}
 									height={0}
 								/>
