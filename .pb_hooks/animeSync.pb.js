@@ -1,4 +1,4 @@
-cronAdd("Sync Anime Characters", "* * * * *", () => {
+cronAdd("Sync Anime Data", "* * * * *", () => {
 	const ANIME_USERNAME = "NATroutter";
 	const JIKAN_BASE_URL = "https://api.jikan.moe/v4";
 	const MAL_BASE_URL = "https://api.myanimelist.net/v2";
@@ -14,7 +14,7 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 	const STALE_AFTER_DAYS = 30;
 
 	const runId = new Date().toISOString();
-	$app.logger().info(`[AnimeCharacters] Sync started (${runId})`);
+	$app.logger().info(`[AnimeSync] Sync started (${runId})`);
 
 	let seriesCollection;
 	let characterCollection;
@@ -23,14 +23,14 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 		characterCollection = $app.findCollectionByNameOrId(CHARACTER_COLLECTION_NAME);
 	} catch (err) {
 		$app.logger().error(
-			`[AnimeCharacters] Missing collections. Expected "${SERIES_COLLECTION_NAME}" and "${CHARACTER_COLLECTION_NAME}"`,
+			`[AnimeSync] Missing collections. Expected "${SERIES_COLLECTION_NAME}" and "${CHARACTER_COLLECTION_NAME}"`,
 		);
 		return;
 	}
 
 	const clientId = $os.getenv("MAL_CLIENT_ID");
 	if (!clientId) {
-		$app.logger().error("[AnimeCharacters] Sync stopped because MAL_CLIENT_ID is not available to PocketBase");
+		$app.logger().error("[AnimeSync] Sync stopped because MAL_CLIENT_ID is not available to PocketBase");
 		return;
 	}
 
@@ -62,7 +62,7 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 
 		if (res.statusCode === 429) {
 			hitJikanRateLimit = true;
-			$app.logger().error(`[AnimeCharacters] Jikan rate limit hit for ${url}. Stopping this run and backing off.`);
+			$app.logger().error(`[AnimeSync] Jikan rate limit hit for ${url}. Stopping this run and backing off.`);
 			sleep(JIKAN_RATE_LIMIT_BACKOFF_MS);
 		}
 
@@ -250,7 +250,7 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 		characterMeta[characterId] = meta;
 
 		$app.logger().info(
-			`[AnimeCharacters] Character ${characterId} will be retried after ${meta.retry_after} (failed attempts: ${failureCount})`,
+			`[AnimeSync] Character ${characterId} will be retried after ${meta.retry_after} (failed attempts: ${failureCount})`,
 		);
 	};
 
@@ -288,8 +288,54 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 		return false;
 	};
 
+	const hasAnimeData = (record) => {
+		if (record === undefined) {
+			return false;
+		}
+
+		const data = getRecordJson(record, "data");
+		return !!(data && data.node && data.node.id && data.list_status);
+	};
+
+	const hasDubbedFlag = (record) => {
+		if (record === undefined) {
+			return false;
+		}
+
+		return typeof record.get("dubbed") === "boolean";
+	};
+
+	const getBackfillReason = (record) => {
+		if (record === undefined) {
+			return "new";
+		}
+
+		if (!hasAnimeData(record)) {
+			return "anime-data";
+		}
+
+		if (!hasDubbedFlag(record)) {
+			return "dubbed";
+		}
+
+		const meta = getRecordJson(record, "character_meta");
+		const characters = getRecordArray(record, "characters");
+		const expectedCount = Object.keys(meta).length;
+		const isIncomplete = expectedCount > 0 && characters.length < expectedCount;
+
+		if (isIncomplete && hasMissingCharacterReadyToSync(record)) {
+			return "characters";
+		}
+
+		return "";
+	};
+
 	const shouldBackfillSeries = (record) => {
 		if (record === undefined) {
+			return true;
+		}
+
+		if (!hasAnimeData(record) || !hasDubbedFlag(record)) {
 			return true;
 		}
 
@@ -330,6 +376,8 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 		return {
 			characterMetaCount: Object.keys(getRecordJson(record, "character_meta")).length,
 			characterRelationCount: getRecordArray(record, "characters").length,
+			hasAnimeData: hasAnimeData(record),
+			dubbed: hasDubbedFlag(record) ? record.get("dubbed") : undefined,
 			fetchedAt: record.get("fetched_at") || record.getString("fetched_at") || "",
 			rawCharacterMeta: stringifyJson(rawCharacterMeta),
 			rawCharacters: stringifyJson(rawCharacters),
@@ -348,7 +396,7 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 		if (isJikanUpstreamException(res)) {
 			logJikanResponse(
 				"info",
-				`[AnimeCharacters] Jikan upstream failed for character ${characterId}. MyAnimeList may be unavailable for this page; it will be retried by a later cron run.`,
+				`[AnimeSync] Jikan upstream failed for character ${characterId}. MyAnimeList may be unavailable for this page; it will be retried by a later cron run.`,
 				characterId,
 				res,
 			);
@@ -358,7 +406,7 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 		if (res.json && res.json.status && res.json.status !== 200) {
 			logJikanResponse(
 				"info",
-				`[AnimeCharacters] Jikan returned an API error body for character ${characterId}. It will be retried by a later cron run.`,
+				`[AnimeSync] Jikan returned an API error body for character ${characterId}. It will be retried by a later cron run.`,
 				characterId,
 				res,
 			);
@@ -368,7 +416,7 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 		if (res.statusCode !== 200) {
 			logJikanResponse(
 				"error",
-				`[AnimeCharacters] Failed to fetch full character data for character ${characterId}: (${res.statusCode}) ${res.statusText}`,
+				`[AnimeSync] Failed to fetch full character data for character ${characterId}: (${res.statusCode}) ${res.statusText}`,
 				characterId,
 				res,
 			);
@@ -378,7 +426,7 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 		if (!res.json || !res.json.data) {
 			logJikanResponse(
 				"info",
-				`[AnimeCharacters] Full character response for character ${characterId} was empty or malformed. Retrying once after a short delay.`,
+				`[AnimeSync] Full character response for character ${characterId} was empty or malformed. Retrying once after a short delay.`,
 				characterId,
 				res,
 			);
@@ -392,7 +440,7 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 			if (isJikanUpstreamException(res)) {
 				logJikanResponse(
 					"info",
-					`[AnimeCharacters] Jikan upstream failed for character ${characterId} on retry. It will be retried by a later cron run.`,
+					`[AnimeSync] Jikan upstream failed for character ${characterId} on retry. It will be retried by a later cron run.`,
 					characterId,
 					res,
 				);
@@ -402,7 +450,7 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 			if (res.json && res.json.status && res.json.status !== 200) {
 				logJikanResponse(
 					"info",
-					`[AnimeCharacters] Jikan returned an API error body for character ${characterId} on retry. It will be retried by a later cron run.`,
+					`[AnimeSync] Jikan returned an API error body for character ${characterId} on retry. It will be retried by a later cron run.`,
 					characterId,
 					res,
 				);
@@ -412,7 +460,7 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 			if (res.statusCode !== 200) {
 				logJikanResponse(
 					"error",
-					`[AnimeCharacters] Failed to fetch full character data for character ${characterId} on retry: (${res.statusCode}) ${res.statusText}`,
+					`[AnimeSync] Failed to fetch full character data for character ${characterId} on retry: (${res.statusCode}) ${res.statusText}`,
 					characterId,
 					res,
 				);
@@ -423,7 +471,7 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 		if (!res.json || !res.json.data) {
 			logJikanResponse(
 				"info",
-				`[AnimeCharacters] Full character data for character ${characterId} is not available from Jikan yet. It will be retried by a later cron run.`,
+				`[AnimeSync] Full character data for character ${characterId} is not available from Jikan yet. It will be retried by a later cron run.`,
 				characterId,
 				res,
 			);
@@ -451,12 +499,12 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 		});
 
 		if (res.statusCode !== 200) {
-			$app.logger().error(`[AnimeCharacters] Failed to fetch MAL anime list: (${res.statusCode}) ${res.statusText}`);
+			$app.logger().error(`[AnimeSync] Failed to fetch MAL anime list: (${res.statusCode}) ${res.statusText}`);
 			return;
 		}
 
 		if (!res.json || !Array.isArray(res.json.data)) {
-			$app.logger().error("[AnimeCharacters] MAL anime list response was empty or malformed");
+			$app.logger().error("[AnimeSync] MAL anime list response was empty or malformed");
 			return;
 		}
 
@@ -473,7 +521,7 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 
 		const record = findSeriesRecord(anime.node.id);
 		if (shouldBackfillSeries(record)) {
-			anime.syncReason = "backfill";
+			anime.syncReason = getBackfillReason(record) || "backfill";
 			anime.syncStats = getSeriesStats(record);
 			animeToSync.push(anime);
 		}
@@ -503,7 +551,7 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 	}
 
 	if (animeToSync.length === 0) {
-		$app.logger().info("[AnimeCharacters] Character cache is up to date");
+		$app.logger().info("[AnimeSync] Character cache is up to date");
 		return;
 	}
 
@@ -517,7 +565,7 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 		const animeId = anime.node.id;
 		const animeTitle = anime.node.title || "";
 		$app.logger().info(
-			`[AnimeCharacters] Selected anime series ${animeId} for ${anime.syncReason || "sync"}`,
+			`[AnimeSync] Selected anime series ${animeId} for ${anime.syncReason || "sync"}`,
 			"animeId",
 			animeId,
 			"syncReason",
@@ -526,6 +574,10 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 			anime.syncStats ? anime.syncStats.characterMetaCount : undefined,
 			"characterRelationCount",
 			anime.syncStats ? anime.syncStats.characterRelationCount : undefined,
+			"hasAnimeData",
+			anime.syncStats ? anime.syncStats.hasAnimeData : undefined,
+			"dubbed",
+			anime.syncStats ? anime.syncStats.dubbed : undefined,
 			"fetchedAt",
 			anime.syncStats ? anime.syncStats.fetchedAt : undefined,
 			"rawCharacterMeta",
@@ -543,7 +595,7 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 		if (res.statusCode !== 200) {
 			logJikanAnimeResponse(
 				"error",
-				`[AnimeCharacters] Failed to fetch character list for anime ${animeId}: (${res.statusCode}) ${res.statusText}`,
+				`[AnimeSync] Failed to fetch character list for anime ${animeId}: (${res.statusCode}) ${res.statusText}`,
 				animeId,
 				res,
 			);
@@ -554,7 +606,7 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 		if (!res.json || !Array.isArray(res.json.data)) {
 			logJikanAnimeResponse(
 				"error",
-				`[AnimeCharacters] Character list response for anime ${animeId} was empty or malformed`,
+				`[AnimeSync] Character list response for anime ${animeId} was empty or malformed`,
 				animeId,
 				res,
 			);
@@ -564,6 +616,7 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 
 		const characterMeta = {};
 		const characterIds = [];
+		let dubbed = false;
 		const existingSeriesRecord = findSeriesRecord(animeId);
 		const existingCharacterMeta = existingSeriesRecord ? getRecordJson(existingSeriesRecord, "character_meta") : {};
 		const seriesRecord = existingSeriesRecord || new Record(seriesCollection);
@@ -571,6 +624,15 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 		for (const entry of res.json.data) {
 			if (!entry.character || !entry.character.mal_id) {
 				continue;
+			}
+
+			if (Array.isArray(entry.voice_actors)) {
+				for (const voiceActor of entry.voice_actors) {
+					if (voiceActor && typeof voiceActor.language === "string" && voiceActor.language.toLowerCase() === "english") {
+						dubbed = true;
+						break;
+					}
+				}
 			}
 
 			const characterId = entry.character.mal_id;
@@ -605,6 +667,11 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 
 			seriesRecord.set("anime_id", animeId);
 			seriesRecord.set("title", animeTitle);
+			seriesRecord.set("data", {
+				node: anime.node,
+				list_status: anime.list_status,
+			});
+			seriesRecord.set("dubbed", dubbed);
 			seriesRecord.set("characters", characterRecordIds);
 			seriesRecord.set("character_meta", characterMeta);
 			seriesRecord.set("fetched_at", new Date().toISOString());
@@ -613,13 +680,13 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 				$app.save(seriesRecord);
 			} catch (err) {
 				$app.logger().error(
-					`[AnimeCharacters] Failed to save anime series ${animeId}. If the error mentions "characters: Select no more than 10", increase the anime_series.characters relation max select in PocketBase. Error: ${err}`,
+					`[AnimeSync] Failed to save anime series ${animeId}. If the error mentions "characters: Select no more than 10", increase the anime_series.characters relation max select in PocketBase. Error: ${err}`,
 				);
 				return false;
 			}
 
 			$app.logger().info(
-				`[AnimeCharacters] Saved anime series ${animeId} with ${characterRecordIds.length}/${characterIds.length} character relation(s)`,
+				`[AnimeSync] Saved anime series ${animeId} with ${characterRecordIds.length}/${characterIds.length} character relation(s)`,
 			);
 			return true;
 		};
@@ -636,7 +703,7 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 		if (anime.syncReason === "backfill" && characterIdsToSync.length === 0) {
 			saveSeriesRecord();
 			$app.logger().info(
-				`[AnimeCharacters] Anime series ${animeId} was selected for backfill but has no ready missing characters`,
+				`[AnimeSync] Anime series ${animeId} was selected for backfill but has no ready missing characters`,
 				"animeId",
 				animeId,
 				"characterCount",
@@ -668,7 +735,7 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 
 			$app.save(characterRecord);
 			clearCharacterRetry(characterMeta, characterId);
-			$app.logger().info(`[AnimeCharacters] Saved full character data for character ${characterId}`);
+			$app.logger().info(`[AnimeSync] Saved full character data for character ${characterId}`);
 			charactersSaved++;
 		}
 
@@ -681,6 +748,6 @@ cronAdd("Sync Anime Characters", "* * * * *", () => {
 	}
 
 	$app.logger().info(
-		`[AnimeCharacters] Sync finished (${runId}) - series saved: ${seriesSaved}, series skipped: ${seriesSkipped}, series failed: ${seriesFailed}, characters saved: ${charactersSaved}, characters failed: ${charactersFailed}`,
+		`[AnimeSync] Sync finished (${runId}) - series saved: ${seriesSaved}, series skipped: ${seriesSkipped}, series failed: ${seriesFailed}, characters saved: ${charactersSaved}, characters failed: ${charactersFailed}`,
 	);
 });

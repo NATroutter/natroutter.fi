@@ -20,22 +20,6 @@ function getEndpoint(endpoint: Endpoint, data: string[]): string {
 	}
 }
 
-export async function getCharacters(animeid: string): Promise<AnimeCharacterListData | undefined> {
-	try {
-		const response = await fetch(getEndpoint("characters",[animeid]), {
-			method: "GET",
-		});
-		if (!response.ok) {
-			console.error(`Failed to fetch anime data from jikan.moe : (${response.status}) ${response.statusText}`);
-			return undefined;
-		}
-		const json = await response.json();
-		return json as AnimeCharacterListData;
-	} catch (err) {
-		console.error("Failed to fetch characters:", err);
-		return undefined;
-	}
-}
 
 export async function getFavorites(): Promise<AnimeFavoritesData | undefined> {
 	try {
