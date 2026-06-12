@@ -3,7 +3,6 @@
 import useSWR from "swr";
 import { ContentError } from "@/components/error";
 import FooterContent from "@/components/FooterContent";
-import FooterSkeleton from "@/components/FooterSkeleton";
 import type { FooterData } from "@/types/interfaces";
 
 const fetcher = (url: string) =>
@@ -15,7 +14,7 @@ const fetcher = (url: string) =>
 export default function Footer() {
 	const { data, error, isLoading } = useSWR<FooterData>("/api/footer", fetcher);
 
-	if (isLoading) return <FooterSkeleton />;
+	if (isLoading) return null;
 	if (error || !data) return <ContentError location="Footer" />;
 
 	return <FooterContent data={data} />;

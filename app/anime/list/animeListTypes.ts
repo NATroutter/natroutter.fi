@@ -1,4 +1,4 @@
-import type { AnimeCharactersByAnimeId, AnimeEntry } from "@/types/animeData";
+import type { AnimeEntry } from "@/types/animeData";
 
 export interface SearchTypes {
 	type: string;
@@ -16,19 +16,7 @@ export interface AnimeSortRule {
 
 export const DEFAULT_ANIME_SORT_RULES: AnimeSortRule[] = [{ column: "updated", direction: "desc" }];
 
-function isAnimeDubbed(entry: AnimeEntry, animeCharacters: AnimeCharactersByAnimeId): boolean | undefined {
-	const characterData = animeCharacters[entry.node.id];
-
-	if (!Array.isArray(characterData?.data)) {
-		return undefined;
-	}
-
-	return characterData.data.some((characterEntry) =>
-		characterEntry.character.voices.some((actor) => actor.language.toLowerCase().includes("english")),
-	);
-}
-
-export function getAnimeSearchTypes(animeCharacters: AnimeCharactersByAnimeId): SearchTypes[] {
+export function getAnimeSearchTypes(): SearchTypes[] {
 	return [
 		{
 			type: "title",
@@ -54,7 +42,7 @@ export function getAnimeSearchTypes(animeCharacters: AnimeCharactersByAnimeId): 
 			type: "dubbed",
 			label: "Dub/Sub",
 			getValue: (entry) => {
-				const dubbed = isAnimeDubbed(entry, animeCharacters);
+				const dubbed = entry.dubbed;
 
 				if (dubbed == null) {
 					return -1;
@@ -157,4 +145,4 @@ export function getAnimeSearchTypes(animeCharacters: AnimeCharactersByAnimeId): 
 	];
 }
 
-export const searchTypes = getAnimeSearchTypes({});
+export const searchTypes = getAnimeSearchTypes();

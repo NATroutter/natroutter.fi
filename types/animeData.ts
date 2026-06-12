@@ -73,6 +73,7 @@ export interface ListStatus {
 export interface AnimeEntry {
 	node: AnimeInfo;
 	list_status: ListStatus;
+	dubbed?: boolean;
 }
 
 export interface AnimePaging {
@@ -127,6 +128,10 @@ export type AnimeCharactersByAnimeId = Record<number, AnimeCharacterData>;
 export interface AnimeSeriesRecord {
 	anime_id: number;
 	title?: string;
+	data?: AnimeInfo;
+	list_status?: ListStatus;
+	list_status_synced_at?: string;
+	dubbed?: boolean;
 	characters?: string[];
 	character_meta?: AnimeSeriesCharacterMetaById;
 	fetched_at: string;

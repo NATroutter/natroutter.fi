@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { type ChartSettings, defaultSettings } from "@/components/ChartSettingsDialog";
+import ChartAnimeActivityMap from "@/components/charts/ChartAnimeActivityMap";
 import ChartAnimeAgeRatings from "@/components/charts/ChartAnimeAgeRatings";
 import ChartAnimeCompletedByDayOfWeek from "@/components/charts/ChartAnimeCompletedByDayOfWeek";
 import ChartAnimeCompletedByMonth from "@/components/charts/ChartAnimeCompletedByMonth";
@@ -16,20 +17,18 @@ import ChartAnimeSeasonsBest from "@/components/charts/ChartAnimeSeasonsBest";
 import ChartAnimeSource from "@/components/charts/ChartAnimeSource";
 import ChartAnimeStatus from "@/components/charts/ChartAnimeStatus";
 import ChartAnimeStudio from "@/components/charts/ChartAnimeStudio";
+import ChartAnimeTimeline from "@/components/charts/ChartAnimeTimeline";
 import ChartAnimeUpdatesByDayOfWeek from "@/components/charts/ChartAnimeUpdatesByDayOfWeek";
 import ChartAnimeUpdatesByMonth from "@/components/charts/ChartAnimeUpdatesByMonth";
 import ChartAnimeYearPreference from "@/components/charts/ChartAnimeYearPreference";
-import type {AnimeEntry, AnimeHistoryUpdate, AnimeCharactersByAnimeId} from "@/types/animeData";
-import ChartAnimeTimeline from "@/components/charts/ChartAnimeTimeline";
-import ChartAnimeActivityMap from "@/components/charts/ChartAnimeActivityMap";
+import type { AnimeEntry, AnimeHistoryUpdate } from "@/types/animeData";
 
 interface AnimeStatsProps {
 	animeData: AnimeEntry[];
 	animeHistory: AnimeHistoryUpdate[];
-	animeCharacters: AnimeCharactersByAnimeId;
 }
 
-export default function AnimeStats({ animeData, animeHistory, animeCharacters }: AnimeStatsProps) {
+export default function AnimeStats({ animeData, animeHistory }: AnimeStatsProps) {
 	const [chartSettings, setChartSettings] = useState<ChartSettings>(defaultSettings);
 
 	return (
@@ -73,7 +72,7 @@ export default function AnimeStats({ animeData, animeHistory, animeCharacters }:
 					</div>
 
 					<div className="flex flex-col lg:flex-row gap-5 w-full">
-						<ChartAnimeTimeline settings={chartSettings} animeHistory={animeHistory} animeData={animeData} animeCharacters={animeCharacters} />
+						<ChartAnimeTimeline settings={chartSettings} animeHistory={animeHistory} animeData={animeData} />
 					</div>
 				</div>
 			</div>

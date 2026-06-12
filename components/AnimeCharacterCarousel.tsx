@@ -9,7 +9,27 @@ interface AnimeCharacterCarouselProps {
 	characterData: AnimeCharacterData;
 }
 
+export function AnimeCharacterCarouselLoading() {
+	return (
+		<div className="flex flex-col gap-2">
+			<h1 className="text-2xl font-bold">Characters</h1>
+			<div className="rounded-xl bg-card-inner p-4 text-sm text-muted-foreground">Loading characters...</div>
+		</div>
+	);
+}
+
 export function AnimeCharacterCarousel({ characterData }: AnimeCharacterCarouselProps) {
+	if (characterData.data.length === 0) {
+		return (
+			<div className="flex flex-col gap-2">
+				<h1 className="text-2xl font-bold">Characters</h1>
+				<div className="rounded-xl bg-card-inner p-4 text-sm text-muted-foreground">
+					No cached character data is available for this anime yet.
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className="flex flex-col gap-2">
 			<h1 className="text-2xl font-bold">Characters</h1>

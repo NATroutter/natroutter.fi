@@ -13,16 +13,15 @@ import {
 	getWatchStatusStyle,
 } from "@/lib/anime-format";
 import { toCapitalizedCase } from "@/lib/utils";
-import type { AnimeAlternativeTitles, AnimeCharacterData, AnimeEntry, AnimeInfo } from "@/types/animeData";
+import type { AnimeAlternativeTitles, AnimeEntry, AnimeInfo } from "@/types/animeData";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 interface AnimeCardProps {
 	data?: AnimeEntry;
-	characterData?: AnimeCharacterData;
 	animation?: boolean;
 }
 
-export function AnimeCard({ data, characterData, animation = true }: AnimeCardProps) {
+export function AnimeCard({ data, animation = true }: AnimeCardProps) {
 	if (!data || !data.node || !data.list_status) {
 		return (
 			<Card
@@ -53,22 +52,13 @@ export function AnimeCard({ data, characterData, animation = true }: AnimeCardPr
 	const hasMoreGenres = anime.genres && anime.genres.length > maxGenres;
 
 	const titles: AnimeAlternativeTitles = anime.alternative_titles;
-	const hasCharacterData = Array.isArray(characterData?.data);
-	const dubbed =
-		hasCharacterData &&
-		characterData.data.some((entry) =>
-			entry.character.voices.some((actor) => actor.language.toLowerCase().includes("english")),
-		);
-
 	const watchStatusShort = formatAnimeWatchStatusShort(data.list_status.status);
 	const watchStatusStyle = getWatchStatusStyle(data.list_status.status);
 
 	return (
-		<AnimeDialog data={data} characterData={characterData}>
+		<AnimeDialog data={data}>
 			<Card
 				className={`select-none w-full h-full min-h-52 overflow-hidden cursor-pointer bg-card-inner shadow-xl border border-card-inner-border ${animation && "hover:scale-103 transition-transform duration-300 ease-in-out"}`}
-				data-character-cache={hasCharacterData ? "available" : "missing"}
-				data-dubbed={dubbed}
 			>
 				<CardContent className="p-2 flex flex-col xs:flex-row gap-4 w-full h-full">
 					{/* Left side - Anime Poster */}
@@ -90,11 +80,11 @@ export function AnimeCard({ data, characterData, animation = true }: AnimeCardPr
 							</div>
 
 							{/* Dubbed badge */}
-							{hasCharacterData && (
+							{data.dubbed && (
 								<div
-									className={`absolute top-1 right-1 font-semibold z-20 text-xs p-1 rounded-sm ${dubbed ? "bg-green-700/70" : "bg-blue-700/70"}`}
+									className={`absolute top-1 right-1 font-semibold z-20 text-xs p-1 rounded-sm ${data.dubbed ? "bg-green-700/70" : "bg-blue-700/70"}`}
 								>
-									{dubbed ? "DUB" : "SUB"}
+									{data.dubbed ? "DUB" : "SUB"}
 								</div>
 							)}
 

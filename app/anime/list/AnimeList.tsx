@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { AnimeCharactersByAnimeId, AnimeEntry, AnimeWatchStatus } from "@/types/animeData";
+import type { AnimeEntry, AnimeWatchStatus } from "@/types/animeData";
 import { AnimeGrid } from "./AnimeGrid";
 import { AnimeListTypeSelector } from "./AnimeListTypeSelector";
 import { AnimeSearchFilter } from "./AnimeSearchFilter";
@@ -30,11 +30,11 @@ const descriptionMap: Record<AnimeWatchStatus | "all", string> = {
 
 interface AnimeListProps {
 	animeData: AnimeEntry[];
-	animeCharacters: AnimeCharactersByAnimeId;
 }
 
-export default function AnimeList({ animeData, animeCharacters }: AnimeListProps) {
-	const sortTypes = useMemo(() => getAnimeSearchTypes(animeCharacters), [animeCharacters]);
+export default function AnimeList({ animeData }: AnimeListProps) {
+	const sortTypes = useMemo(() => getAnimeSearchTypes(), []);
+
 	const searchTypes = useMemo(() => sortTypes.filter((searchType) => searchType.searchable), [sortTypes]);
 	const {
 		selectedList,
@@ -101,7 +101,6 @@ export default function AnimeList({ animeData, animeCharacters }: AnimeListProps
 								hasMore={hasMore}
 								isLoadingMore={isLoadingMore}
 								loadMoreRef={loadMoreRef}
-								animeCharacters={animeCharacters}
 							/>
 						</div>
 					</CardContent>

@@ -206,6 +206,10 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 		return [];
 	};
 
+	const jsonEquals = (left, right) => {
+		return stringifyJson(left) === stringifyJson(right);
+	};
+
 	const isRecordStale = (record) => {
 		if (record === undefined) {
 			return true;
@@ -294,7 +298,7 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 		}
 
 		const data = getRecordJson(record, "data");
-		return !!(data && data.node && data.node.id && data.list_status);
+		return !!(data && data.id);
 	};
 
 	const hasDubbedFlag = (record) => {
@@ -335,7 +339,7 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 			return true;
 		}
 
-		if (!hasAnimeData(record) || !hasDubbedFlag(record)) {
+		if (!hasAnimeData(record)) {
 			return true;
 		}
 
@@ -512,6 +516,55 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 		nextUrl = res.json.paging && res.json.paging.next ? res.json.paging.next : "";
 	}
 
+	let listStatusSaved = 0;
+	let listStatusFailed = 0;
+	let listStatusChanged = 0;
+	const listStatusSyncedAt = new Date().toISOString();
+	const staleFetchedAt = "1970-01-01T00:00:00.000Z";
+
+	for (const anime of animeList) {
+		if (!anime.node || !anime.node.id) {
+			continue;
+		}
+
+		const animeId = anime.node.id;
+		const animeTitle = anime.node.title || "";
+		const existingSeriesRecord = findSeriesRecord(animeId);
+		const seriesRecord = existingSeriesRecord || new Record(seriesCollection);
+		const existingData = existingSeriesRecord ? getRecordJson(existingSeriesRecord, "data") : {};
+		const existingListStatus = existingSeriesRecord ? getRecordJson(existingSeriesRecord, "list_status") : {};
+		const existingTitle = existingSeriesRecord ? existingSeriesRecord.get("title") || existingSeriesRecord.getString("title") : "";
+		const statusChanged =
+			!existingSeriesRecord ||
+			existingTitle !== animeTitle ||
+			!jsonEquals(existingData, anime.node) ||
+			!jsonEquals(existingListStatus, anime.list_status);
+		const shouldRefreshSeriesPayload = !existingSeriesRecord || !hasAnimeData(existingSeriesRecord);
+
+		seriesRecord.set("anime_id", animeId);
+		seriesRecord.set("title", animeTitle);
+		seriesRecord.set("data", anime.node);
+		seriesRecord.set("list_status", anime.list_status || {});
+		seriesRecord.set("list_status_synced_at", listStatusSyncedAt);
+		if (!existingSeriesRecord) {
+			seriesRecord.set("dubbed", false);
+		}
+		if (shouldRefreshSeriesPayload) {
+			seriesRecord.set("fetched_at", staleFetchedAt);
+		}
+
+		try {
+			$app.save(seriesRecord);
+			listStatusSaved++;
+			if (statusChanged) {
+				listStatusChanged++;
+			}
+		} catch (err) {
+			listStatusFailed++;
+			$app.logger().error(`[AnimeSync] Failed to save MAL anime data/list status for anime ${animeId}: ${err}`);
+		}
+	}
+
 	const animeToSync = [];
 
 	for (const anime of animeList) {
@@ -551,7 +604,9 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 	}
 
 	if (animeToSync.length === 0) {
-		$app.logger().info("[AnimeSync] Character cache is up to date");
+		$app.logger().info(
+			`[AnimeSync] Series payload cache is up to date - list status saved: ${listStatusSaved}, list status changed: ${listStatusChanged}, list status failed: ${listStatusFailed}`,
+		);
 		return;
 	}
 
@@ -667,10 +722,9 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 
 			seriesRecord.set("anime_id", animeId);
 			seriesRecord.set("title", animeTitle);
-			seriesRecord.set("data", {
-				node: anime.node,
-				list_status: anime.list_status,
-			});
+			seriesRecord.set("data", anime.node);
+			seriesRecord.set("list_status", anime.list_status || {});
+			seriesRecord.set("list_status_synced_at", new Date().toISOString());
 			seriesRecord.set("dubbed", dubbed);
 			seriesRecord.set("characters", characterRecordIds);
 			seriesRecord.set("character_meta", characterMeta);
@@ -748,6 +802,6 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 	}
 
 	$app.logger().info(
-		`[AnimeSync] Sync finished (${runId}) - series saved: ${seriesSaved}, series skipped: ${seriesSkipped}, series failed: ${seriesFailed}, characters saved: ${charactersSaved}, characters failed: ${charactersFailed}`,
+		`[AnimeSync] Sync finished (${runId}) - list status saved: ${listStatusSaved}, list status changed: ${listStatusChanged}, list status failed: ${listStatusFailed}, series saved: ${seriesSaved}, series skipped: ${seriesSkipped}, series failed: ${seriesFailed}, characters saved: ${charactersSaved}, characters failed: ${charactersFailed}`,
 	);
 });

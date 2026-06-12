@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import Privacy from "@/app/privacy/Privacy";
-import PrivacySkeleton from "@/app/privacy/PrivacySkeleton";
 import { ContentError } from "@/components/error";
 import { getPrivacyPage } from "@/lib/database";
 
@@ -18,16 +16,8 @@ export const metadata: Metadata = {
 // ISR: Revalidate every 60 seconds
 export const revalidate = 60;
 
-async function PrivacyContent() {
+export default async function PrivacyPage() {
 	const data = await getPrivacyPage();
 	if (!data) return <ContentError location="Privacy" />;
 	return <Privacy data={data} />;
-}
-
-export default function PrivacyPage() {
-	return (
-		<Suspense fallback={<PrivacySkeleton />}>
-			<PrivacyContent />
-		</Suspense>
-	);
 }

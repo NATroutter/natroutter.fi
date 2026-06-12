@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -15,24 +15,74 @@ import {
 import { formatAnimeAgeRating, formatAnimeWatchStatus, getWatchStatusStyle } from "@/lib/anime-format";
 import { formatDate, toCapitalizedCase } from "@/lib/utils";
 import type { AnimeAlternativeTitles, AnimeCharacterData, AnimeEntry } from "@/types/animeData";
-import { AnimeCharacterCarousel } from "./AnimeCharacterCarousel";
+import { AnimeCharacterCarousel, AnimeCharacterCarouselLoading } from "./AnimeCharacterCarousel";
 
 interface AnimeCardProps {
 	data: AnimeEntry;
-	characterData?: AnimeCharacterData;
 	children?: ReactNode;
 }
 
-export function AnimeDialog({ data, children, characterData }: AnimeCardProps) {
+export function AnimeDialog({ data, children }: AnimeCardProps) {
+	const [open, setOpen] = useState(false);
+	const [characterData, setCharacterData] = useState<AnimeCharacterData | undefined>();
+	const [isLoadingCharacters, setIsLoadingCharacters] = useState(false);
+	const [characterLoadFailed, setCharacterLoadFailed] = useState(false);
+	const [hasLoadedCharacters, setHasLoadedCharacters] = useState(false);
 	const anime = data.node;
 	const status = data.list_status;
 	const titles: AnimeAlternativeTitles = anime.alternative_titles;
 	const watchStatusStyle = getWatchStatusStyle(status.status);
 
-	const hasCharacterData = Array.isArray(characterData?.data);
+	const hasCharacterData = Array.isArray(characterData?.data) && characterData.data.length > 0;
+
+	useEffect(() => {
+		if (!open || characterData || characterLoadFailed) {
+			return;
+		}
+
+		let cancelled = false;
+		setIsLoadingCharacters(true);
+		setCharacterLoadFailed(false);
+
+		async function loadCharacters() {
+			try {
+				const response = await fetch(`/api/anime/characters/${anime.id}`, {
+					credentials: "same-origin",
+					headers: {
+						accept: "application/json",
+					},
+				});
+
+				if (!response.ok) {
+					throw new Error(`Failed to load characters (${response.status})`);
+				}
+
+				const payload = (await response.json()) as AnimeCharacterData;
+				if (!cancelled) {
+					setCharacterData(Array.isArray(payload.data) ? payload : { data: [] });
+					setHasLoadedCharacters(true);
+				}
+			} catch (err) {
+				if (!cancelled) {
+					console.error("Failed to load anime characters:", err);
+					setCharacterLoadFailed(true);
+				}
+			} finally {
+				if (!cancelled) {
+					setIsLoadingCharacters(false);
+				}
+			}
+		}
+
+		loadCharacters();
+
+		return () => {
+			cancelled = true;
+		};
+	}, [anime.id, characterData, characterLoadFailed, open]);
 
 	return (
-		<Dialog>
+		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild data-umami-event={`[ANIME] Expand (${anime.id})`}>
 				{children ?? anime.title}
 			</DialogTrigger>
@@ -254,6 +304,17 @@ export function AnimeDialog({ data, children, characterData }: AnimeCardProps) {
 							{/*bottom section - Characters*/}
 							<div className="grid min-w-0 w-full grid-cols-[minmax(0,1fr)] gap-4">
 								{hasCharacterData && <AnimeCharacterCarousel characterData={characterData} />}
+								{isLoadingCharacters && <AnimeCharacterCarouselLoading />}
+								{characterLoadFailed && (
+									<div className="rounded-xl bg-card-inner p-4 text-sm text-muted-foreground">
+										Character data is unavailable.
+									</div>
+								)}
+								{hasLoadedCharacters && !hasCharacterData && !isLoadingCharacters && !characterLoadFailed && (
+									<div className="rounded-xl bg-card-inner p-4 text-sm text-muted-foreground">
+										No cached character data is available for this anime yet.
+									</div>
+								)}
 							</div>
 						</div>
 

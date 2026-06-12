@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
-import AnimeSkeleton from "@/app/anime/AnimeSkeleton";
 import AnimeStats from "@/app/anime/AnimeStats";
 import { ContentError } from "@/components/error";
-import { getAnimeData } from "@/lib/anime-api";
-import { getHistory, getAnimeCharactersByAnimeIdMap } from "@/lib/database";
-
+import { getAnimeData, getHistory } from "@/lib/database";
 
 export const metadata: Metadata = {
 	title: "Anime Statistics",
@@ -18,18 +14,10 @@ export const metadata: Metadata = {
 // ISR: Revalidate
 export const revalidate = 120;
 
-async function AnimeContent() {
-	const [data, history, animeCharacters] = await Promise.all([getAnimeData(), getHistory(), getAnimeCharactersByAnimeIdMap()]);
+export default async function AnimePage() {
+	const [data, history] = await Promise.all([getAnimeData(), getHistory()]);
 
 	if (!data) return <ContentError location="Anim-data" />;
 
-	return <AnimeStats animeData={data} animeHistory={history} animeCharacters={animeCharacters} />;
-}
-
-export default function AnimePage() {
-	return (
-		<Suspense fallback={<AnimeSkeleton />}>
-			<AnimeContent />
-		</Suspense>
-	);
+	return <AnimeStats animeData={data} animeHistory={history} />;
 }

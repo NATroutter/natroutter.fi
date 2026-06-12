@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import AnimeList from "@/app/anime/list/AnimeList";
-import AnimeListSkeleton from "@/app/anime/list/AnimeListSkeleton";
 import { ContentError } from "@/components/error";
-import { getAnimeData } from "@/lib/anime-api";
-import { getAnimeCharactersByAnimeIdMap } from "@/lib/database";
+import { getAnimeData } from "@/lib/database";
 
 export const metadata: Metadata = {
 	title: "Anime List",
@@ -19,17 +16,9 @@ export const metadata: Metadata = {
 // ISR: Revalidate
 export const revalidate = 120;
 
-async function AnimeListContent() {
-	const [data, animeCharacters] = await Promise.all([getAnimeData(), getAnimeCharactersByAnimeIdMap()]);
+export default async function AnimeListPage() {
+	const data = await getAnimeData();
 
 	if (!data) return <ContentError location="AnimeList" />;
-	return <AnimeList animeData={data} animeCharacters={animeCharacters} />;
-}
-
-export default function AnimeListPage() {
-	return (
-		<Suspense fallback={<AnimeListSkeleton />}>
-			<AnimeListContent />
-		</Suspense>
-	);
+	return <AnimeList animeData={data} />;
 }
