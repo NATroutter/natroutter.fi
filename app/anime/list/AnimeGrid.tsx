@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { AnimeCard } from "@/components/AnimeCard";
 import type { AnimeEntry } from "@/types/animeData";
 
@@ -7,9 +8,17 @@ interface AnimeGridProps {
 	hasMore: boolean;
 	isLoadingMore: boolean;
 	loadMoreRef: React.RefObject<HTMLDivElement | null>;
+	onAnimeOpen: (anime: AnimeEntry) => void;
 }
 
-export function AnimeGrid({ visibleData, isInitialLoad, hasMore, isLoadingMore, loadMoreRef }: AnimeGridProps) {
+export const AnimeGrid = memo(function AnimeGrid({
+	visibleData,
+	isInitialLoad,
+	hasMore,
+	isLoadingMore,
+	loadMoreRef,
+	onAnimeOpen,
+}: AnimeGridProps) {
 	if (isInitialLoad) {
 		return <div className="h-24 flex items-center justify-center text-center text-muted-foreground">Loading...</div>;
 	}
@@ -22,7 +31,7 @@ export function AnimeGrid({ visibleData, isInitialLoad, hasMore, isLoadingMore, 
 		<>
 			<div className="grid gap-4 place-items-center grid-cols-1 xl:grid-cols-2 xxl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6">
 				{visibleData.map((entry) => (
-					<AnimeCard key={entry.node.id} data={entry} />
+					<AnimeCard key={entry.node.id} data={entry} onOpen={onAnimeOpen} />
 				))}
 			</div>
 
@@ -34,4 +43,4 @@ export function AnimeGrid({ visibleData, isInitialLoad, hasMore, isLoadingMore, 
 			)}
 		</>
 	);
-}
+});

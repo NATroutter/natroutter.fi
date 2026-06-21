@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimeDialog } from "@/components/AnimeDialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { AnimeEntry, AnimeWatchStatus } from "@/types/animeData";
@@ -55,6 +55,11 @@ export default function AnimeList({ animeData }: AnimeListProps) {
 		isLoadingMore,
 		loadMoreRef,
 	} = useAnimeFiltering(animeData, searchTypes, sortTypes);
+
+	const openAnimeDialog = useCallback((anime: AnimeEntry) => {
+		setUrlAnime(anime);
+		setUrlAnimeOpen(true);
+	}, []);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -165,6 +170,7 @@ export default function AnimeList({ animeData }: AnimeListProps) {
 								hasMore={hasMore}
 								isLoadingMore={isLoadingMore}
 								loadMoreRef={loadMoreRef}
+								onAnimeOpen={openAnimeDialog}
 							/>
 						</div>
 					</CardContent>
