@@ -1,5 +1,5 @@
 import { FaTv } from "react-icons/fa";
-import { AnimeDialog } from "@/components/AnimeDialog";
+import { AnimeDialog } from "@/components/anime-dialog/AnimeDialog";
 import type { ChartSettings } from "@/components/ChartSettingsDialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {

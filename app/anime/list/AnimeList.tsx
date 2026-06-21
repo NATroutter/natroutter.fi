@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { AnimeDialog } from "@/components/AnimeDialog";
+import { AnimeDialog } from "@/components/anime-dialog/AnimeDialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { AnimeEntry, AnimeWatchStatus } from "@/types/animeData";
 import { AnimeGrid } from "./AnimeGrid";

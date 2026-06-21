@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { memo } from "react";
 import { GoDotFill } from "react-icons/go";
-import { AnimeDialog } from "@/components/AnimeDialog";
+import { AnimeDialog } from "@/components/anime-dialog/AnimeDialog";
 import { getAnimeSeason, getAnimeStartYear } from "@/components/charts/ChartAnimeSeasonsBest";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -84,7 +84,7 @@ export const AnimeCard = memo(function AnimeCard({ data, animation = true, onOpe
 							src={anime.main_picture.medium || anime.main_picture.large}
 							alt={anime.title}
 							sizes="100vw"
-							loading="eager"
+							loading="lazy"
 							width={0}
 							height={0}
 						/>
