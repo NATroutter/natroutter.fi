@@ -20,7 +20,7 @@ import { AnimeDialogCharacters } from "./AnimeDialogCharacters";
 import { AnimeDialogMobileImage } from "./AnimeDialogMobileImage";
 import { AnimeDialogRelations } from "./AnimeDialogRelations";
 import { AnimeDialogSidebar } from "./AnimeDialogSidebar";
-import { AnimeDialogTop } from './AnimeDialogTop';
+import { AnimeDialogTop } from "./AnimeDialogTop";
 import { getTrailerEmbedUrl } from "./utils";
 
 interface AnimeCardProps {
@@ -65,16 +65,34 @@ function getAnimeShareUrl(animeId: number): string {
 const ANIME_DIALOG_URL_OPEN_SYNC_DELAY_MS = 300;
 const ANIME_DIALOG_DEFERRED_CONTENT_DELAY_MS = 300;
 
+type CharacterLoadState = {
+	animeId: number;
+	data?: AnimeCharacterData;
+	failed: boolean;
+	loaded: boolean;
+};
+
+type RelationImagesState = {
+	itemsKey: string;
+	data: AnimeRelationImagesResponse["data"];
+	loaded: boolean;
+};
+
 export function AnimeDialog({ data, children, open: controlledOpen, onOpenChange }: AnimeCardProps) {
 	const [internalOpen, setInternalOpen] = useState(false);
 	const [trailerOpen, setTrailerOpen] = useState(false);
 	const [relatedAnime, setRelatedAnime] = useState<AnimeEntry | undefined>();
 	const [relatedAnimeOpen, setRelatedAnimeOpen] = useState(false);
-	const [characterData, setCharacterData] = useState<AnimeCharacterData | undefined>();
-	const [characterLoadFailed, setCharacterLoadFailed] = useState(false);
-	const [hasLoadedCharacters, setHasLoadedCharacters] = useState(false);
-	const [relationImages, setRelationImages] = useState<AnimeRelationImagesResponse["data"]>({});
-	const [hasLoadedRelationImages, setHasLoadedRelationImages] = useState(false);
+	const [characterLoadState, setCharacterLoadState] = useState<CharacterLoadState>({
+		animeId: 0,
+		failed: false,
+		loaded: false,
+	});
+	const [relationImagesState, setRelationImagesState] = useState<RelationImagesState>({
+		itemsKey: "",
+		data: {},
+		loaded: false,
+	});
 	const [shareUrl, setShareUrl] = useState("");
 	const [shareCopied, setShareCopied] = useState(false);
 	const [canRenderDeferredContent, setCanRenderDeferredContent] = useState(false);
@@ -118,6 +136,12 @@ export function AnimeDialog({ data, children, open: controlledOpen, onOpenChange
 	const setOpen = onOpenChange ?? setInternalOpen;
 	const shouldRenderTrigger = controlledOpen === undefined;
 
+	const characterData = characterLoadState.animeId === anime.id ? characterLoadState.data : undefined;
+	const characterLoadFailed = characterLoadState.animeId === anime.id && characterLoadState.failed;
+	const hasLoadedCharacters = characterLoadState.animeId === anime.id && characterLoadState.loaded;
+	const relationImages = relationImagesState.itemsKey === relationImageItemsKey ? relationImagesState.data : {};
+	const hasLoadedRelationImages =
+		relationImagesState.itemsKey === relationImageItemsKey ? relationImagesState.loaded : false;
 	const hasCharacterData = Array.isArray(characterData?.data) && characterData.data.length > 0;
 	const shouldShowCharacterLoading = !hasCharacterData && !hasLoadedCharacters && !characterLoadFailed;
 
@@ -134,7 +158,6 @@ export function AnimeDialog({ data, children, open: controlledOpen, onOpenChange
 		if (open) {
 			setShareUrl(getAnimeShareUrl(anime.id));
 			setCanRenderDeferredContent(false);
-			setHasLoadedRelationImages(false);
 			// Keep the open interaction responsive by syncing the non-visual URL state after the dialog animation.
 			animeUrlSyncTimeoutRef.current = window.setTimeout(() => {
 				setAnimeDialogUrlId(anime.id);
@@ -146,7 +169,6 @@ export function AnimeDialog({ data, children, open: controlledOpen, onOpenChange
 			}, ANIME_DIALOG_DEFERRED_CONTENT_DELAY_MS);
 		} else {
 			setCanRenderDeferredContent(false);
-			setHasLoadedRelationImages(false);
 			clearAnimeDialogUrlId(anime.id);
 		}
 
@@ -164,6 +186,7 @@ export function AnimeDialog({ data, children, open: controlledOpen, onOpenChange
 
 	useEffect(() => {
 		setShareCopied(false);
+		setTrailerOpen(false);
 	}, [anime.id]);
 
 	useEffect(() => {
@@ -186,7 +209,6 @@ export function AnimeDialog({ data, children, open: controlledOpen, onOpenChange
 		}
 
 		let cancelled = false;
-		setCharacterLoadFailed(false);
 
 		async function loadCharacters() {
 			try {
@@ -203,13 +225,21 @@ export function AnimeDialog({ data, children, open: controlledOpen, onOpenChange
 
 				const payload = (await response.json()) as AnimeCharacterData;
 				if (!cancelled) {
-					setCharacterData(Array.isArray(payload.data) ? payload : { data: [] });
-					setHasLoadedCharacters(true);
+					setCharacterLoadState({
+						animeId: anime.id,
+						data: Array.isArray(payload.data) ? payload : { data: [] },
+						failed: false,
+						loaded: true,
+					});
 				}
 			} catch (err) {
 				if (!cancelled) {
 					console.error("Failed to load anime characters:", err);
-					setCharacterLoadFailed(true);
+					setCharacterLoadState({
+						animeId: anime.id,
+						failed: true,
+						loaded: false,
+					});
 				}
 			}
 		}
@@ -224,13 +254,16 @@ export function AnimeDialog({ data, children, open: controlledOpen, onOpenChange
 	useEffect(() => {
 		if (!open || !canRenderDeferredContent || !relationImageItemsKey) {
 			if (!relationImageItemsKey) {
-				setHasLoadedRelationImages(true);
+				setRelationImagesState({
+					itemsKey: "",
+					data: {},
+					loaded: true,
+				});
 			}
 			return;
 		}
 
 		let cancelled = false;
-		setHasLoadedRelationImages(false);
 
 		async function loadRelationImages() {
 			try {
@@ -247,14 +280,20 @@ export function AnimeDialog({ data, children, open: controlledOpen, onOpenChange
 
 				const payload = (await response.json()) as AnimeRelationImagesResponse;
 				if (!cancelled) {
-					setRelationImages(payload.data ?? {});
-					setHasLoadedRelationImages(true);
+					setRelationImagesState({
+						itemsKey: relationImageItemsKey,
+						data: payload.data ?? {},
+						loaded: true,
+					});
 				}
 			} catch (err) {
 				if (!cancelled) {
 					console.error("Failed to load anime relation images:", err);
-					setRelationImages({});
-					setHasLoadedRelationImages(true);
+					setRelationImagesState({
+						itemsKey: relationImageItemsKey,
+						data: {},
+						loaded: true,
+					});
 				}
 			}
 		}
