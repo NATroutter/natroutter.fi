@@ -7,19 +7,19 @@ import type { AnimeRelationImagesResponse } from "@/types/animeData";
 import type { AnimeRelationEntry } from "./types";
 import { getRelationTypeBadgeStyle } from "./utils";
 
-interface AnimeDialogRelationsSectionProps {
+interface AnimeDialogRelationsProps {
 	entries: AnimeRelationEntry[];
 	relationImages: AnimeRelationImagesResponse["data"];
 	hasLoadedRelationImages: boolean;
 	onAnimeRelationClick: (event: MouseEvent<HTMLElement>, animeId: number, url: string) => void;
 }
 
-export const AnimeDialogRelationsSection = memo(function AnimeDialogRelationsSection({
+export const AnimeDialogRelations = memo(function AnimeDialogRelations({
 	entries,
 	relationImages,
 	hasLoadedRelationImages,
 	onAnimeRelationClick,
-}: AnimeDialogRelationsSectionProps) {
+}: AnimeDialogRelationsProps) {
 	if (entries.length === 0) {
 		return null;
 	}

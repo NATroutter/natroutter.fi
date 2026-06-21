@@ -12,7 +12,7 @@ import {
 import { formatAnimeWatchStatus } from "@/lib/anime-format";
 import type { AnimeAlternativeTitles, AnimeInfo, JikanAnimeFull, ListStatus } from "@/types/animeData";
 
-interface AnimeDialogTopSectionProps {
+interface AnimeDialogTopProps {
 	anime: AnimeInfo;
 	titles: AnimeAlternativeTitles;
 	status: ListStatus;
@@ -26,7 +26,7 @@ interface AnimeDialogTopSectionProps {
 	onTrailerOpenChange: (open: boolean) => void;
 }
 
-export const AnimeDialogTopSection = memo(function AnimeDialogTopSection({
+export const AnimeDialogTop = memo(function AnimeDialogTop({
 	anime,
 	titles,
 	status,
@@ -38,9 +38,9 @@ export const AnimeDialogTopSection = memo(function AnimeDialogTopSection({
 	trailerPlayerUrl,
 	canRenderDeferredContent,
 	onTrailerOpenChange,
-}: AnimeDialogTopSectionProps) {
+}: AnimeDialogTopProps) {
 	return (
-		<div className="flex flex-col gap-4 pr-5 xl:flex-row">
+		<div className="flex flex-col gap-4 pr-5 2xl:flex-row">
 			<div className="flex min-w-0 w-full flex-col gap-4">
 				<div className="flex flex-col">
 					<div className="flex flex-col">

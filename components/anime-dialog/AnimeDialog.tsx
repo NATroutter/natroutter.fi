@@ -16,11 +16,11 @@ import type {
 	AnimeEntry,
 	AnimeRelationImagesResponse,
 } from "@/types/animeData";
-import { AnimeCharactersSection } from "./AnimeDialogCharacters";
+import { AnimeDialogCharacters } from "./AnimeDialogCharacters";
 import { AnimeDialogMobileImage } from "./AnimeDialogMobileImage";
-import { AnimeDialogRelationsSection } from "./AnimeDialogRelations";
+import { AnimeDialogRelations } from "./AnimeDialogRelations";
 import { AnimeDialogSidebar } from "./AnimeDialogSidebar";
-import { AnimeDialogTopSection } from "./AnimeDialogTop";
+import { AnimeDialogTop } from './AnimeDialogTop';
 import { getTrailerEmbedUrl } from "./utils";
 
 interface AnimeCardProps {
@@ -360,7 +360,7 @@ export function AnimeDialog({ data, children, open: controlledOpen, onOpenChange
 							{/*Right side*/}
 							<div className="flex min-w-0 w-full flex-1 flex-col gap-4 justify-between overflow-visible">
 								{/*Top section - title synopsis*/}
-								<AnimeDialogTopSection
+								<AnimeDialogTop
 									anime={anime}
 									titles={titles}
 									status={status}
@@ -376,13 +376,13 @@ export function AnimeDialog({ data, children, open: controlledOpen, onOpenChange
 
 								{/*Bottom section*/}
 								<div className="grid min-w-0 w-full grid-cols-[minmax(0,1fr)] gap-4">
-									<AnimeDialogRelationsSection
+									<AnimeDialogRelations
 										entries={animeRelationEntries}
 										relationImages={relationImages}
 										hasLoadedRelationImages={hasLoadedRelationImages}
 										onAnimeRelationClick={handleAnimeRelationClick}
 									/>
-									<AnimeCharactersSection
+									<AnimeDialogCharacters
 										characterData={characterData}
 										hasCharacterData={hasCharacterData}
 										shouldShowCharacterLoading={shouldShowCharacterLoading}

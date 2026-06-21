@@ -4,7 +4,7 @@ import { memo } from "react";
 import type { AnimeCharacterData } from "@/types/animeData";
 import { AnimeCharacterCarousel, AnimeCharacterCarouselLoading } from "../AnimeCharacterCarousel";
 
-interface AnimeCharactersSectionProps {
+interface AnimeCharactersProps {
 	characterData?: AnimeCharacterData;
 	hasCharacterData: boolean;
 	shouldShowCharacterLoading: boolean;
@@ -12,13 +12,13 @@ interface AnimeCharactersSectionProps {
 	hasLoadedCharacters: boolean;
 }
 
-export const AnimeCharactersSection = memo(function AnimeCharactersSection({
+export const AnimeDialogCharacters = memo(function AnimeDialogCharacters({
 	characterData,
 	hasCharacterData,
 	shouldShowCharacterLoading,
 	characterLoadFailed,
 	hasLoadedCharacters,
-}: AnimeCharactersSectionProps) {
+}: AnimeCharactersProps) {
 	return (
 		<div className="min-w-0 w-full">
 			{hasCharacterData && characterData && <AnimeCharacterCarousel characterData={characterData} />}
