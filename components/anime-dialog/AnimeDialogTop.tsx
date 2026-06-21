@@ -76,13 +76,14 @@ export const AnimeDialogTopSection = memo(function AnimeDialogTopSection({
 			{trailerPreviewUrl && (
 				<Dialog open={trailerOpen} onOpenChange={onTrailerOpenChange}>
 					<DialogTrigger asChild>
-						<div
-							className="w-full shrink-0 cursor-pointer sm:max-w-64 xl:max-w-72"
+						<button
+							type="button"
+							className="aspect-video w-full shrink-0 self-start cursor-pointer overflow-hidden rounded-lg border-0 bg-transparent p-0 sm:max-w-64 xl:max-w-72"
 							data-umami-event={`[ANIME] Show Trailer (${anime.id})`}
 						>
 							{canRenderDeferredContent ? (
 								<iframe
-									className="aspect-video w-full pointer-events-none rounded-lg"
+									className="h-full w-full pointer-events-none rounded-lg"
 									src={trailerPreviewUrl}
 									title={`${anime.title} trailer preview`}
 									allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -90,9 +91,9 @@ export const AnimeDialogTopSection = memo(function AnimeDialogTopSection({
 									tabIndex={-1}
 								/>
 							) : (
-								<div className="aspect-video w-full animate-pulse rounded-lg bg-card-inner" />
+								<div className="h-full w-full animate-pulse rounded-lg bg-card-inner" />
 							)}
-						</div>
+						</button>
 					</DialogTrigger>
 					<DialogContent
 						className="w-[min(96vw,90rem)] max-w-none overflow-hidden border-none bg-background p-0 sm:max-w-none"
