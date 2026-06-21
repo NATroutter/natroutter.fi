@@ -9,11 +9,26 @@ interface AnimeCharacterCarouselProps {
 	characterData: AnimeCharacterData;
 }
 
+const CHARACTER_SKELETON_IDS = ["first", "second", "third", "fourth", "fifth"];
+
 export function AnimeCharacterCarouselLoading() {
 	return (
 		<div className="flex flex-col gap-2">
 			<h1 className="text-2xl font-bold">Characters</h1>
-			<div className="rounded-xl bg-card-inner p-4 text-sm text-muted-foreground">Loading characters...</div>
+			<div className="grid min-w-0 w-full grid-cols-[2.25rem_minmax(0,1fr)_2.25rem] items-center gap-2 overflow-hidden rounded-xl bg-card-inner px-2">
+				<div />
+				<div className="min-w-0 overflow-hidden">
+					<div className="flex gap-3 py-3 pr-1">
+						{CHARACTER_SKELETON_IDS.map((id) => (
+							<div
+								key={`character-skeleton-${id}`}
+								className="h-48 w-35 shrink-0 animate-pulse rounded-xl bg-muted/30 sm:h-52 sm:w-39 md:h-56 md:w-43"
+							/>
+						))}
+					</div>
+				</div>
+				<div />
+			</div>
 		</div>
 	);
 }

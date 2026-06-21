@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import AnimeList from "@/app/anime/list/AnimeList";
 import { ContentError } from "@/components/error";
 import { getAnimeData } from "@/lib/database";
@@ -20,5 +21,9 @@ export default async function AnimeListPage() {
 	const data = await getAnimeData();
 
 	if (!data) return <ContentError location="AnimeList" />;
-	return <AnimeList animeData={data} />;
+	return (
+		<Suspense fallback={null}>
+			<AnimeList animeData={data} />
+		</Suspense>
+	);
 }

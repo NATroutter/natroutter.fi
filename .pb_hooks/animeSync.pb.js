@@ -11,6 +11,7 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 	const JIKAN_RATE_LIMIT_BACKOFF_MS = 15000;
 	const CHARACTER_RETRY_BASE_MINUTES = 15;
 	const CHARACTER_RETRY_MAX_MINUTES = 24 * 60;
+	const LIST_STATUS_SYNC_INTERVAL_MINUTES = 5;
 	const STALE_AFTER_DAYS = 30;
 
 	const runId = new Date().toISOString();
@@ -28,12 +29,6 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 		return;
 	}
 
-	const clientId = $os.getenv("MAL_CLIENT_ID");
-	if (!clientId) {
-		$app.logger().error("[AnimeSync] Sync stopped because MAL_CLIENT_ID is not available to PocketBase");
-		return;
-	}
-
 	const findSeriesRecord = (animeId) => {
 		const records = $app.findRecordsByFilter(SERIES_COLLECTION_NAME, `anime_id = ${animeId}`, "", 1, 0);
 		return records.length > 0 ? records[0] : undefined;
@@ -42,6 +37,10 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 	const findCharacterRecord = (characterId) => {
 		const records = $app.findRecordsByFilter(CHARACTER_COLLECTION_NAME, `character_id = ${characterId}`, "", 1, 0);
 		return records.length > 0 ? records[0] : undefined;
+	};
+
+	const getRecordDate = (record, field) => {
+		return record.get(field) || record.getString(field) || "";
 	};
 
 	let hitJikanRateLimit = false;
@@ -143,6 +142,29 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 		);
 	};
 
+	const logJikanFullAnimeResponse = (level, message, animeId, res) => {
+		const logger = $app.logger();
+		const log = level === "error" ? logger.error.bind(logger) : logger.info.bind(logger);
+
+		log(
+			message,
+			"animeId",
+			animeId,
+			"statusCode",
+			res ? res.statusCode : undefined,
+			"statusText",
+			res ? res.statusText : undefined,
+			"responseType",
+			res && res.json ? res.json.type : undefined,
+			"responseMessage",
+			res && res.json ? res.json.message : undefined,
+			"responseError",
+			res && res.json ? res.json.error : undefined,
+			"responseJson",
+			res && res.json ? stringifyJson(res.json) : undefined,
+		);
+	};
+
 	const isJikanUpstreamException = (res) => {
 		return res && res.json && res.json.type === "UpstreamException";
 	};
@@ -211,11 +233,15 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 	};
 
 	const isRecordStale = (record) => {
+		return isRecordDateStale(record, "fetched_at");
+	};
+
+	const isRecordDateStale = (record, field) => {
 		if (record === undefined) {
 			return true;
 		}
 
-		const fetchedAt = record.get("fetched_at") || record.getString("fetched_at");
+		const fetchedAt = getRecordDate(record, field);
 		if (!fetchedAt) {
 			return true;
 		}
@@ -301,6 +327,23 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 		return !!(data && data.id);
 	};
 
+	const hasJikanData = (record) => {
+		if (record === undefined) {
+			return false;
+		}
+
+		const data = getRecordJson(record, "jikan_data");
+		return !!(data && data.mal_id);
+	};
+
+	const shouldSyncJikanData = (record) => {
+		if (record === undefined) {
+			return true;
+		}
+
+		return !hasJikanData(record) || isRecordDateStale(record, "jikan_data_fetched_at");
+	};
+
 	const hasDubbedFlag = (record) => {
 		if (record === undefined) {
 			return false;
@@ -316,6 +359,10 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 
 		if (!hasAnimeData(record)) {
 			return "anime-data";
+		}
+
+		if (shouldSyncJikanData(record)) {
+			return "jikan-data";
 		}
 
 		if (!hasDubbedFlag(record)) {
@@ -340,6 +387,10 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 		}
 
 		if (!hasAnimeData(record)) {
+			return true;
+		}
+
+		if (shouldSyncJikanData(record)) {
 			return true;
 		}
 
@@ -381,11 +432,81 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 			characterMetaCount: Object.keys(getRecordJson(record, "character_meta")).length,
 			characterRelationCount: getRecordArray(record, "characters").length,
 			hasAnimeData: hasAnimeData(record),
+			hasJikanData: hasJikanData(record),
 			dubbed: hasDubbedFlag(record) ? record.get("dubbed") : undefined,
 			fetchedAt: record.get("fetched_at") || record.getString("fetched_at") || "",
+			jikanDataFetchedAt: getRecordDate(record, "jikan_data_fetched_at"),
 			rawCharacterMeta: stringifyJson(rawCharacterMeta),
 			rawCharacters: stringifyJson(rawCharacters),
 		};
+	};
+
+	const getLatestListStatusSyncedAt = () => {
+		const records = $app.findRecordsByFilter(SERIES_COLLECTION_NAME, "", "-list_status_synced_at", 1, 0);
+		return records.length > 0 ? getRecordDate(records[0], "list_status_synced_at") : "";
+	};
+
+	const shouldFetchMalList = () => {
+		const latestSyncedAt = getLatestListStatusSyncedAt();
+		if (!latestSyncedAt) {
+			return true;
+		}
+
+		const nextSyncAt = new Date(latestSyncedAt);
+		if (Number.isNaN(nextSyncAt.getTime())) {
+			return true;
+		}
+
+		nextSyncAt.setMinutes(nextSyncAt.getMinutes() + LIST_STATUS_SYNC_INTERVAL_MINUTES);
+
+		if (nextSyncAt <= new Date()) {
+			return true;
+		}
+
+		$app.logger().info(
+			`[AnimeSync] Skipping MAL list sync until ${nextSyncAt.toISOString()} based on latest list_status_synced_at ${latestSyncedAt}`,
+		);
+		return false;
+	};
+
+	const getLocalAnimeList = () => {
+		const localAnimeList = [];
+		const limit = 1000;
+		let offset = 0;
+
+		while (true) {
+			const records = $app.findRecordsByFilter(SERIES_COLLECTION_NAME, "", "updated", limit, offset);
+			for (const record of records) {
+				const animeId = record.get("anime_id");
+				if (!animeId) {
+					continue;
+				}
+
+				const data = getRecordJson(record, "data");
+				const title = record.get("title") || record.getString("title") || data.title || "";
+				const node = data && typeof data === "object" ? data : {};
+
+				if (!node.id) {
+					node.id = animeId;
+				}
+				if (!node.title) {
+					node.title = title;
+				}
+
+				localAnimeList.push({
+					node,
+					list_status: getRecordJson(record, "list_status"),
+				});
+			}
+
+			if (records.length < limit) {
+				break;
+			}
+
+			offset += records.length;
+		}
+
+		return localAnimeList;
 	};
 
 
@@ -485,84 +606,198 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 		return res.json.data;
 	};
 
+	const getAnimeFullById = (animeId) => {
+		const url = `${JIKAN_BASE_URL}/anime/${animeId}/full`;
+		let res = sendJikanRequest(url);
+
+		if (!res || res.statusCode === 429) {
+			return undefined;
+		}
+
+		if (isJikanUpstreamException(res)) {
+			logJikanFullAnimeResponse(
+				"info",
+				`[AnimeSync] Jikan upstream failed for full anime data ${animeId}. It will be retried by a later cron run.`,
+				animeId,
+				res,
+			);
+			return undefined;
+		}
+
+		if (res.json && res.json.status && res.json.status !== 200) {
+			logJikanFullAnimeResponse(
+				"info",
+				`[AnimeSync] Jikan returned an API error body for full anime data ${animeId}. It will be retried by a later cron run.`,
+				animeId,
+				res,
+			);
+			return undefined;
+		}
+
+		if (res.statusCode !== 200) {
+			logJikanFullAnimeResponse(
+				"error",
+				`[AnimeSync] Failed to fetch full anime data for anime ${animeId}: (${res.statusCode}) ${res.statusText}`,
+				animeId,
+				res,
+			);
+			return undefined;
+		}
+
+		if (!res.json || !res.json.data) {
+			logJikanFullAnimeResponse(
+				"info",
+				`[AnimeSync] Full anime response for anime ${animeId} was empty or malformed. Retrying once after a short delay.`,
+				animeId,
+				res,
+			);
+			sleep(JIKAN_TRANSIENT_RETRY_DELAY_MS);
+			res = sendJikanRequest(url);
+
+			if (!res || res.statusCode === 429) {
+				return undefined;
+			}
+
+			if (isJikanUpstreamException(res)) {
+				logJikanFullAnimeResponse(
+					"info",
+					`[AnimeSync] Jikan upstream failed for full anime data ${animeId} on retry. It will be retried by a later cron run.`,
+					animeId,
+					res,
+				);
+				return undefined;
+			}
+
+			if (res.json && res.json.status && res.json.status !== 200) {
+				logJikanFullAnimeResponse(
+					"info",
+					`[AnimeSync] Jikan returned an API error body for full anime data ${animeId} on retry. It will be retried by a later cron run.`,
+					animeId,
+					res,
+				);
+				return undefined;
+			}
+
+			if (res.statusCode !== 200) {
+				logJikanFullAnimeResponse(
+					"error",
+					`[AnimeSync] Failed to fetch full anime data for anime ${animeId} on retry: (${res.statusCode}) ${res.statusText}`,
+					animeId,
+					res,
+				);
+				return undefined;
+			}
+		}
+
+		if (!res.json || !res.json.data) {
+			logJikanFullAnimeResponse(
+				"info",
+				`[AnimeSync] Full anime data for anime ${animeId} is not available from Jikan yet. It will be retried by a later cron run.`,
+				animeId,
+				res,
+			);
+			return undefined;
+		}
+
+		return res.json.data;
+	};
+
 	const fields =
 		"list_status,rank,rating,status,nsfw,average_episode_duration,popularity,num_episodes,num_scoring_users,media_type,start_date,end_date,mean,source,main_picture,genres,alternative_titles,synopsis,studios";
 
-	let nextUrl = `${MAL_BASE_URL}/users/${ANIME_USERNAME}/animelist?fields=${fields}&limit=1000&sort=list_updated_at&nsfw=1`;
-	const animeList = [];
-
-	while (nextUrl) {
-		const res = $http.send({
-			url: nextUrl,
-			method: "GET",
-			headers: {
-				"X-MAL-CLIENT-ID": clientId,
-				"content-type": "application/json",
-			},
-			timeout: 120,
-		});
-
-		if (res.statusCode !== 200) {
-			$app.logger().error(`[AnimeSync] Failed to fetch MAL anime list: (${res.statusCode}) ${res.statusText}`);
-			return;
-		}
-
-		if (!res.json || !Array.isArray(res.json.data)) {
-			$app.logger().error("[AnimeSync] MAL anime list response was empty or malformed");
-			return;
-		}
-
-		animeList.push(...res.json.data);
-		nextUrl = res.json.paging && res.json.paging.next ? res.json.paging.next : "";
-	}
-
+	let animeList = [];
 	let listStatusSaved = 0;
 	let listStatusFailed = 0;
 	let listStatusChanged = 0;
 	const listStatusSyncedAt = new Date().toISOString();
 	const staleFetchedAt = "1970-01-01T00:00:00.000Z";
 
-	for (const anime of animeList) {
-		if (!anime.node || !anime.node.id) {
-			continue;
+	if (shouldFetchMalList()) {
+		const clientId = $os.getenv("MAL_CLIENT_ID");
+		let malListFailed = false;
+		let nextUrl = `${MAL_BASE_URL}/users/${ANIME_USERNAME}/animelist?fields=${fields}&limit=1000&sort=list_updated_at&nsfw=1`;
+
+		if (!clientId) {
+			$app.logger().error("[AnimeSync] MAL list sync skipped because MAL_CLIENT_ID is not available to PocketBase");
+			malListFailed = true;
 		}
 
-		const animeId = anime.node.id;
-		const animeTitle = anime.node.title || "";
-		const existingSeriesRecord = findSeriesRecord(animeId);
-		const seriesRecord = existingSeriesRecord || new Record(seriesCollection);
-		const existingData = existingSeriesRecord ? getRecordJson(existingSeriesRecord, "data") : {};
-		const existingListStatus = existingSeriesRecord ? getRecordJson(existingSeriesRecord, "list_status") : {};
-		const existingTitle = existingSeriesRecord ? existingSeriesRecord.get("title") || existingSeriesRecord.getString("title") : "";
-		const statusChanged =
-			!existingSeriesRecord ||
-			existingTitle !== animeTitle ||
-			!jsonEquals(existingData, anime.node) ||
-			!jsonEquals(existingListStatus, anime.list_status);
-		const shouldRefreshSeriesPayload = !existingSeriesRecord || !hasAnimeData(existingSeriesRecord);
+		while (!malListFailed && nextUrl) {
+			const res = $http.send({
+				url: nextUrl,
+				method: "GET",
+				headers: {
+					"X-MAL-CLIENT-ID": clientId,
+					"content-type": "application/json",
+				},
+				timeout: 120,
+			});
 
-		seriesRecord.set("anime_id", animeId);
-		seriesRecord.set("title", animeTitle);
-		seriesRecord.set("data", anime.node);
-		seriesRecord.set("list_status", anime.list_status || {});
-		seriesRecord.set("list_status_synced_at", listStatusSyncedAt);
-		if (!existingSeriesRecord) {
-			seriesRecord.set("dubbed", false);
-		}
-		if (shouldRefreshSeriesPayload) {
-			seriesRecord.set("fetched_at", staleFetchedAt);
-		}
-
-		try {
-			$app.save(seriesRecord);
-			listStatusSaved++;
-			if (statusChanged) {
-				listStatusChanged++;
+			if (res.statusCode !== 200) {
+				$app.logger().error(`[AnimeSync] Failed to fetch MAL anime list: (${res.statusCode}) ${res.statusText}`);
+				malListFailed = true;
+				break;
 			}
-		} catch (err) {
-			listStatusFailed++;
-			$app.logger().error(`[AnimeSync] Failed to save MAL anime data/list status for anime ${animeId}: ${err}`);
+
+			if (!res.json || !Array.isArray(res.json.data)) {
+				$app.logger().error("[AnimeSync] MAL anime list response was empty or malformed");
+				malListFailed = true;
+				break;
+			}
+
+			animeList.push(...res.json.data);
+			nextUrl = res.json.paging && res.json.paging.next ? res.json.paging.next : "";
 		}
+
+		if (malListFailed) {
+			animeList = getLocalAnimeList();
+			$app.logger().info(`[AnimeSync] Continuing Jikan sync with ${animeList.length} local anime series record(s)`);
+		} else {
+			for (const anime of animeList) {
+				if (!anime.node || !anime.node.id) {
+					continue;
+				}
+
+				const animeId = anime.node.id;
+				const animeTitle = anime.node.title || "";
+				const existingSeriesRecord = findSeriesRecord(animeId);
+				const seriesRecord = existingSeriesRecord || new Record(seriesCollection);
+				const existingData = existingSeriesRecord ? getRecordJson(existingSeriesRecord, "data") : {};
+				const existingListStatus = existingSeriesRecord ? getRecordJson(existingSeriesRecord, "list_status") : {};
+				const existingTitle = existingSeriesRecord ? existingSeriesRecord.get("title") || existingSeriesRecord.getString("title") : "";
+				const statusChanged =
+					!existingSeriesRecord ||
+					existingTitle !== animeTitle ||
+					!jsonEquals(existingData, anime.node) ||
+					!jsonEquals(existingListStatus, anime.list_status);
+				const shouldRefreshSeriesPayload = !existingSeriesRecord || !hasAnimeData(existingSeriesRecord);
+
+				seriesRecord.set("anime_id", animeId);
+				seriesRecord.set("title", animeTitle);
+				seriesRecord.set("data", anime.node);
+				seriesRecord.set("list_status", anime.list_status || {});
+				seriesRecord.set("list_status_synced_at", listStatusSyncedAt);
+				if (!existingSeriesRecord) {
+					seriesRecord.set("dubbed", false);
+				}
+				if (shouldRefreshSeriesPayload) {
+					seriesRecord.set("fetched_at", staleFetchedAt);
+				}
+
+				try {
+					$app.save(seriesRecord);
+					listStatusSaved++;
+					if (statusChanged) {
+						listStatusChanged++;
+					}
+				} catch (err) {
+					listStatusFailed++;
+					$app.logger().error(`[AnimeSync] Failed to save MAL anime data/list status for anime ${animeId}: ${err}`);
+				}
+			}
+		}
+	} else {
+		animeList = getLocalAnimeList();
 	}
 
 	const animeToSync = [];
@@ -615,10 +850,18 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 	let seriesSkipped = 0;
 	let charactersSaved = 0;
 	let charactersFailed = 0;
+	let jikanDataSaved = 0;
+	let jikanDataFailed = 0;
 
 	for (const anime of animeToSync) {
 		const animeId = anime.node.id;
 		const animeTitle = anime.node.title || "";
+		const existingSeriesRecord = findSeriesRecord(animeId);
+		const seriesRecord = existingSeriesRecord || new Record(seriesCollection);
+		let jikanDataToSave;
+		let jikanDataFetchedAt = "";
+		let jikanDataSaveCounted = false;
+
 		$app.logger().info(
 			`[AnimeSync] Selected anime series ${animeId} for ${anime.syncReason || "sync"}`,
 			"animeId",
@@ -631,15 +874,35 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 			anime.syncStats ? anime.syncStats.characterRelationCount : undefined,
 			"hasAnimeData",
 			anime.syncStats ? anime.syncStats.hasAnimeData : undefined,
+			"hasJikanData",
+			anime.syncStats ? anime.syncStats.hasJikanData : undefined,
 			"dubbed",
 			anime.syncStats ? anime.syncStats.dubbed : undefined,
 			"fetchedAt",
 			anime.syncStats ? anime.syncStats.fetchedAt : undefined,
+			"jikanDataFetchedAt",
+			anime.syncStats ? anime.syncStats.jikanDataFetchedAt : undefined,
 			"rawCharacterMeta",
 			anime.syncStats ? anime.syncStats.rawCharacterMeta : undefined,
 			"rawCharacters",
 			anime.syncStats ? anime.syncStats.rawCharacters : undefined,
 		);
+
+		if (shouldSyncJikanData(existingSeriesRecord)) {
+			const animeFull = getAnimeFullById(animeId);
+			if (hitJikanRateLimit) {
+				seriesFailed++;
+				break;
+			}
+
+			if (animeFull) {
+				jikanDataToSave = animeFull;
+				jikanDataFetchedAt = new Date().toISOString();
+			} else {
+				jikanDataFailed++;
+			}
+		}
+
 		const res = sendJikanRequest(`${JIKAN_BASE_URL}/anime/${animeId}/characters`);
 
 		if (!res || res.statusCode === 429) {
@@ -672,9 +935,7 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 		const characterMeta = {};
 		const characterIds = [];
 		let dubbed = false;
-		const existingSeriesRecord = findSeriesRecord(animeId);
 		const existingCharacterMeta = existingSeriesRecord ? getRecordJson(existingSeriesRecord, "character_meta") : {};
-		const seriesRecord = existingSeriesRecord || new Record(seriesCollection);
 
 		for (const entry of res.json.data) {
 			if (!entry.character || !entry.character.mal_id) {
@@ -724,11 +985,14 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 			seriesRecord.set("title", animeTitle);
 			seriesRecord.set("data", anime.node);
 			seriesRecord.set("list_status", anime.list_status || {});
-			seriesRecord.set("list_status_synced_at", new Date().toISOString());
 			seriesRecord.set("dubbed", dubbed);
 			seriesRecord.set("characters", characterRecordIds);
 			seriesRecord.set("character_meta", characterMeta);
 			seriesRecord.set("fetched_at", new Date().toISOString());
+			if (jikanDataToSave !== undefined) {
+				seriesRecord.set("jikan_data", jikanDataToSave);
+				seriesRecord.set("jikan_data_fetched_at", jikanDataFetchedAt);
+			}
 
 			try {
 				$app.save(seriesRecord);
@@ -737,6 +1001,11 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 					`[AnimeSync] Failed to save anime series ${animeId}. If the error mentions "characters: Select no more than 10", increase the anime_series.characters relation max select in PocketBase. Error: ${err}`,
 				);
 				return false;
+			}
+
+			if (jikanDataToSave !== undefined && !jikanDataSaveCounted) {
+				jikanDataSaved++;
+				jikanDataSaveCounted = true;
 			}
 
 			$app.logger().info(
@@ -802,6 +1071,6 @@ cronAdd("Sync Anime Data", "* * * * *", () => {
 	}
 
 	$app.logger().info(
-		`[AnimeSync] Sync finished (${runId}) - list status saved: ${listStatusSaved}, list status changed: ${listStatusChanged}, list status failed: ${listStatusFailed}, series saved: ${seriesSaved}, series skipped: ${seriesSkipped}, series failed: ${seriesFailed}, characters saved: ${charactersSaved}, characters failed: ${charactersFailed}`,
+		`[AnimeSync] Sync finished (${runId}) - list status saved: ${listStatusSaved}, list status changed: ${listStatusChanged}, list status failed: ${listStatusFailed}, jikan data saved: ${jikanDataSaved}, jikan data failed: ${jikanDataFailed}, series saved: ${seriesSaved}, series skipped: ${seriesSkipped}, series failed: ${seriesFailed}, characters saved: ${charactersSaved}, characters failed: ${charactersFailed}`,
 	);
 });

@@ -74,6 +74,8 @@ export interface AnimeEntry {
 	node: AnimeInfo;
 	list_status: ListStatus;
 	dubbed?: boolean;
+	jikan_data?: JikanAnimeFull;
+	jikan_data_fetched_at?: string;
 }
 
 export interface AnimePaging {
@@ -105,6 +107,17 @@ export interface AnimeCharacterData {
 	data: AnimeCharacterEntry[];
 }
 
+export interface AnimeRelationImage {
+	id: number;
+	type: string;
+	image_url?: string;
+	source?: "jikan_data" | "data" | "jikan_api";
+}
+
+export interface AnimeRelationImagesResponse {
+	data: Record<string, AnimeRelationImage>;
+}
+
 export interface AnimeCharacterListData {
 	data: AnimeCharacterListEntry[];
 }
@@ -132,12 +145,131 @@ export interface AnimeSeriesRecord {
 	list_status?: ListStatus;
 	list_status_synced_at?: string;
 	dubbed?: boolean;
+	jikan_data?: JikanAnimeFull;
+	jikan_data_fetched_at?: string;
 	characters?: string[];
 	character_meta?: AnimeSeriesCharacterMetaById;
 	fetched_at: string;
 	expand?: {
 		characters?: AnimeCharacterRecord[];
 	};
+}
+
+export interface JikanAnimeFull {
+	mal_id: number;
+	url: string;
+	images: JikanImages;
+	trailer: JikanTrailer;
+	approved: boolean;
+	titles: JikanTitle[];
+	title: string;
+	title_english: string | null;
+	title_japanese: string | null;
+	title_synonyms: string[];
+	type: string | null;
+	source: string | null;
+	episodes: number | null;
+	status: string | null;
+	airing: boolean;
+	aired: JikanAired;
+	duration: string | null;
+	rating: string | null;
+	score: number | null;
+	scored_by: number | null;
+	rank: number | null;
+	popularity: number | null;
+	members: number | null;
+	favorites: number | null;
+	synopsis: string | null;
+	background: string | null;
+	season: string | null;
+	year: number | null;
+	broadcast: JikanBroadcast;
+	producers: JikanMalResource[];
+	licensors: JikanMalResource[];
+	studios: JikanMalResource[];
+	genres: JikanMalResource[];
+	explicit_genres: JikanMalResource[];
+	themes: JikanMalResource[];
+	demographics: JikanMalResource[];
+	relations: JikanAnimeRelation[];
+	theme: JikanAnimeTheme;
+	external: JikanExternalLink[];
+	streaming: JikanExternalLink[];
+}
+
+export interface JikanImages {
+	jpg: JikanImageSet;
+	webp: JikanImageSet;
+}
+
+export interface JikanImageSet {
+	image_url: string | null;
+	small_image_url: string | null;
+	large_image_url: string | null;
+}
+
+export interface JikanTrailer {
+	youtube_id: string | null;
+	url: string | null;
+	embed_url: string | null;
+	images: {
+		image_url: string | null;
+		small_image_url: string | null;
+		medium_image_url: string | null;
+		large_image_url: string | null;
+		maximum_image_url: string | null;
+	};
+}
+
+export interface JikanTitle {
+	type: string;
+	title: string;
+}
+
+export interface JikanAired {
+	from: string | null;
+	to: string | null;
+	prop: {
+		from: JikanDateParts;
+		to: JikanDateParts;
+	};
+	string: string;
+}
+
+export interface JikanDateParts {
+	day: number | null;
+	month: number | null;
+	year: number | null;
+}
+
+export interface JikanBroadcast {
+	day: string | null;
+	time: string | null;
+	timezone: string | null;
+	string: string | null;
+}
+
+export interface JikanMalResource {
+	mal_id: number;
+	type: string;
+	name: string;
+	url: string;
+}
+
+export interface JikanAnimeRelation {
+	relation: string;
+	entry: JikanMalResource[];
+}
+
+export interface JikanAnimeTheme {
+	openings: string[];
+	endings: string[];
+}
+
+export interface JikanExternalLink {
+	name: string;
+	url: string;
 }
 
 export type AnimeSeriesCharacterMetaById = Record<number, AnimeSeriesCharacterMeta>;

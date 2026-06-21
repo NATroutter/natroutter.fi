@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { AnimeDialog } from "@/components/AnimeDialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { AnimeEntry, AnimeWatchStatus } from "@/types/animeData";
 import { AnimeGrid } from "./AnimeGrid";
@@ -34,6 +35,8 @@ interface AnimeListProps {
 
 export default function AnimeList({ animeData }: AnimeListProps) {
 	const sortTypes = useMemo(() => getAnimeSearchTypes(), []);
+	const [urlAnime, setUrlAnime] = useState<AnimeEntry | undefined>();
+	const [urlAnimeOpen, setUrlAnimeOpen] = useState(false);
 
 	const searchTypes = useMemo(() => sortTypes.filter((searchType) => searchType.searchable), [sortTypes]);
 	const {
@@ -52,6 +55,67 @@ export default function AnimeList({ animeData }: AnimeListProps) {
 		isLoadingMore,
 		loadMoreRef,
 	} = useAnimeFiltering(animeData, searchTypes, sortTypes);
+
+	useEffect(() => {
+		let cancelled = false;
+
+		async function syncAnimeDialogFromUrl() {
+			const animeId = Number(new URLSearchParams(window.location.search).get("anime"));
+			if (!Number.isInteger(animeId) || animeId <= 0) {
+				if (!cancelled) {
+					setUrlAnimeOpen(false);
+					setUrlAnime(undefined);
+				}
+				return;
+			}
+
+			const localAnime = animeData.find((entry) => entry.node.id === animeId);
+			if (localAnime) {
+				if (!cancelled) {
+					setUrlAnime(localAnime);
+					setUrlAnimeOpen(true);
+				}
+				return;
+			}
+
+			try {
+				const response = await fetch(`/api/anime/series/${animeId}`, {
+					credentials: "same-origin",
+					headers: {
+						accept: "application/json",
+					},
+				});
+
+				if (!response.ok) {
+					if (!cancelled) {
+						setUrlAnimeOpen(false);
+						setUrlAnime(undefined);
+					}
+					return;
+				}
+
+				const payload = (await response.json()) as AnimeEntry;
+				if (!cancelled) {
+					setUrlAnime(payload);
+					setUrlAnimeOpen(true);
+				}
+			} catch (err) {
+				console.error("Failed to load anime dialog from URL:", err);
+				if (!cancelled) {
+					setUrlAnimeOpen(false);
+					setUrlAnime(undefined);
+				}
+			}
+		}
+
+		syncAnimeDialogFromUrl();
+		window.addEventListener("popstate", syncAnimeDialogFromUrl);
+
+		return () => {
+			cancelled = true;
+			window.removeEventListener("popstate", syncAnimeDialogFromUrl);
+		};
+	}, [animeData]);
 
 	return (
 		<div className="flex flex-col justify-center mx-auto w-full p-6">
@@ -106,6 +170,7 @@ export default function AnimeList({ animeData }: AnimeListProps) {
 					</CardContent>
 				</Card>
 			</div>
+			{urlAnime && <AnimeDialog data={urlAnime} open={urlAnimeOpen} onOpenChange={setUrlAnimeOpen} />}
 		</div>
 	);
 }

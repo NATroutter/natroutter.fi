@@ -203,30 +203,44 @@ export async function getHistory(): Promise<AnimeHistoryUpdate[]> {
 //***************************************
 //*           ANIME DATA                *
 //***************************************
+const ANIME_SERIES_ENTRY_FIELDS =
+	"anime_id,data,list_status,list_status_synced_at,dubbed,jikan_data,jikan_data_fetched_at";
+
+function buildAnimeEntry(record: AnimeSeriesRecord): AnimeEntry | undefined {
+	if (!record.data || !record.list_status) {
+		return undefined;
+	}
+
+	const entry: AnimeEntry = {
+		node: record.data,
+		list_status: record.list_status,
+	};
+
+	if (typeof record.dubbed === "boolean") {
+		entry.dubbed = record.dubbed;
+	}
+
+	if (record.jikan_data) {
+		entry.jikan_data = record.jikan_data;
+	}
+
+	if (record.jikan_data_fetched_at) {
+		entry.jikan_data_fetched_at = record.jikan_data_fetched_at;
+	}
+
+	return entry;
+}
+
 export async function getAnimeData(): Promise<AnimeEntry[] | undefined> {
 	try {
 		const pb = getPocketBase();
 		const records = await pb.collection("anime_series").getFullList<AnimeSeriesRecord>({
-			fields: "anime_id,data,list_status,list_status_synced_at,dubbed",
+			fields: ANIME_SERIES_ENTRY_FIELDS,
 		});
 
 		const data = records
-			.filter(
-				(record): record is AnimeSeriesRecord & Required<Pick<AnimeSeriesRecord, "data" | "list_status">> =>
-					!!record.data && !!record.list_status,
-			)
-			.map((record): AnimeEntry => {
-				const entry: AnimeEntry = {
-					node: record.data,
-					list_status: record.list_status,
-				};
-
-				if (typeof record.dubbed === "boolean") {
-					entry.dubbed = record.dubbed;
-				}
-
-				return entry;
-			})
+			.map(buildAnimeEntry)
+			.filter((entry): entry is AnimeEntry => entry !== undefined)
 			.sort((a, b) => {
 				const aUpdatedAt = new Date(a.list_status.updated_at || "").getTime();
 				const bUpdatedAt = new Date(b.list_status.updated_at || "").getTime();
@@ -241,6 +255,20 @@ export async function getAnimeData(): Promise<AnimeEntry[] | undefined> {
 		return data.length > 0 ? data : undefined;
 	} catch (err) {
 		return handlePocketBaseError(err, "Failed to fetch data for AnimeData");
+	}
+}
+
+export async function getAnimeEntryByAnimeId(animeId: number): Promise<AnimeEntry | undefined> {
+	try {
+		const pb = getPocketBase();
+		const record = await pb.collection("anime_series").getFirstListItem<AnimeSeriesRecord>(`anime_id = ${animeId}`, {
+			fields: ANIME_SERIES_ENTRY_FIELDS,
+		});
+
+		return buildAnimeEntry(record);
+	} catch (err) {
+		await handlePocketBaseError(err, `Failed to fetch data for Anime ${animeId}`);
+		return undefined;
 	}
 }
 
