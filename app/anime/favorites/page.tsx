@@ -3,7 +3,8 @@ import { Suspense } from "react";
 import AnimeFavorites from "@/app/anime/favorites/AnimeFavorites";
 import AnimeFavoritesSkeleton from "@/app/anime/favorites/AnimeFavoritesSkeleton";
 import { ContentError } from "@/components/error";
-import { getAnimeData, getFavorites } from "@/lib/anime-api";
+import { getAnimeData } from "@/lib/anime-api";
+import { getFavorites } from "@/lib/database";
 
 export const metadata: Metadata = {
 	title: "Anime Favorite",

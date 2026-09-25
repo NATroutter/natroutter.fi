@@ -1,12 +1,11 @@
 "use server";
 
 import { config } from "@/lib/config";
-import type { AnimeData, AnimeEntry, AnimeFavoritesData } from "@/types/animeData";
+import type { AnimeData, AnimeEntry } from "@/types/animeData";
 
-type Endpoint = "anime_data" | "favorites";
+type Endpoint = "anime_data";
 function getEndpoint(endpoint: Endpoint): string {
 	const username = "NATroutter";
-	const jikan = `https://api.jikan.moe/v4`;
 	const mal = "https://api.myanimelist.net/v2";
 	const mal_fields: string =
 		"list_status,rank,rating,status,nsfw,average_episode_duration,popularity,num_episodes,num_scoring_users,media_type,start_date,end_date,mean,source,main_picture,genres,alternative_titles,synopsis,studios";
@@ -14,25 +13,6 @@ function getEndpoint(endpoint: Endpoint): string {
 	switch (endpoint) {
 		case "anime_data":
 			return `${mal}/users/${username}/animelist?fields=${mal_fields}&limit=1000&sort=list_updated_at&nsfw=1`;
-		case "favorites":
-			return `${jikan}/users/${username}/favorites`;
-	}
-}
-
-export async function getFavorites(): Promise<AnimeFavoritesData | undefined> {
-	try {
-		const response = await fetch(getEndpoint("favorites"), {
-			method: "GET",
-		});
-		if (!response.ok) {
-			console.error(`Failed to fetch anime data from jikan.moe : (${response.status}) ${response.statusText}`);
-			return undefined;
-		}
-		const json = await response.json();
-		return json as AnimeFavoritesData;
-	} catch (err) {
-		console.error("Failed to fetch favorites:", err);
-		return undefined;
 	}
 }
 

@@ -3,8 +3,13 @@
 import PocketBase from "pocketbase";
 import { config } from "@/lib/config";
 import logger from "@/lib/logger";
+import type {
+	AnimeFavoritesData,
+	AnimeHistoryEntry,
+	AnimeHistoryResponse,
+	AnimeHistoryUpdate,
+} from "@/types/animeData";
 import type { AboutPage, FooterData, HomePage, LinkPage, PrivacyPage, ProjectPage } from "@/types/interfaces";
-import type { AnimeHistoryEntry, AnimeHistoryResponse, AnimeHistoryUpdate } from "@/types/animeData";
 
 function getFileURL(collection: string, id: string, file: string): string {
 	return `${config.POCKETBASE.PUBLIC}/api/files/${collection}/${id}/${file}`;
@@ -190,6 +195,21 @@ export async function getHistory(): Promise<AnimeHistoryUpdate[]> {
 	entries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
 	return entries;
+}
+
+//***************************************
+//*         ANIME FAVORITES             *
+//***************************************
+export async function getFavorites(): Promise<AnimeFavoritesData | undefined> {
+	try {
+		const pb = getPocketBase();
+		const record = await pb.collection("anime_favorites").getFirstListItem<{ data: AnimeFavoritesData }>("", {
+			sort: "-updated",
+		});
+		return record.data ?? undefined;
+	} catch (err) {
+		return handlePocketBaseError(err, "Failed to fetch data for AnimeFavorites");
+	}
 }
 
 //***************************************
