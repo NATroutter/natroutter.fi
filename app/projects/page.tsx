@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import Projects from "@/app/projects/Projects";
-import ProjectsSkeleton from "@/app/projects/ProjectsSkeleton";
 import { ContentError } from "@/components/error";
 import { getProjectsPage } from "@/lib/database";
 
@@ -18,16 +16,8 @@ export const metadata: Metadata = {
 // ISR: Revalidate every 60 seconds
 export const revalidate = 60;
 
-async function ProjectsContent() {
+export default async function ProjectsPage() {
 	const data = await getProjectsPage();
 	if (!data) return <ContentError location="Projects" />;
 	return <Projects data={data} />;
-}
-
-export default function ProjectsPage() {
-	return (
-		<Suspense fallback={<ProjectsSkeleton />}>
-			<ProjectsContent />
-		</Suspense>
-	);
 }

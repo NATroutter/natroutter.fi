@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import AnimeFavorites from "@/app/anime/favorites/AnimeFavorites";
-import AnimeFavoritesSkeleton from "@/app/anime/favorites/AnimeFavoritesSkeleton";
 import { ContentError } from "@/components/error";
-import { getAnimeData } from "@/lib/anime-api";
-import { getFavorites } from "@/lib/database";
+import { getAnimeData, getFavorites } from "@/lib/database";
 
 export const metadata: Metadata = {
 	title: "Anime Favorite",
@@ -17,19 +14,11 @@ export const metadata: Metadata = {
 // ISR: Revalidate
 export const revalidate = 120;
 
-async function AnimeFavoritesContent() {
+export default async function AnimeFavoritesPage() {
 	const [data, favorites] = await Promise.all([getAnimeData(), getFavorites()]);
 
 	if (!data) return <ContentError location="AnimeFavorites(1)" />;
 	if (!favorites) return <ContentError location="AnimeFavorites(2)" />;
 
 	return <AnimeFavorites animeData={data} favorites={favorites} />;
-}
-
-export default function AnimeFavoritesPage() {
-	return (
-		<Suspense fallback={<AnimeFavoritesSkeleton />}>
-			<AnimeFavoritesContent />
-		</Suspense>
-	);
 }

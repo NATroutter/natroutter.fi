@@ -1,12 +1,14 @@
 "use client";
 
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { AnimeDialog } from "@/components/anime-dialog/AnimeDialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { AnimeEntry, AnimeWatchStatus } from "@/types/animeData";
 import { AnimeGrid } from "./AnimeGrid";
 import { AnimeListTypeSelector } from "./AnimeListTypeSelector";
 import { AnimeSearchFilter } from "./AnimeSearchFilter";
 import { AnimeSortControl } from "./AnimeSortControl";
-import { searchTypes } from "./animeListTypes";
+import { getAnimeSearchTypes } from "./animeListTypes";
 import { useAnimeFiltering } from "./useAnimeFiltering";
 
 const titleMap: Record<AnimeWatchStatus | "all", string> = {
@@ -27,16 +29,23 @@ const descriptionMap: Record<AnimeWatchStatus | "all", string> = {
 	dropped: "Anime I've decided not to continue watching.",
 };
 
-export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
+interface AnimeListProps {
+	animeData: AnimeEntry[];
+}
+
+export default function AnimeList({ animeData }: AnimeListProps) {
+	const sortTypes = useMemo(() => getAnimeSearchTypes(), []);
+	const [urlAnime, setUrlAnime] = useState<AnimeEntry | undefined>();
+	const [urlAnimeOpen, setUrlAnimeOpen] = useState(false);
+
+	const searchTypes = useMemo(() => sortTypes.filter((searchType) => searchType.searchable), [sortTypes]);
 	const {
 		selectedList,
 		setSelectedList,
 		searchValue,
 		setSearchValue,
-		sortDirection,
-		setSortDirection,
-		sortColumn,
-		setSortColumn,
+		sortRules,
+		setSortRules,
 		fieldSearchType,
 		setFieldSearchType,
 		processedData,
@@ -45,7 +54,73 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 		hasMore,
 		isLoadingMore,
 		loadMoreRef,
-	} = useAnimeFiltering(animeData);
+	} = useAnimeFiltering(animeData, searchTypes, sortTypes);
+
+	const openAnimeDialog = useCallback((anime: AnimeEntry) => {
+		setUrlAnime(anime);
+		setUrlAnimeOpen(true);
+	}, []);
+
+	useEffect(() => {
+		let cancelled = false;
+
+		async function syncAnimeDialogFromUrl() {
+			const animeId = Number(new URLSearchParams(window.location.search).get("anime"));
+			if (!Number.isInteger(animeId) || animeId <= 0) {
+				if (!cancelled) {
+					setUrlAnimeOpen(false);
+					setUrlAnime(undefined);
+				}
+				return;
+			}
+
+			const localAnime = animeData.find((entry) => entry.node.id === animeId);
+			if (localAnime) {
+				if (!cancelled) {
+					setUrlAnime(localAnime);
+					setUrlAnimeOpen(true);
+				}
+				return;
+			}
+
+			try {
+				const response = await fetch(`/api/anime/series/${animeId}`, {
+					credentials: "same-origin",
+					headers: {
+						accept: "application/json",
+					},
+				});
+
+				if (!response.ok) {
+					if (!cancelled) {
+						setUrlAnimeOpen(false);
+						setUrlAnime(undefined);
+					}
+					return;
+				}
+
+				const payload = (await response.json()) as AnimeEntry;
+				if (!cancelled) {
+					setUrlAnime(payload);
+					setUrlAnimeOpen(true);
+				}
+			} catch (err) {
+				console.error("Failed to load anime dialog from URL:", err);
+				if (!cancelled) {
+					setUrlAnimeOpen(false);
+					setUrlAnime(undefined);
+				}
+			}
+		}
+
+		syncAnimeDialogFromUrl();
+		window.addEventListener("popstate", syncAnimeDialogFromUrl);
+
+		return () => {
+			cancelled = true;
+			window.removeEventListener("popstate", syncAnimeDialogFromUrl);
+		};
+	}, [animeData]);
 
 	return (
 		<div className="flex flex-col justify-center mx-auto w-full p-6">
@@ -64,7 +139,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 							<AnimeListTypeSelector selectedList={selectedList} onListChange={setSelectedList} />
 
 							{/* Search and Sort Controls */}
-							<div className="flex flex-row gap-1 flex-wrap">
+							<div className="flex flex-col gap-2">
 								<AnimeSearchFilter
 									searchTypes={searchTypes}
 									fieldSearchType={fieldSearchType}
@@ -73,13 +148,7 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 									onSearchValueChange={setSearchValue}
 								/>
 
-								<AnimeSortControl
-									searchTypes={searchTypes}
-									sortColumn={sortColumn}
-									sortDirection={sortDirection}
-									onSortColumnChange={setSortColumn}
-									onSortDirectionToggle={() => setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))}
-								/>
+								<AnimeSortControl searchTypes={sortTypes} sortRules={sortRules} onSortRulesChange={setSortRules} />
 							</div>
 
 							{/* Display info */}
@@ -101,11 +170,13 @@ export default function AnimeList({ animeData }: { animeData: AnimeEntry[] }) {
 								hasMore={hasMore}
 								isLoadingMore={isLoadingMore}
 								loadMoreRef={loadMoreRef}
+								onAnimeOpen={openAnimeDialog}
 							/>
 						</div>
 					</CardContent>
 				</Card>
 			</div>
+			{urlAnime && <AnimeDialog data={urlAnime} open={urlAnimeOpen} onOpenChange={setUrlAnimeOpen} />}
 		</div>
 	);
 }

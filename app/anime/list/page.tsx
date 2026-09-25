@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import AnimeList from "@/app/anime/list/AnimeList";
-import AnimeListSkeleton from "@/app/anime/list/AnimeListSkeleton";
 import { ContentError } from "@/components/error";
-import { getAnimeData } from "@/lib/anime-api";
+import { getAnimeData } from "@/lib/database";
 
 export const metadata: Metadata = {
 	title: "Anime List",
@@ -18,16 +17,13 @@ export const metadata: Metadata = {
 // ISR: Revalidate
 export const revalidate = 120;
 
-async function AnimeListContent() {
+export default async function AnimeListPage() {
 	const data = await getAnimeData();
-	if (!data) return <ContentError location="AnimeList" />;
-	return <AnimeList animeData={data} />;
-}
 
-export default function AnimeListPage() {
+	if (!data) return <ContentError location="AnimeList" />;
 	return (
-		<Suspense fallback={<AnimeListSkeleton />}>
-			<AnimeListContent />
+		<Suspense fallback={null}>
+			<AnimeList animeData={data} />
 		</Suspense>
 	);
 }

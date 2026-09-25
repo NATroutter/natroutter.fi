@@ -2,10 +2,9 @@
 /** biome-ignore-all lint/a11y/useSemanticElements: <explanation> */
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import * as React from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import * as React from "react";
 
 export type HeatmapDatum = {
 	date: string | Date;
@@ -169,53 +168,64 @@ function formatMonth(d: Date, fmt: "short" | "long" | "numeric") {
 		const yy = String(d.getFullYear()).slice(-2);
 		return `${d.getMonth() + 1}/${yy}`;
 	}
-	return d.toLocaleDateString(undefined, { month: fmt });
+
+	const shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+	const longMonths = [
+		"January",
+		"February",
+		"March",
+		"April",
+		"May",
+		"June",
+		"July",
+		"August",
+		"September",
+		"October",
+		"November",
+		"December",
+	];
+
+	return fmt === "long" ? longMonths[d.getMonth()] : shortMonths[d.getMonth()];
 }
 
 function weekdayLabelForIndex(index: number, weekStartsOn: 0 | 1) {
 	// index is 0..6 in grid row order (top->bottom).
 	// actual weekday = weekStartsOn + index
 	const actualDay = (weekStartsOn + index) % 7;
-	// stable reference week (UTC)
-	const base = new Date(Date.UTC(2024, 0, 7 + actualDay));
-	return base.toLocaleDateString(undefined, { weekday: "short" });
+	const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+	return weekdays[actualDay];
+}
+
+function formatCellLabel(d: Date) {
+	return `${formatMonth(d, "short")} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
 /* ---------------- component ---------------- */
 
 export function HeatmapCalendar({
-
-									data,
-									rangeDays = 365,
-									endDate = new Date(),
-									weekStartsOn = 1,
-									cellSize = 12,
-									cellGap = 3,
-									onCellClick,
-									levelClassNames,
-									palette,
-									legend = true,
-									axisLabels = true,
-									renderLegend,
-									renderTooltip,
-									className,
-								}: HeatmapCalendarProps) {
+	data,
+	rangeDays = 365,
+	endDate = new Date(),
+	weekStartsOn = 1,
+	cellSize = 12,
+	cellGap = 3,
+	onCellClick,
+	levelClassNames,
+	palette,
+	legend = true,
+	axisLabels = true,
+	renderLegend,
+	renderTooltip,
+	className,
+}: HeatmapCalendarProps) {
 	// Default classes are semantic => good in light/dark
-	const levels = levelClassNames ?? [
-		"bg-muted",
-		"bg-primary/20",
-		"bg-primary/35",
-		"bg-primary/55",
-		"bg-primary/75",
-	];
+	const levels = levelClassNames ?? ["bg-muted", "bg-primary/20", "bg-primary/35", "bg-primary/55", "bg-primary/75"];
 
 	const levelCount = palette?.length ? palette.length : levels.length;
 
-	const legendCfg: LegendConfig =
-		legend === true ? {} : legend === false ? { show: false } : legend;
+	const legendCfg: LegendConfig = legend === true ? {} : legend === false ? { show: false } : legend;
 
-	const axisCfg: AxisLabelsConfig =
-		axisLabels === true ? {} : axisLabels === false ? { show: false } : axisLabels;
+	const axisCfg: AxisLabelsConfig = axisLabels === true ? {} : axisLabels === false ? { show: false } : axisLabels;
 
 	const showAxis = axisCfg.show ?? true;
 	const showWeekdays = axisCfg.showWeekdays ?? true;
@@ -262,11 +272,7 @@ export function HeatmapCalendar({
 				level: clampLevel(lvl, levelCount),
 				disabled: !inRange,
 				meta,
-				label: date.toLocaleDateString(undefined, {
-					year: "numeric",
-					month: "short",
-					day: "numeric",
-				}),
+				label: formatCellLabel(date),
 			});
 		}
 	}
@@ -404,39 +410,23 @@ export function HeatmapCalendar({
 						<div className="flex">
 							{/* Weekday labels column */}
 							{showAxis && showWeekdays ? (
-								<div
-									className="mr-2 flex flex-col"
-									style={{ gap: `${cellGap}px` }}
-									aria-hidden="true"
-								>
+								<div className="mr-2 flex flex-col" style={{ gap: `${cellGap}px` }} aria-hidden="true">
 									{Array.from({ length: 7 }).map((_, rowIdx) => (
 										<div
 											key={rowIdx}
 											className="flex items-center justify-end text-xs text-muted-foreground"
 											style={{ width: 40, height: cellSize }}
 										>
-											{weekdayIndices.includes(rowIdx)
-												? weekdayLabelForIndex(rowIdx, weekStartsOn)
-												: ""}
+											{weekdayIndices.includes(rowIdx) ? weekdayLabelForIndex(rowIdx, weekStartsOn) : ""}
 										</div>
 									))}
 								</div>
 							) : null}
 
 							{/* Heatmap grid */}
-							<div
-								className="flex"
-								style={{ gap: `${cellGap}px` }}
-								role="grid"
-								aria-label="Heatmap calendar"
-							>
+							<div className="flex" style={{ gap: `${cellGap}px` }} role="grid" aria-label="Heatmap calendar">
 								{columns.map((col, i) => (
-									<div
-										key={i}
-										className="flex flex-col"
-										style={{ gap: `${cellGap}px` }}
-										role="rowgroup"
-									>
+									<div key={i} className="flex flex-col" style={{ gap: `${cellGap}px` }} role="rowgroup">
 										{col.map((cell) => {
 											const cls = levels[clampLevel(cell.level, levels.length)];
 											return (
@@ -456,9 +446,7 @@ export function HeatmapCalendar({
 																height: cellSize,
 																...(bgStyleForLevel(cell.level, palette) ?? {}),
 															}}
-															aria-label={
-																cell.disabled ? "Outside range" : `${cell.label}: ${cell.value}`
-															}
+															aria-label={cell.disabled ? "Outside range" : `${cell.label}: ${cell.value}`}
 															role="gridcell"
 														/>
 													</TooltipTrigger>
